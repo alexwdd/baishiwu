@@ -45,6 +45,16 @@
 			<p>多个用户使用"|"进行分割，如：aaa|bbb|ccc...，不填则只有系统管理员维护</p>
 		</div>
 	</div>
+	
+	<eq name="mid" value="1">
+	<div class="layui-form-item">
+		<label class="layui-form-label">首页展示</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="comm" value="1" title="是">
+			<input type="radio" name="comm" value="0" title="否" checked="checked">
+		</div>	
+	</div>
+	</eq>
 
 	<div class="layui-form-item layui-form-text">
 		<label class="layui-form-label">外链</label>
@@ -52,7 +62,7 @@
 			<input type="text" name="url" class="layui-input" lay-verify="_url">
 		</div>
 	</div>
-
+	
 	<div class="layui-form-item layui-form-text">
 		<label class="layui-form-label">图片地址</label>
 		<div class="layui-input-inline" style="width:400px">

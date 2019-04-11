@@ -72,37 +72,26 @@
 	      		</tr>
 	      		</volist>
       		</volist>
+
+      		<volist name="article" id="vo">
       		<tr>
-        	<td><input data-id="b-94" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="94" <?php if(in_array(94,$myArr)) echo 'checked';?>/> 时事热点<input type="hidden" name="name94" value="时事热点" /></td>
+        	<td><input data-id="b-<{$vo.id}>" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="<{$vo.id}>" <?php if(in_array($vo['id'],$myArr)) echo 'checked';?>/> <{$vo.name}><input type="hidden" name="name<{$vo.id}>" value="<{$vo.name}>" /></td>
         	<td></td>
-        	<td><input type="text" name="icon94" class="layui-input" value="" style="width:400px; float: left; margin-right: 5px" value="<?php
-				if($myIcon[94]){
-					echo $myIcon[94];
-        		}
+        	<td><input type="text" name="icon<{$vo.id}>" class="layui-input" style="width:400px; float: left; margin-right: 5px" value="<?php
+        		if($myIcon[$vo['id']]){
+					echo $myIcon[$vo['id']];
+        		}				
         		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
-        	<td><input type="number" name="sort94" class="layui-input" value="<?php
-				if($mySort[94]){
-					echo $mySort[94];
+        	<td><input type="number" name="sort<{$vo.id}>" class="layui-input" value="<?php
+        		if($mySort[$vo['id']]){
+					echo $mySort[$vo['id']];
         		}else{
 					echo '0';
-        		}
-        		?>" /></td>
-        	</tr>
-        	<td><input data-id="b-113" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="113" <?php if(in_array(113,$myArr)) echo 'checked';?>/> 征婚<input type="hidden" name="name113" value="征婚" /></td>
-        	<td></td>
-        	<td><input type="text" name="icon113" class="layui-input" style="width:400px; float: left; margin-right: 5px" value="<?php
-				if($myIcon[113]){
-					echo $myIcon[113];
-        		}
-        		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
-        	<td><input type="number" name="sort113" class="layui-input" value="<?php
-				if($mySort[113]){
-					echo $mySort[113];
-        		}else{
-					echo '0';
-        		}
-        		?>" /></td>
-        	</tr>
+        		}				
+        		?>"/></td>
+      		</tr>	      		
+      		</volist>
+      		
     	</tbody>
   	</table>
 

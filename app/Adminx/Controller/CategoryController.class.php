@@ -33,7 +33,7 @@ class CategoryController extends AdminController {
 			$mid=I("get.mid");
 			if(empty($mid)){die;}
 			$map['model']=$mid;
-			$list = M('Category')->where($map)->field("id,name,user,fid,path,sort")->order('path,id asc')->select();
+			$list = M('Category')->where($map)->field("id,name,comm,user,fid,path,sort")->order('path,id asc')->select();
 			foreach ($list as $key => $value) {
 				$count = count(explode('-', $value['path'])) - 2;
 				if ($value['fid'] > 0) {

@@ -51,17 +51,17 @@ class WeixinController extends CommonController {
             unset($map);
             $map['cityID'] = $cityID;   
             $map['fid'] = 0;        
-            $list = M('CityCate')->field('cid,name')->where($map)->order('sort asc')->select();
+            $list = M('CityCate')->field('cid,name,icon')->where($map)->order('sort asc')->select();
             foreach ($list as $key => $value) {
                 unset($r);
                 $r = $this->getPy($value['cid']);
                 if ($r) {
                     $list[$key]['type'] = $r['py'];
                 }else{
-                    $list[$key]['type'] = '';
+                    $list[$key]['type'] = 'article';
                 }
 
-                if ($list[$key]['type']!='') {
+                if ($list[$key]['type']!='article') {
                     $db = $this->getModel($list[$key]['type']);
                     unset($map);
                     $map['status'] = 1;
@@ -87,17 +87,12 @@ class WeixinController extends CommonController {
                         $child[$k]['time'] = date("Y-m-d",$val['time']);
                         $child[$k]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$val['time']).'/'.$val['id'].'.html';
                     }  
-                    if($value['cid']==94){
-                        $list[$key]['type'] = 'news';
-                    }
-                    if($value['cid']==113){
-                        $list[$key]['type'] = 'marriage';
-                    }
                 }
                 foreach ($child as $k => $val) {
                     $child[$k] = $this->setTagPrice($val,$list[$key]['type']);
                 }
                 $list[$key]['child'] = $child;
+                $list[$key]['icon'] = getRealUrl($value['icon']);
             }
 
             unset($map);
@@ -108,7 +103,7 @@ class WeixinController extends CommonController {
                 $temp = [
                     'type'=>'mall',
                     'name'=>$value['name'],
-                    'image'=>'http://' . $_SERVER['HTTP_HOST'] . $value['logo'],
+                    'icon'=>'http://' . $_SERVER['HTTP_HOST'] . $value['logo'],
                     'url'  =>'http://' . $_SERVER['HTTP_HOST'] .'/store/?agentid='.$value['id']
                 ];
                 array_push($list, $temp);
@@ -373,7 +368,7 @@ class WeixinController extends CommonController {
 
             $where['fid'] = $arr['fid'];
             $where['cityID'] = $cityID;
-            $cate = M("CityCate")->where($where)->field("cid as id  ,name as title")->order('sort asc,id asc')->select();
+            $cate = M("CityCate")->where($where)->field("cid as id,name as title,icon")->order('sort asc,id asc')->select();
 
             if ($jobtype!='' && is_numeric($jobtype)) {
                 $map['jobtype'] = $jobtype;
@@ -561,6 +556,14 @@ class WeixinController extends CommonController {
             $obj = M('Commend');
             $list = $obj->where($map)->limit(20)->order('sort asc , articleid desc')->select();
             foreach ($list as $key => $value) {
+                if ($value['type']=='article') {
+                    $db = ['db'=>'Article'];
+                    $where['id'] = $value['articleid']; 
+                }else{
+                    $db = $this->getModel($value['type']);
+                    $where['articleid'] = $value['articleid']; 
+                }                
+                $list[$key]['hit'] = M($db['db'])->where($where)->getField('hit');
                 $list[$key]['image'] = getRealUrl($value['image']);
                 if ($value['userid']==0) {
                     $list[$key]['user'] = array('nickname'=>'','headimg'=>'');

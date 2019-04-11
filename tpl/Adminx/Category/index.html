@@ -25,9 +25,16 @@
 					<p field="id" title="ID" width="100"/>
 					<p field="name" title="名称" width="150" templet="#nameTpl"/>		
 					<p field="url" title="链接" width="200"/>
+					<p field="comm" title="首页展示" width="90" templet="#comm"/>
 					<p field="sort" title="排序" width="150"/>
 					<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="150"/>
 				</div>
+
+				<script type="text/html" id="comm">
+				{{# if(d.comm==1){ }}
+				<span style="color: blue">是</span>
+				{{# } }}
+				</script>
 
 				<script type="text/html" id="nameTpl">
 				{{# if(d.fid==0){ }}

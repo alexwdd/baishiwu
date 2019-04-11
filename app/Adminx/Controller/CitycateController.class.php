@@ -59,14 +59,20 @@ class CitycateController extends AdminController {
                 $cityID = I('get.cityID',$city[0]['id']);                
                 $this->assign('city',$city);
             }
-            $map['cityID'] = $cityID;
     		$map['fid'] = 0;
-	    	$map['model'] = 2;
+	    	$map['model'] = 2;            
 	    	$list = M('Category')->where($map)->select();
 	    	foreach ($list as $key => $value) {
 	    		$list[$key]['child'] = M('Category')->where(array('fid'=>$value['id']))->select();
 	    	}
 	    	$this->assign('list',$list);
+
+            unset($map);
+            $map['fid'] = 0;
+            $map['model'] = 1;
+            $map['comm'] = 1;
+            $article = M('Category')->where($map)->select();
+            $this->assign('article',$article);
 
 	    	$myArr = M('CityCate')->where(array('cityID'=>$cityID))->getField('cid',true);
             $mySort = M('CityCate')->where(array('cityID'=>$cityID))->getField('cid,sort',true);

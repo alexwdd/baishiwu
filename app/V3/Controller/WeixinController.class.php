@@ -57,8 +57,15 @@ class WeixinController extends CommonController {
                 $r = $this->getPy($value['cid']);
                 if ($r) {
                     $list[$key]['type'] = $r['py'];
+                    $list[$key]['flag'] = 0;
                 }else{
                     $list[$key]['type'] = 'article';
+                    $res = M('Category')->where(array('fid'=>$value['cid']))->count();
+                    if ($res>0) {
+                        $list[$key]['flag'] = 1;
+                    }else{
+                        $list[$key]['flag'] = 0;
+                    }
                 }
 
                 if ($list[$key]['type']!='article') {
@@ -110,6 +117,30 @@ class WeixinController extends CommonController {
             }
             returnJson('0',C("SUCCESS_RETURN"),array('ads'=>$ads,'cate'=>$list));       
         }       
+    }
+
+    public function newscate(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $cityID = I('post.cityID');
+            $cid = I('post.cid');
+            if ($cityID==0) {
+                returnJson('-1','缺少cityID');
+            }
+            if ($cid=='' || !is_numeric($cid)) {
+                returnJson('-1','缺少参数');
+            }
+
+            $cateName = M('Category')->where(array('model'=>1,'id'=>$cid))->getField('name');
+            if (!$cateName) {
+                returnJson('-1','栏目不存在');
+            }
+            $list = M('Category')->field('id,picname,name')->where(array('fid'=>$cid))->select();       
+            foreach ($list as $key => $value) {
+                $list[$key]['picname'] = getRealUrl($value['picname']); 
+            }
+            returnJson(0,'success',['data'=>$list,'cateName'=>$cateName]);
+        }
     }
 
     public function news()

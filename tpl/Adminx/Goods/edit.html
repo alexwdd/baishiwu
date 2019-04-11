@@ -1,0 +1,80 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">订单号</label>
+		<div class="layui-form-mid">
+			<strong><{$list.tuan_order_no}></strong>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">标题</label>
+		<div class="layui-form-mid">
+			<{$list.title}>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">快递公司</label>
+		<div class="layui-form-mid">
+			<strong><{$list.company}></strong>
+		</div>
+
+		<label class="layui-form-label">订单号</label>
+		<div class="layui-form-mid">
+			<strong><{$list.order}></strong>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系人</label>
+		<div class="layui-form-mid"><{$list.contact}></div>
+
+		<label class="layui-form-label">联系电话</label>
+		<div class="layui-form-mid"><{$list.phone}></div>
+
+		<label class="layui-form-label">微信号</label>
+		<div class="layui-form-mid"><{$list.wechat}></div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">留言</label>
+		<div class="layui-form-mid"><{$list.detail}></div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">预估重量(kg)</label>
+		<div class="layui-form-mid">
+			<{$list.weight}>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">实际重量(kg)</label>
+		<div class="layui-input-inline">
+			<input type="number" step="0.1" value="<{$list.weight_a}>" name="weight_a" lay-verify="required" lay-verType="tips" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">			
+			<select name="status" default="<{$list.status}>" lay-verify="required" lay-verType="tips">
+			<option value="0">未到仓库</option>
+			<option value="1">已到仓库</option>
+	      	</select>
+		</div>		
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Goods/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+
+    <input type="hidden" name="goodsid" value="<{$list.goodsid}>">
+    <input type="hidden" name="articleid" value="<{$list.articleid}>">
+</form>

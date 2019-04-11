@@ -1,0 +1,99 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="联系人/手机" class="layui-input"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">包裹编号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="goodsid" autocomplete="off" class="layui-input"/>				
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">快递单号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="order_no" autocomplete="off" class="layui-input"/>				
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">状态</label>
+				<div class="layui-input-inline">
+					<select name="type">
+						<option value="">请选择</option>
+						<option value="0">未到仓库</option>
+						<option value="1">已到仓库</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">发布日期</label>
+				<div class="layui-input-inline">
+					<input type="text" name="createDate" autocomplete="off" class="layui-input fsDate" dateRange="1" placeholder=" - "/>
+				</div>
+			</div>
+		</form>
+		
+	    <div class="layui-col-md12">
+	    	<button class="layui-btn layui-btn-sm" function="move" url="<{:U("Tuan/move")}>" topWidth="80%" isMaximize="0" topHeight="80%" isMutiDml="1" topTitle="包裹批量移动" inputs="goodsid">
+			<i class="layui-icon">&#xe857;</i>批量移动
+			</button>
+
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Goods/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="goodsid:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Goods/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>	
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>	
+				<p field="articleid" title="团号" width="80"/>				
+				<p field="goodsid" title="包裹编号" width="100"/>				
+				<p field="title" title="标题" width="240"/>				
+				<p field="company" title="快递公司" width="150"/>
+				<p field="order" title="快递单号" width="150"/>
+				<p field="weight" title="预估重量(kg)" width="130"/>
+				<p field="weight_a" title="实际重量(kg)" width="130"/>
+				<p field="contact" title="联系人" width="100"/>
+				<p field="phone" title="电话" width="120"/>
+				<p field="wechat" title="微信" width="150"/>
+				<p field="detail" title="留言" width="200"/>
+				<p field="createTime" title="发布日期" width="180" sort="true"/>
+				<p field="updateTime" title="更新日期" width="180" sort="true"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="150"/>
+			</div>
+
+			<script type="text/html" id="barDemo">
+				<input type="checkbox" name="status" value="{{d.goodsid}}" lay-skin="switch" lay-text="到仓|未到" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+
+ 				<a class="layui-btn layui-btn-xs" lay-event="top" topUrl="<{:U("Goods/edit")}>&id={{d.goodsid}}" topWidth="80%" topHeight="80%" topTitle="编辑">编辑</a> 				
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+layui.use('table', function(){
+	form = layui.form; 
+	//监听性别操作
+	form.on('switch(status)', function(obj){
+		url = '<{:U('Goods/status')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"status",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

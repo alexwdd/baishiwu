@@ -1,0 +1,59 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+	    <div class="layui-col-md12">
+        	<button class="layui-btn layui-btn-sm" function="top" topUrl="<{:U('Push/add')}>" topWidth="80%" isMaximize="0" topHeight="80%" topTitle="新增">
+			  <i class="layui-icon">&#xe654;</i>新增
+			</button>
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Push/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+	    </div>
+
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Push/data')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-60"></table>
+
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>				
+				<p field="city" title="城市" width="150" dict="city"/>
+				<p field="type" title="类型" width="100" templet="#type"/>
+				<p field="title" title="内容" width="300"/>
+				<p field="url" title="url" width="250"/>	
+				<p field="model" title="模型" width="100"/>	
+				<p field="articleID" title="帖子ID" width="100"/>	
+				<p field="createTime" title="添加日期" width="180"/>
+			</div>
+			<script type="text/html" id="type">
+ 				{{# if(d.type==1){ }}
+ 				文章
+ 				{{# }else{ }}
+ 				帖子
+ 				{{# } }}
+			</script>
+
+			<script type="text/html" id="barDemo">
+ 				<a class="layui-btn layui-btn-xs" lay-event="top" topUrl="<{:U("Push/edit")}>&id={{d.id}}" topWidth="80%" topHeight="80%" topTitle="编辑">编辑</a>
+ 				<a class="layui-btn layui-btn-xs sendBtn" href="javascript:void(0)" data-id="{{d.id}}">重发</a>
+			</script>
+	    </div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$(document).on('click','.sendBtn',function(){
+		var id = $(this).attr('data-id');
+		$.get('<{:U('Push/send')}>?id='+id,function(res){
+			if (res.code==1){
+				layer.alert("发送成功");
+			}else{
+				layer.alert("发送失败");
+			}
+		},'json')
+	})
+})
+</script>

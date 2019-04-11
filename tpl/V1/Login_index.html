@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title><{:C('site.name')}></title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.min.js" ></script>
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.form.min.js"></script>
+<script src="<{:STATICS}>/amazeui/js/amazeui.min.js" charset="utf-8"></script>
+<script src="<{:STATICS}>/layer_mobile/layer.js" charset="utf-8"></script>
+<script type="text/javascript" src="<{:RES}>/js/common.js"></script>
+<link rel="stylesheet" href="<{:STATICS}>/amazeui/css/amazeui.min.css" />
+<link rel="stylesheet" href="<{:RES}>/css/login.css" type="text/css" />
+</head>
+<body>
+
+<div class="login-form">
+	<div class="top-logo">
+		<span><img src="<{:RES}>/image/logo.png"/></span>
+	</div>
+	<h1><{:C('site.name')}></h1>
+	<div class="login-top">
+	<form id="ajaxForm" action="<{:U('Login/loginDo')}>" method="post" style="margin-top:10px;">
+		<div class="login-ic">
+			<i ></i>
+			<input type="number" name="mobile" id="mobile" placeholder="请输入手机号"/>
+			<div class="clear"> </div>
+		</div>
+
+		<div class="login-ic">
+			<i class="icon"></i>
+			<input type="password" name="password" id="password" placeholder="请输入密码"/>
+			<div class="clear"> </div>
+		</div>
+
+		<!-- <div class="login-ic">
+			<i class="check"></i>
+			<input type="text" name="veriCode" id="veriCode" placeholder="验证码" style="width:100px" />
+			<img src="<{:U('Login/verify')}>" alt="" class="verify" id="verify_img">
+			<div class="clear"></div>
+		</div> -->
+	
+		<div class="log-bwn">
+			<input type="submit"  value="Login" >
+		</div>
+		</form>
+	</div>
+</div>	
+
+
+<script>
+$("#verify_img").on("click",function(){
+	var veriCodeUrl = "<{:U('verify',array('randt'=>time()))}>?"+new Date().getTime();
+    $("#verify_img").attr("src",veriCodeUrl);
+})
+
+$(function(){
+	//ajaxform
+	var options = { 
+		dataType:'json',
+		beforeSubmit:showRequest,//表单验证方式
+        success:showResponse  // post-submit callback 
+    }; 
+    $('#ajaxForm').ajaxForm(options); 
+    function showResponse(response, status)  {
+    	$('#ajaxForm button').removeAttr('disabled');
+    	$('#ajaxForm input').removeAttr('disabled');
+		if (status == 'success') {
+			layer.close(load);
+			if (response.status==1) {
+				layer.open({
+					type:0, 
+					content:response.info,
+					time:3,
+					end: function(){ 
+						if(response.url!='' && response.url!=undefined && response.url!="undefined"){
+							if (response.url=='reload') {
+								window.location.reload();
+							}else{
+								window.location.href = response.url;
+							}									
+						}
+					} 
+				});
+			}else{
+				layer.open({
+					type:0, 
+					time:3,
+					content:response.info
+				});
+				$("#verify_img").click();
+				$("#veriCode").val("");
+			}
+		}else{
+			layer.msg('服务器错误');
+		}
+	} 
+
+	function showRequest(){
+		$('#ajaxForm button').attr("disabled","disabled");
+		$('#ajaxForm input').attr("disabled","disabled");
+		load = layer.open({type: 2});
+	}
+})
+</script>
+
+</body>
+</html>

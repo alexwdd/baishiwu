@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" type="text/css" href="./css/hui.css" />
+<style>
+*{font-size: 14px;}
+li{list-style: none;}
+.news-title{border-bottom: 1px #ddd solid;padding: 10px; overflow: hidden;}
+.news-title h1{font-size: 17px;  font-weight: normal; margin-bottom: 10px}
+.news-title .date{color: #666; font-size: 12px}
+.news-title .date span{color: #666; font-size: 12px}
+.baseInfo{clear: both; overflow: hidden; margin: 10px;}
+.baseInfo li{float: left; width: 50%; text-align: left; font-size: 14px; line-height: 30px;}
+.baseInfo li.long{width: 100%}
+.intr{border: 1px #dbdbdb solid; clear: both; overflow: hidden; margin: 10px;}
+.intr .hd{height: 30px; line-height: 30px; border-bottom: 1px #dbdbdb solid; background: #f7f7f7; padding-left: 10px;}
+.intr .bd{padding: 10px;}
+.ad img{width: 100%}
+.hui-swipe-items{text-align: center;}
+.hui-swipe-items img{height: 300px;}
+.quick{clear: both; background: #fff; overflow: hidden; padding: 10px 0}
+.quick li{float: left; width: 50%; padding: 0 10px; box-sizing: border-box;}
+.quick li img{width: 100%; display: block;}
+</style>
+</head>
+<body>
+<div class="hui-wrap">
+    <div class="ad"><a href="http://www.worldmedia.top/kanpeila/image/ad1.gif"><img src="http://www.worldmedia.top/kanpeila/image/ad1.gif"></a></div>
+    <div class="ad"><a href="http://www.worldmedia.top/kanpeila/image/ad2.jpg"><img src="http://www.worldmedia.top/kanpeila/image/ad2.jpg"></a></div>
+    <div class="ad"><a href="http://www.worldmedia.top/kanpeila/image/ad5.jpg"><img src="http://www.worldmedia.top/kanpeila/image/ad5.jpg"></a></div>
+
+    <div class="news-title">
+        <h1 id="title"></h1>
+    </div>
+
+    <div class="baseInfo" id="baseInfo"></div>
+    <div class="intr">
+        <div class="hd">说明</div>
+        <div class="bd" id="detail"></div>
+    </div>
+
+
+    <div class="ad"><a href="http://www.worldmedia.top/kanpeila/image/ad4.jpg"><img src="http://www.worldmedia.top/kanpeila/image/ad4.jpg"></a></div>
+    <div class="ad"><a href="http://www.worldmedia.top/kanpeila/image/ad6.jpg"><img src="http://www.worldmedia.top/kanpeila/image/ad6.jpg"></a></div>
+    
+    <div class="quick">
+      <li><a href="https://itunes.apple.com/cn/app/id1413038662?l=zh&ls=1&mt=8"><img src="http://www.worldmedia.top/kanpeila/image/appstore.png"></a></li>
+      <li><a href="https://play.google.com/store/apps/details?id=com.ldw.kanchengquan"><img src="http://www.worldmedia.top/kanpeila/image/googleplay.png"></a></li>
+    </div>
+
+</div>
+
+<script src="./js/hui.js" type="text/javascript" charset="utf-8"></script>
+<script src="./js/hui-swipe.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+hui.loading('数据加载中');
+request = GetRequest();
+id = request.articleid;
+if (id!='' && id!=undefined){
+    url = '/V1/Pinyou/getinfo';
+    hui.postJSON(url, {articleid:id},function(data){
+        if (data.code==-1){
+            hui.closeLoading();
+            hui.toast(data.desc); 
+        }else{
+            hui.closeLoading();
+            hui("#title").html(data.body.title);
+            res = createBase(data.body);
+            hui("#baseInfo").html(res);
+            hui("#detail").html(data.body.detail);
+        }
+    }, function(){
+        hui.toast('读取失败'); 
+    })
+}else{
+    hui.toast('缺少参数');
+}
+
+function GetRequest() {   
+   var url = location.search; //获取url中"?"符后的字串   
+   var theRequest = new Object();   
+   if (url.indexOf("?") != -1) {   
+      var str = url.substr(1);   
+      strs = str.split("&");   
+      for(var i = 0; i < strs.length; i ++) {   
+         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);   
+      }   
+   }   
+   return theRequest;   
+}
+
+//二手
+function createBase(data){
+    _html = '';    
+    switch(data.status){
+    case '0':
+      status = '等待包裹';
+      break;
+    case '1':
+      status = '包裹到齐';
+      break;
+    case '2':
+      status = '等待发货';
+      break;
+    case '3':
+      status = '<span style="color:green">成功发货</span>';
+      break;
+    default:
+      status = '<span style="color:#f00">发货失败</span>';
+    }
+    _html += '<li>本团状态：'+status+'</li>';
+
+    if (data.auth=='1'){
+        auth = '已实名认证';
+    }else{
+        auth = '<span style="color:#f00">未认证</span>';
+    }
+    _html += '<li>认证状态：'+auth+'</li>';
+
+
+    if (data.goodstype=='1'){
+        goodstype = '普通货';
+    }else{
+        goodstype = '敏感货';
+    }
+    _html += '<li>货物类型：'+goodstype+'</li>';
+    _html += '<li>开团时间：'+fromatDate(data.createTime)+'</li>';
+    _html += '<li>本团团长：'+data.contact+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    _html += '<li class="long">取货地址：'+data.address+'</li>';
+    return _html;
+}
+
+function fromatDate (value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+        month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+        day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+}
+
+</script>
+</body>
+</html>

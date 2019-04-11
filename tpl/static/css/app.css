@@ -1,0 +1,42 @@
+body, html, div, blockquote, img, label, p, h1, h2, h3, h4, h5, h6, pre, ul, ol,li, dl, dt, dd, form, a, fieldset, input, th, td{margin: 0; padding: 0; border: 0; outline: none;list-style: none;}
+html{height: 100%; max-width: 640px; margin: auto}
+img{max-width: 100%}
+body{font-size:16px; height: 100%; background: #f5f5f5;}
+h1, h2, h3, h4, h5, h6,label{padding: 0; margin: 0;font-weight: normal;font-size: 16px}
+[class*=am-u-]+[class*=am-u-]:last-child {float: left;}
+a{color: black;text-decoration: none;}
+a:hover{text-decoration: none;}
+.page{padding: 10px; background: #fff}
+.title{font-size: 18px; font-weight: bold; padding:1rem 0}
+.date{font-size: 12px; color: #999; height: 30px; line-height: 30px;}
+.baseInfo{clear: both; overflow: hidden;}
+.baseInfo li{float: left; width: 50%; text-align: left; font-size: 14px; line-height: 30px;}
+.baseInfo li.long{width: 100%}
+.intr{border: 1px #dbdbdb solid; clear: both; overflow: hidden;}
+.intr .hd{height: 30px; line-height: 30px; border-bottom: 1px #dbdbdb solid; background: #f7f7f7; padding-left: 10px;}
+.intr .bd{padding: 10px;}
+.content{clear: both; padding: 10px 0; line-height: 150%}
+.banner{height: 300px;}
+.banner img{height: 300px;}
+
+[v-cloak] {display: none;}
+#app{background: #f1f1f1;margin-top: 10px;}
+.adList{clear: both; overflow: hidden;}
+.feedback{clear: both; overflow: hidden; padding: 10px;}
+.feedback .hd{clear: both; overflow: hidden; margin-bottom: 15px}
+.feedback .hd p{float: left;}
+.feedback .hd span{float: right; cursor: pointer; font-size: 14px;color:#586a9c}
+.feedback .bd{clear: both; overflow: hidden;}
+.feedback .bd li{clear: both; overflow: hidden; display: flex; margin-bottom: 15px}
+.feedback .bd li .face{width: 50px;}
+.feedback .bd li .desc{flex: 1; padding: 0 10px}
+.feedback .bd li .desc .name{font-size: 14px; color: #999}
+.feedback .bd li .desc .say{font-size: 14px;}
+.feedback .bd li .like{ width:60px; text-align: right; color: #586a9c}
+.feedback .bd li .like img{height:20px;display: block; float: right}
+.feedback .bd li .like span{display: block; float: right; line-height: 20px; font-size: 12px; margin-top:2px}
+.writeBox{position: fixed; width: 100%;background: #fff; left: 0; bottom: 0; padding: 10px; display: flex;}
+.writeBox input{border:0; padding: 5px; margin: 0}
+.writeBox button{height: 40px; margin: 0}
+.loadding{text-align: center;}
+.empty{text-align: center; padding: 30px 0}

@@ -1,0 +1,228 @@
+vm = new Vue({
+	el : "#vm",
+	data : {
+		image :[],
+		info : [],
+		type:'',
+
+		/*company : '',
+		msg : '',
+		jobtype : ''*/
+	},
+	created : function(){
+		var that = this;
+		mui.showLoading('数据加载中');
+		that.type = request.type;
+
+		if ((request.userid!='' && request.userid!=undefined) || (request.openid!='' && request.openid!=undefined)) {
+			that.showBtn = true;
+		}
+
+		$.post(
+			config.articleInfo,
+			request,
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					data = res.body;
+					that.info = data;
+					_html = '';
+					$.each(data.images,function(index){
+						image = getImageInfo(this);
+						imgurl1 = image.path+image.name+"_240_180"+image.ext;
+						imgurl2 = image.path+image.name+"_600_450"+image.ext;
+						if (data.thumb_s==imgurl1) {
+							_html += "<li><img src='"+imgurl1+"'><i class='mui-icon mui-icon-closeempty' onclick='removeLi(this)'></i><a href='javascript:void(0)' onclick=\"setFace(this,'thumb','"+imgurl1+"','"+imgurl2+"')\" class='active'>封面</a></li>";
+						}else{
+							_html += "<li><img src='"+imgurl1+"'><i class='mui-icon mui-icon-closeempty' onclick='removeLi(this)'></i><a href='javascript:void(0)' onclick=\"setFace(this,'thumb','"+imgurl1+"','"+imgurl2+"')\">设为封面</a></li>";
+						}
+						
+					})
+					$("#insert-btn").before(_html);		
+
+					/*that.jobtype = data.jobtype
+					if (that.jobtype==0){
+						that.company = '公司名称(必填)';
+						that.msg = '请输入公司名称';
+					}else{
+						that.company = '职位，如：餐厅服务员(选填)';
+						that.msg = '请输入求职岗位';
+					}*/
+
+					if (that.type=='zp' || that.type=='zf'){
+						price = that.info.price;
+						if (price!=0){
+							var index = price.lastIndexOf("\/");
+							that.info.p1 =  price.substring(0,index);
+							that.info.p2 =  price.substring(index,price.length);
+						}else{
+							that.info.p1 =  price;
+							if (that.type=='zf'){
+								that.info.p2 =  '/月';
+							}
+							if (that.type=='zp'){
+								that.info.p2 =  '/周';
+							}
+						}						
+					};
+
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+	},
+	updated : function(){
+
+	}
+});
+
+mui.ready(function(){
+	mui.showLoading('数据加载中');
+	var request = GetRequest();
+	$("#type").val(request.type);
+	$("#userid").val(request.userid);
+	$("#password").val(request.password);		
+	$("#openid").val(request.openid);
+	$("#articleid").val(request.articleid);
+	
+	$('#submitBtn').click(function(){
+	    var res = muiFormCheck('#myForm');
+	    //提交
+	    if(res){
+	    	var data = mui.getFormData('#myForm');	
+	    	//招聘 租房薪资
+	    	if ($("#type").val()=='zp' || $("#type").val()=='zf'){
+	    		unit = $("#unitBtn").html();
+	    		if (unit!='' && unit!=undefined && $("#price").val()!=0){
+	    			price = $("#price").val()+unit
+	    			data.price = price;  
+	    		};	    		
+	    	}		    	
+	    	mui.post(config.articleEdit,data,function(r){
+				if (r.code=='0'){
+					mui.alert('编辑成功！等待客服认证信息！', '系统消息', function(){
+						window.location.href = 'app://goback';
+					})          
+				}else{
+					mui.toast(r.desc);
+				}
+			},'json');
+	    }
+	});
+
+	$('#delBtn').click(function(){
+		var btnArray = ['确认', '取消'];
+	    mui.confirm('确定吗？', '系统消息', btnArray, function(e) {   
+            if (e.index == 0) {
+            	var data = mui.getFormData('#myForm');	
+            	mui.post(config.articleDel,data,function(r){
+					if (r.code=='0'){
+						mui.alert('操作成功', '系统消息', function(){
+							window.location.href = 'app://goback';
+						})          
+					}else{
+						mui.toast(r.desc);
+					}
+				},'json');
+            }
+        },'div');
+	});
+})
+
+function uploadMultiFile(o){
+	$("#uploadfile").click();
+	$("#uploadfile").bind("change", function(){
+		if ($(this).val() != "") {
+			mui.showLoading('上传中');
+			var formdata = new FormData();
+			formdata.append("file", $('#uploadfile')[0].files[0]);
+			$.ajax({
+				url: config.upload,
+				type: 'POST',
+				cache: false,
+				data: formdata,
+				dataType:'json',		
+				//必须false才会避开jQuery对 formdata 的默认处理 
+				// XMLHttpRequest会对 formdata 进行正确的处理
+				processData: false,
+				//必须false才会自动加上正确的Content-Type 
+				contentType: false,
+				xhrFields: {
+				   withCredentials: true
+				},
+				success: function(res) {
+					mui.hideLoading();
+					if(res.code=='0'){
+						$("#uploadfile").unbind("change");
+						$("#uploadfile").val("");
+						data = res.body;
+						_html = '<li><img src="'+data.thumb_s+'" /><i class="mui-icon mui-icon-closeempty" onclick="removeLi(this)"></i><a href="javascript:void(0)" onclick="setFace(this,\'thumb\',\''+data.thumb_s+'\',\''+data.thumb_b+'\')">设为封面</a></li>';
+                        $("#"+o).before(_html);
+                        if ($("#thumb_s").val()==''){
+                        	$("#thumb_s").val(data.thumb_s);
+                        	$("#thumb_b").val(data.thumb_b);
+                        }
+                        var imgpath = ''
+                        $("#insert-img img").each(function(index){
+                        	url = $(this).attr('src');
+                        	url = url.replace("_240_180", "");
+                        	if (index==0){
+                        		imgpath += url;
+                        	}else{
+                        		imgpath += ';' + url;
+                        	}                        	
+                        });
+                        $("#imgpath").val(imgpath);
+					}else{
+						mui.toast(res.desc);
+					}
+				}
+ 			})
+        }
+	});
+}
+
+function removeLi(obj) {
+    $(obj).parent().remove();
+    imgpath = '';
+    $("#insert-img img").each(function(index){
+    	url = $(this).attr('src');
+    	url = url.replace("_240_180", "");
+    	if (index==0){
+    		imgpath += url;
+    	}else{
+    		imgpath += ';' + url;
+    	}                        	
+    });
+    $("#imgpath").val(imgpath);
+}
+
+function setFace(obj,to,thumb_s,thumb_b){
+	$("#"+to+"_s").val(thumb_s);
+	$("#"+to+"_b").val(thumb_b);
+	$(".insert-img li a").removeClass("active").html('设为封面');
+	$(obj).addClass("active").html('封面');
+}
+
+function setAddress(address,lng,lat){
+	$("#address").val(address);
+	$("#address_str").html('<span>'+address+'</span>');
+	$("#longitude").val(lng);
+	$("#latitude").val(lat);
+}
+
+function getImageInfo(str){
+	var index = str .lastIndexOf("\/");  
+	path  = str .substring(0,index+1);
+	var index = str .lastIndexOf("."); 
+	ext  = str .substring(index,str.length);
+	filename = str.replace(path, '');
+	filename = filename.replace(ext, '');
+	return {
+		'path':path,
+		'ext':ext,
+		'name':filename
+	};
+}

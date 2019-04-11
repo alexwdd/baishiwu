@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>编辑-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<h5 class="sortName">添加照片</h5>
+		<div class="insert-img" id="insert-img">
+	        <a href="javascript:;" onclick="uploadMultiFile('insert-btn');" class="insert-btn" id="insert-btn"><i class="icon icon-zhaoxiangji"></i></a>
+	    </div>   
+	    
+	    <input type="file" id="uploadfile"/>   
+	    
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" v-model="info.title" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">{{info.address}}</a>
+	        </li>
+	    </ul>
+	    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述" v-model="info.detail"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="discount" v-model="info.discount" class="mui-input-clear" placeholder="给予本平台优惠(选填)" />
+		    </div>
+	    </div> 	    
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="links" id="links" v-model="info.links" class="mui-input-clear" placeholder="相关链接(选填)">
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="feature" id="feature" v-model="info.feature" class="mui-input-clear" placeholder="特色标签,如:某某专卖,最低价(选填)">
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="price" v-model="info.price" class="mui-input-clear" placeholder="价格(0为面议，必填)" checkType="required" checkMsg="请输入价格">
+		    </div>
+	    </div> 
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" v-model="info.contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+		
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" v-model="info.phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" v-model="info.wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div>
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn" style="width: 67%; float: left;">编辑</button>
+	    	<button type="button" id="delBtn" class="mui-btn mui-btn-block" style="width: 30%;float: right;">删除</button>
+	    </div>	
+	    <input type="hidden" name="articleid" id="articleid" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>  
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="address" id="address" v-model="info.address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" v-model="info.longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" v-model="info.latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" v-model="info.image" id="imgpath" />
+	    <input type="hidden" name="thumb_s" v-model="info.thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" v-model="info.thumb_b" id="thumb_b" />
+	    <input type="hidden" name="status" value="0" />
+	</form>
+</div>
+<script src="../static/vue/vue.min.js"></script>
+<script type="text/javascript" src="../static/js/edit.js"></script>
+</body>
+</html>

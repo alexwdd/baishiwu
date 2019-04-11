@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>编辑-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style type="text/css">
+.subway{clear: both; overflow: hidden; padding:10px;}
+.subway .hd{clear: both; overflow: hidden;}
+.subway .hd p{float: left; font-size: 16px; line-height: 33px; color: #999}
+.subway .hd span{float: right;}
+.subway .bd{clear: both; overflow: hidden;}
+.subway .bd li{clear: both; overflow: hidden; border: 1px #dbdbdb solid; font-size: 14px; height: 30px; line-height: 30px; margin-bottom: 10px; padding-left: 10px;}
+.subway .bd li p{float: left; margin: 0}
+.subway .bd li span{cursor: pointer; float: right; display: block; width: 30px; background: #f7f7f7; text-align: center;}
+.subway .bd li span i{font-size: 14px;}
+</style>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<h5 class="sortName">添加照片</h5>
+		<div class="insert-img" id="insert-img">
+	        <a href="javascript:;" onclick="uploadMultiFile('insert-btn');" class="insert-btn" id="insert-btn"><i class="icon icon-zhaoxiangji"></i></a>
+	    </div>   
+	    
+	    <input type="file" id="uploadfile"/>   
+	    
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" v-model="info.title" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">{{info.address}}</a>
+	        </li>
+	    </ul>
+	    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述" v-model="info.detail"></textarea>
+		    </div>
+	    </div> 
+
+	    <template v-if="info.houseType == 0">
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="Into" id="Into" v-model="info.Into" class="mui-input-clear" checkType="required" checkMsg="请填写入住时间" placeholder="入住时间(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="singleType" id="singleType" v-model="info.singleType" class="mui-input-clear" checkType="required" checkMsg="请选择出租类型" placeholder="出租类型(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="remark" id="chuzu" v-model="info.chuzu" class="mui-input-clear" placeholder="出租时长(短租<1月<长租，选填)">
+		    </div>
+	    </div>
+	    </template>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="facility" id="facility" v-model="info.facility" class="mui-input-clear" placeholder="设施(选填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="subway">
+		    	<div class="hd">
+		    		<p>地铁线路</p>
+		    		<span><button class="mui-btn" type="button" id="addBtn">添加</button></span>
+		    	</div>
+		    	<div class="bd" id="result"></div>
+		    </div>
+		    <input type="hidden" name="subway" id="subway" v-model="info.subway">
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="bedrooms" id="bedrooms" v-model="info.bedrooms" class="mui-input-clear" placeholder="卧室数(选填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="parks" id="parks" v-model="info.parks" class="mui-input-clear" placeholder="停车位数(选填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="showers" id="showers" v-model="info.showers" class="mui-input-clear" checkMsg="请选择淋浴数0-9" placeholder="淋浴数(选填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="toilets" id="toilets" v-model="info.toilets" class="mui-input-clear" placeholder="卫生间数(选填)">
+		    </div>
+	    </div>
+		
+		<template v-if="info.houseType == 1">
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="remark" id="chushou" v-model="info.chushou" class="mui-input-clear" checkType="required" checkMsg="请选择卖家类型" placeholder="卖家类型(必填)">
+		    </div>
+	    </div>
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="links" id="links" v-model="info.links" class="mui-input-clear" placeholder="相关链接(选填)">
+		    </div>
+	    </div> 
+	    </template> 
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="price" v-model="info.price" class="mui-input-clear" placeholder="价格(0为面议，必填)" checkType="required" checkMsg="请输入价格">
+		    </div>
+	    </div> 
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" v-model="info.contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+		
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" v-model="info.phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" v-model="info.wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div>
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">编辑</button>
+	    </div>	
+	    <input type="hidden" name="articleid" id="articleid" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>  
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="address" id="address" checkType="required" v-model="info.address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" v-model="info.longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" v-model="info.latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" v-model="info.image" id="imgpath" />
+	    <input type="hidden" name="thumb_s" v-model="info.thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" v-model="info.thumb_b" id="thumb_b" />
+	    <input type="hidden" name="status" value="0" />
+	</form>
+</div>
+<script src="../static/vue/vue.min.js"></script>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var singleTypePicker = new $.PopPicker();
+		var chuzuPicker = new $.PopPicker();
+		var cityData = {};
+		
+		mui.showLoading('数据加载中');
+		var request = GetRequest();  		
+		$.post(
+			config.subway,
+			request,
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					cityData = res.body.subway;
+					//级联示例
+					var cityPicker = new $.PopPicker({
+						layer: 2
+					});
+					cityPicker.setData(cityData);
+					var showCityPickerButton = doc.getElementById('addBtn');
+					var cityResult = doc.getElementById('result');
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker.show(function(items) {			
+							html = '<li><p>'+items[0].text + "-" + items[1].text+'</p><span><i class="mui-icon mui-icon-trash"></i></span></li>';
+							cityResult.innerHTML = cityResult.innerHTML + html;
+							if (doc.getElementById('subway').value==''){		
+								doc.getElementById('subway').value = items[0].text + "-" + items[1].text;
+							}else{
+								doc.getElementById('subway').value = doc.getElementById('subway').value+','+items[0].text + "-" + items[1].text;
+							}
+						});
+					}, false);
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+
+		singleTypePicker.setData(['床位出租','普通房','主人房','保姆房','工作室','车库','储藏室','厅房/隔间']);
+		chuzuPicker.setData(['短租','长租','短租/长租']);
+		var singleTypeBtn = doc.getElementById('singleType');
+		var chuzuBtn = doc.getElementById('chuzu');
+		var singleTypeResult = doc.getElementById('singleType');
+		var chuzuResult = doc.getElementById('chuzu');
+		if (singleTypeBtn){
+			singleTypeBtn.addEventListener('tap', function(event) {
+				singleTypePicker.show(function(items) {
+					singleTypeResult.value = items[0];
+				});
+			}, false);
+		}
+
+		if (chuzuBtn){
+			chuzuBtn.addEventListener('tap', function(event) {
+				chuzuPicker.show(function(items) {
+					chuzuResult.value = items[0];
+				});
+			}, false);
+		}
+
+		//出售
+		var chushouPicker = new $.PopPicker();
+		chushouPicker.setData(['中介','卖家']);
+		var chushouObj = doc.getElementById('chushou');
+		if (chushouObj){
+			chushouObj.addEventListener('tap', function(event) {
+				chushouPicker.show(function(items) {
+					chushouObj.value = items[0];
+				});
+			}, false);
+		}
+		//-----------------------------------------			
+	});
+})(mui, document);
+
+
+$(function(){
+	$("#result").on('click',"span",function(){
+		$(this).parent().remove();
+		var str = '';
+		$("#result li").each(function(index){
+			if (index==0){
+				str = $(this).find('p').html();
+			}else{
+				str += ','+$(this).find('p').html();
+			}
+		})
+		$("#subway").val(str);
+	})
+})
+</script>
+<script type="text/javascript" src="../static/js/edit.js"></script>
+</body>
+</html>

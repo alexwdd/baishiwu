@@ -1,0 +1,124 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">订单号</label>
+		<div class="layui-form-mid">
+			<strong><{$list.order_no}></strong>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" default="<{$list.cityID}>" lay-verify="required" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">重量上限(kg)</label>
+		<div class="layui-input-inline">
+			<input type="number" step="0.1" value="<{$list.maxWeight}>" name="maxWeight" lay-verify="required" lay-verType="tips" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">取货地址</label>
+		<div class="layui-input-block">
+			<input type="text" id="address" name="address" value="<{$list.address}>" lay-verType="tips" lay-verify="required" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">经度</label>
+		<div class="layui-input-inline">
+			<input type="text" name="longitude" value="<{$list.longitude}>" class="layui-input" lay-verify="required">
+		</div>
+
+		<label class="layui-form-label">纬度</label>
+		<div class="layui-input-inline">
+			<input type="text" name="latitude" value="<{$list.latitude}>" class="layui-input" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系人</label>
+		<div class="layui-input-inline">
+			<input type="text" id="contact" name="contact" value="<{$list.contact}>" lay-verType="tips" lay-verify="required" class="layui-input">
+		</div>
+
+		<label class="layui-form-label">联系电话</label>
+		<div class="layui-input-inline">
+			<input type="text" name="phone" value="<{$list.phone}>" lay-verType="tips" lay-verify="required" class="layui-input">
+		</div>
+
+		<label class="layui-form-label">微信号</label>
+		<div class="layui-input-inline">
+			<input type="text" id="wechat" value="<{$list.wechat}>" name="wechat" lay-verType="tips" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea name="detail" lay-verType="tips" lay-verify="required" class="layui-textarea"><{$list.detail}></textarea>
+		</div>
+	</div>	
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">团类型</label>
+		<div class="layui-input-inline">			
+			<select name="type" default="<{$list.type}>" lay-verify="required" lay-verType="tips" class="fsSelect fsDict" dict="tuanType" addNull="1">
+	      	</select>
+		</div>
+
+		<label class="layui-form-label">商品类型</label>
+		<div class="layui-input-inline">			
+			<select name="goodstype" default="<{$list.goodstype}>" lay-verify="required" lay-verType="tips" class="fsSelect fsDict" dict="goodstype" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">认证</label>
+		<div class="layui-input-inline">			
+			<select name="auth" default="<{$list.auth}>" lay-verify="required" lay-verType="tips">
+			<option value="0">未认证</option>
+			<option value="1">已认证</option>
+	      	</select>
+		</div>
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">			
+			<select name="status" default="<{$list.status}>" lay-verify="required" lay-verType="tips" class="fsSelect fsDict" dict="baoguo" addNull="1">
+	      	</select>
+		</div>
+		<label class="layui-form-label">揽件</label>
+		<div class="layui-input-inline">			
+			<select name="isStop" default="<{$list.isStop}>" lay-verify="required" lay-verType="tips" class="fsSelect fsDict" dict="lanjian" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">国际物流公司</label>
+		<div class="layui-input-inline">
+			<select name="company" default="<{$list.company}>" lay-verType="tips" class="fsSelect fsDict" dict="company" addNull="1">
+	      	</select>
+		</div>
+
+		<label class="layui-form-label">物流单号</label>
+		<div class="layui-input-inline">
+			<input type="text" name="order" value="<{$list.order}>" lay-verType="tips" class="layui-input">
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Tuan/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+
+    <input type="hidden" name="articleid" value="<{$list.articleid}>">
+</form>

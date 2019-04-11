@@ -1,0 +1,60 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <div class="title">{$pay.name}</div>
+</div>
+
+<div style="height:44px;clear:both"></div>
+
+<div class="mui-content">
+    <div class="payOk">        
+        <div class="fd">
+            <!-- <p>应付人民币 <span style="color: #000">￥{$list.rmb}</span></p> -->
+            <p>应付澳币 <span style="color: #f00">$ {$list.money}</span></p>
+            <!-- <p>当前汇率 <span style="color: #000">{:C('site.huilv')}</span></p> -->
+        </div>
+    </div>
+
+	<form id="myForm" style="background:none">
+
+    <notempty name="pay.logo">
+    <div class="qrcode"><img src="{$pay.logo}"></div>
+    <div class="cardIntr" style="overflow: hidden;">        
+        <div style="background: #f7f7f7; margin: 10px; text-align: center; padding: 10px; border-radius: 5px;">
+            <p style="margin: 0; font-size: 16px">方式1：请点击分享到微信朋友，长按二维码扫一扫进行支付。</p>
+            <p style="margin: 0; font-size: 16px">方式2：长按二维码，保存图片，由支付宝或微信扫码支付</p>
+        </div>
+    </div>
+    </notempty>
+    
+	<div class="payOk">        
+		<div class="fd">
+            <notempty name="pay.bank">
+            <p>银行 <strong style="color:#000">{$pay.bank}</strong><span class="copyBtn" data-clipboard-text="{$pay.bank}">复制</span></p>
+            </notempty>
+            <notempty name="pay.account">
+            <p>账户 <strong style="color:#000">{$pay.account}</strong><span class="copyBtn" data-clipboard-text="{$pay.account}">复制</span></p>
+            </notempty>
+            <notempty name="pay.bsb">
+            <p>BSB <strong style="color:#000">{$pay.bsb}</strong><span class="copyBtn" data-clipboard-text="{$pay.bsb}">复制</span></p>
+            </notempty>
+            <notempty name="pay.cardno">
+            <p>账号 <strong style="color:#000">{$pay.cardno}</strong><span class="copyBtn" data-clipboard-text="{$pay.cardno}">复制</span></p>
+            </notempty>
+			<p>支付时请备注单号 <strong style="color:#000">{$list.order_no}</strong><span class="copyBtn" data-clipboard-text="{$list.order_no}">复制</span></p>
+			<p>下单时间<span>{$list.createTime|date="Y-m-d H:i:s",###}</span></p>
+		</div>
+	</div>
+
+    </form>
+</div>
+<script src="{:RES}/js/clipboard.min.js"></script>
+<script>
+var clipboard = new ClipboardJS('.copyBtn');
+clipboard.on('success', function(e) {
+    mui.toast("已复制到粘贴板");
+});
+clipboard.on('error', function(e) {
+    mui.toast("系统不支持");
+});
+</script>

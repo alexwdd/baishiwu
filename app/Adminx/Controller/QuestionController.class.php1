@@ -1,0 +1,66 @@
+<?php
+namespace Admin\Controller;
+
+class QuestionController extends AdminController {
+
+    public function index(){
+		$obj = M('Question');
+		$sid = I('get.sid');
+
+		if ($sid=='' || !is_numeric($sid)) {
+			$this->error('参数错误');
+		}
+		$subject = M('Subject')->where(array('id'=>$sid))->find();
+		if (!$subject) {
+			$this->error('主题不存在');
+		}
+		$map['sid']=$sid;		
+		$list = $obj->where($map)->order('id desc')->select();
+		$this->assign('list', $list);
+		$this->assign('subject', $subject);
+		$this->display();
+    }
+
+    #添加
+	public function add() {
+		if ($_POST) {
+			$this->all_add('Question',U('Question/index',array('sid'=>I('post.sid'))));
+		}else{
+			$sid = I('get.sid');
+			$subject = M('Subject')->where(array('id'=>$sid))->find();
+			if (!$subject) {
+				$this->error('主题不存在');
+			}
+			$this->assign('subject', $subject);
+			$this->display();
+		}
+	}
+
+	#编辑
+	public function edit() {
+		if ($_POST) {
+			$this->all_save('Question',U('Question/index',array('sid'=>I('post.sid'))));
+		}else{
+			$id = (int) $_GET['id'];
+			if (!isset ($id)) {
+				$this->error('参数错误');
+			}
+
+			$obj = M('Question');
+
+			$list = $obj->where("id=$id")->find();
+
+			if (!$list) {
+				$this->error('信息不存在');
+			} else {
+				$this->assign('list', $list);
+				$this->display();
+			}
+		}
+	}
+
+	#删除
+	public function del() {
+		$this->all_del('Question','reload');
+	}
+}

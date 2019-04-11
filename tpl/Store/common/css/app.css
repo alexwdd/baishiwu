@@ -1,0 +1,309 @@
+.main{padding: 10px;}
+.header-nav{margin-top: 10px}
+
+.mui-bar-nav.mui-bar .mui-action-back{margin-right: 0}
+
+.appText{text-align: center; clear: both; margin-bottom: 10px}
+.appList{clear: both; overflow: hidden;}
+.appList li{list-style: none; float: left; width: 50%}
+.appList li img{display: block; width: 100%}
+
+.copyBtn{cursor: pointer;}
+.green{color: #05c1af;}
+.red{color: #f00;}
+.blue{color: blue;}
+
+.loadding{text-align: center; padding: 30px 0; line-height: 40px}
+.hide{display: none;}
+
+.my-btn{background-color: #05c1af;border: 1px solid #05c1af; color: #fff;}
+.my-btn:active{background-color: #05c1af;border: 1px solid #05c1af;}
+.my-btn:enabled:active{border: 1px solid #0aa596;background-color: #0aa596;}
+
+.pager{clear: both; overflow: hidden; text-align: center; padding-top: 10px}
+.pager li{display: inline-block;}
+.pager li a,.pager li span{display: block; width: 40px; height: 40px; border:1px #dbdbdb solid; line-height: 40px; text-align: center; font-size: 20px}
+
+.tabMenu{height: 40px; background: #fff; line-height: 40px; display: flex}
+.tabMenu li{flex:1; text-align: center;}
+.tabMenu li a{color: #666}
+.tabMenu li.active{border-bottom: 2px #05C1AF solid}
+.tabMenu li.active a{color: #05C1AF}
+
+.indexHeader{height: 44px; width: 100%; clear: both; background: #05c1af; position: fixed; left: 0; top: 0; z-index: 999; color: #fff; display: flex; text-align: center; line-height:44px; color: #fff}
+.indexHeader .title{flex:1; font-size: 17px}
+.indexHeader a{display: block; width: 36px; color: #fff}
+.indexHeader a i{font-size: 24px}
+.indexHeader a.cartIcon{position: relative;}
+.indexHeader a.cartIcon span{position: absolute; right: 0; top: 5px; font-size: 12px; background: #f00; color: #fff}
+
+.topSearch{height: 40px; width: 100%; line-height: 40px; background: #fff; position: fixed; top: 44px; left: 0; z-index: 999; display: flex; border-bottom: 1px #dbdbdb solid; overflow: hidden;}
+.topSearch .search{flex:1;}
+.topSearch .search input{border: 0; margin: 0;}
+.topSearch .act{display: block; width: 44px; height: 40px; line-height: 40px; text-align: center;}
+.topSearch .act a{color: #666}
+.topSearch .cateBtn{margin-right: 5px;}
+.topSearch .cateBtn a{color: #fff; display: block; height: 30px; line-height: 30px;background: #05C1AF; color: #fff; margin-top: 5px; border-radius: 5px;}
+
+.indexTitle{background: #fff; clear: both; padding: 10px; overflow: hidden;}
+.indexTitle p{margin: 0; float: left; border-left: 4px #05c1af solid; padding-left: 10px}
+.indexTitle span{float: right; font-size: 12px;}
+.indexTitle span a{font-size: 12px; color: #666}
+
+.indexShow{clear: both; text-align: center; overflow: hidden; cursor: pointer; background: #fff; margin-bottom: 5px}
+.indexShow .img{width: 100%; margin: auto}
+.indexShow .img img{width: 100%; display: block;}
+.indexShow h1{font-weight: normal; font-size: 20px}
+.indexShow h2{font-weight: normal; font-size: 16px}
+.indexShow h3{font-weight: normal; font-size: 14px}
+
+.bank{ border-top: 1px solid #ddd; background: #fff; margin-top: 1rem;}
+.bank li{ border-bottom: 1px solid #ddd; overflow: hidden; padding: 1rem;}
+.bank li img{ float: left; margin-top: 5px;}
+.bank .bankname{ float: left; width: 80%; margin-left: 0.5rem;}
+.bank .bankname .name{ font-size: 18px; color: #333;}
+.bank .bankname .text{ font-size: 12px; color: #999;}
+.bank .am-icon-angle-right,.bank .am-icon-trash{ float: right; margin-top: 10px; color: #666;}
+
+.empty{text-align: center; margin-top: 10%; color: #999;}
+.empty img{width: 30%;}
+.empty p{ font-size: 12px}
+
+.feedback{clear: both; overflow: hidden; border:1px #dbdbdb solid; background: #fff; margin-bottom: 10px; margin: 10px;}
+.feedback .hd{ border-bottom: #f1f1f1; background: #f7f7f7; padding:5px 10px; border-bottom: 1px #dbdbdb solid}
+.feedback .bd{padding: 10px}
+
+.content{background: #fff; padding: 10px; clear: both; overflow: hidden;}
+
+.goodsIntr{background: #fff;clear: both; overflow: hidden; padding: 10px}
+.goodsIntr p{background: #f7f7f7; padding: 5px; margin-bottom: 0}
+
+.cateBox{clear: both; width: 100%;}
+.cateBox a{color: #666}
+.cateBox .cateLeft{width: 90px; border-right: 1px #ddd solid; overflow: auto;float: left;top:71px;bottom:50px; background: #fff}
+.cateBox .cateLeft li{line-height:100%; border-bottom: 1px #dbdbdb solid; text-align: center; padding:10px 5px;}
+.cateBox .cateLeft li.active{background:#f7f7f7;}
+.cateBox .cateRight{margin-left: 90px; overflow: auto;}
+.cateBox .cateRight .cate{clear: both; overflow: hidden; background: #fff; border: 1px #dbdbdb solid; margin: 5px;}
+.cateBox .cateRight .cate .hd{border-bottom: 1px #dbdbdb solid; height: 30px; line-height: 30px; padding:0 10px; background: #05c1af; color: #fff}
+.cateBox .cateRight .cate .hd a{color: #fff}
+.cateBox .cateRight .cate .hd span{float: right; font-size: 12px}
+.cateBox .cateRight .cate .bd{clear: both; overflow: hidden;}
+.cateBox .cateRight .cate .bd li{float: left; width: 50%; text-align: center; font-size: 12px; padding-top:10px}
+.cateBox .cateRight .cate .bd li img{display: block; width: 80px; height: 70px; margin: auto}
+.cateBox .cateRight .cate .bd li span{display: block; text-align: center;font-size: 12px}
+.showCate{display: none;}
+
+/* 商品 */
+.productList{clear: both; overflow: hidden; background: #fff; margin-top: 10px}
+.productList li{float: left; width: 50%; padding: 10px;}
+.productList li .item{clear: both; overflow: hidden; background: #fff; box-shadow: 0 0 5px #d67dd4; padding: 5px}
+.productList li p{margin: 0px}
+.productList li img{height: 160px; display: block; margin: auto}
+.productList li span{color: #f00}
+.productList li span i{font-style: normal;}
+
+.selectFooter{background: #fff; clear: both; overflow: hidden; height: 44px; border-top: 1px #dbdbdb solid; position: fixed; left: 0; bottom: 0; width: 100%; text-align: center; display: flex}
+.selectFooter .cartInfo{height: 44px; line-height: 44px;flex:1; text-align: left; padding-left: 10px}
+.selectFooter .cartInfo em{font-style: normal; border-radius: 50%; width: 16px; height: 16px; background: #f00; display: inline-block; line-height: 16px; color: #fff; font-size: 12px; text-align: center;}
+.selectFooter .cartInfo i{font-size:16px}
+.selectFooter .cartInfo em.none{background: #ccc;}
+.selectFooter .cartInfo .priceDetail{float: left; padding-right: 10px; padding-top: 4px}
+.selectFooter .cartInfo .priceDetail *{line-height: 16px; margin: 0; clear: both; font-size: 12px}
+
+.selectFooter .btn{width: 100px;height: 44px;line-height: 44px; background: #05c1af;color: #fff}
+.selectFooter .cartBtn{background: #1c998d;}
+.footSingleBtn{width: 100%; height: 44px; line-height: 44px; font-size: 20px; background: #5eb95e; color: #fff; border: 0}
+
+
+
+.goodsInfo{clear: both; overflow: hidden; margin-bottom: 45px}
+.goodsInfo .goodsName{ padding: 10px; color: #000; background-color: #fff; font-size: 20px; margin-top: 1px }
+.goodsInfo .priceBox{ background: #fff; clear: both; overflow: hidden; padding-bottom: 10px; color: #999}
+.goodsInfo .priceBox li{padding: 3px 10px; clear: both; overflow: hidden;}
+.goodsInfo .priceBox li .money{color: #f00; font-size: 18px; font-weight: bold; padding-right: 10px}
+.goodsInfo .goodsContent{clear: both; background-color: #fff; padding: 10px;}
+.goodsInfo .goodsContent .hd{background-color: #f1f1f1; height: 36px; line-height: 36px; text-align: center;}
+.goodsInfo .goodsContent .bd{clear: both; padding-top: 10px;}
+.sTitle{background: #fff; padding: 10px; clear: both;}
+.attr{clear: both; margin: 10px;}
+.attr li{clear: both; overflow: hidden;}
+.attr li label{float: left; width: 100px; color: #666; display: block;}
+.attr li p{margin-left: 110px;}
+
+.shulges{clear: both; overflow: hidden; padding: 5px 10px}
+.shulges p{font-weight: bold; color: #000}
+.shulges .plus{clear: both; overflow: hidden;}
+.shulges .plus .mp_minous,.shulges .plus .mp_plus{float: left; width: 30px; height: 30px; display: block; line-height: 24px; text-align: center; border: 1px #dbdbdb solid; font-size: 20px;}
+.shulges .plus .mp_mp{width: 40px; float: left; margin: 0 15px}
+.shulges .plus .mp_mp input.buyNum{margin: 0; height: 30px; line-height: 30px}
+.choic-sel span{display: block; float: left; padding: 5px 10px; margin-right: 10px; border: 1px #dbdbdb solid}
+.choic-sel span.red{background: #c00; color: #fff;border-color: #c00}
+.selectBtn{clear: both; padding: 10px 0; overflow: hidden;}
+.selectBtn li{float: left; width: 50%; padding: 0 10px}
+.selectBtn li button{width: 100%}
+
+.shaixuan{clear: both; overflow: hidden;}
+.shaixuan .item{clear: both; overflow: hidden; padding: 5px;}
+.shaixuan .item label{float: left; width: 80px; text-align: left; color: #999; line-height: 31px}
+.shaixuan .item .sel{margin-left: 90px;}
+.shaixuan .item .sel li{float: left; background: #f1f1f1; padding: 5px; margin-right: 10px}
+.shaixuan .item .sel li.active{ background: #f60; color: #fff}
+
+/* 购物车 */
+.emptyCart{ text-align: center; padding: 20px 0;}
+.cartList{ margin-bottom:5px; overflow: hidden; border-bottom: 1px #dbdbdb solid; padding:10px; background-color: #fff}
+.cartList p{clear: both; margin: 0px; font-size: 14px}
+.cartList p.m{ color: #f00;}
+.numberAction div{display: block; float: left; min-width: 24px; height: 24px; line-height:24px ;text-align: center; border: 1px #dbdbdb solid; margin-right: 5px; font-size: 12px; cursor: pointer;}
+.infobox{overflow:hidden; margin-bottom:0; border-top: 1px #dbdbdb solid; background-color: #fff;}
+.infobox .hd{ height: 30px; line-height: 30px; padding-left: 10px; font-weight: bold; background-color: #F5F4F4}
+.infobox .bd{clear: both; overflow: hidden;}
+.infobox p {margin: 0px;border-bottom: 1px solid #ccc; padding: 10px 15px; line-height: 18px;}
+.infobox p:last-child { border: none;}
+.infoTable{border: 0px; margin: 0; font-size: 1.2rem}
+.infobox .fd{ height: 30px; line-height: 30px; padding:0 10px;background-color: #f1f1f1; border-top: 1px #dbdbdb solid}
+
+/* 收货地址 */
+#add_address{display: none;}
+.myaddress{border-radius: 5px;overflow:hidden;margin-bottom: 10px; border: 1px #dbdbdb solid; background-color: #fff; margin: 10px}
+.myaddress .hd{ height: 30px; line-height: 30px; padding-left: 10px; font-weight: bold; background-color: #F5F4F4}
+.myaddress p {	margin: 0px;border-bottom: 1px solid #ccc; padding: 10px 15px; line-height: 18px;}
+.myaddress p span{ display: block; margin-top: 5px}
+.myaddress p:last-child { border: none;}
+.myaddress p a{color: #428bca}
+.myaddress .item_defalut{ background-color:#ffffe1}
+
+/* 会员中心 */
+.userInfo{clear: both; overflow: hidden; background: #fff; display: flex; margin-top: 10px; padding: 10px;}
+.userInfo .face{width: 80px; height: 80px; margin-right: 10px;}
+.userInfo .face img{height: 80px; width: 80px; border-radius: 50%;}
+.userInfo .setting{width: 30px; text-align: center;}
+.userInfo .info{flex: 1; margin-top: 10px}
+.userInfo .info p{margin: 0; font-size: 14px; line-height: 20px;}
+.userInfo .info p i{font-size: 14px; color: #f60}
+
+.sncode{text-align: center; color: #000; background: #fff;border-top: 1px #dbdbdb solid; padding: 10px;font-size: 20px}
+.sncode span{font-size: 12px; color: #999; padding-right: 10px}
+
+.myOrder{ clear: both; overflow: hidden; background-color: #fff;}
+.myOrder li{ width: 25%; float: left; text-align: center; padding: 10px 0}
+.myOrder li p{ margin: 0;}
+.myOrder li a{ color: #666}
+.myOrder li i{font-size: 16px}
+
+.upload{background: #fff; clear: both; overflow: hidden;}
+.sn{float: left; width: 50%; padding: 10px; box-sizing: border-box;}
+.sn img{width: 100%; height: 100px; display: block;}
+.userFace{text-align: center; padding: 20px}
+.userFace img{width: 80px; height: 80px; border-radius: 50%}
+
+.list{clear: both; overflow: hidden; border-top: 1px #ddd solid; background: #fff}
+.list li{border-bottom: 1px #ddd solid; padding: 10px; clear: both; overflow: hidden;}
+.list li p{float: left; color: #666; margin: 0; font-size: 16px}
+.list li span{float: right; color: #000}
+
+.userList{clear: both; background: #fff; overflow: hidden; margin-top: 5px;}
+.userList li{border-bottom: 1px #dbdbdb solid; clear: both; padding: 10px; height: 60px}
+.userList li .face{height: 40px; width: 40px; border-radius: 50%; float: left;}
+.userList li .name{margin-left: 50px; line-height: 20px}
+
+.price{text-align: center; padding:10px 0; display: flex}
+.price li{flex:1;}
+.price h2{font-weight: normal;text-align: center; font-size: 20px}
+.price span{font-size: 12px; display: block;}
+
+.tongji{clear: both; background: #fff; overflow: hidden; display:flex; padding: 10px 0}
+.tongji li{flex:1; text-align: center; border-right: 1px #f1f1f1 solid;}
+.tongji li:last-child{border: 0}
+.tongji li span{font-size: 12px;}
+.tongji li h2{font-size: 16px;}
+
+.detail{margin-top: 10px; background: #fff}
+.detail li{padding: 10px; border-bottom: 1px #dbdbdb solid}
+.detail li .hd{font-size: 20px; margin-bottom: 10px}
+.detail li .hd span{float: right; font-size: 12px; color: #666}
+.detail li .bd{color: #999; font-size: 12px;}
+
+.remark{margin:0 10px; background: #fff; padding: 10px; font-size: 12px; border-radius: 5px}
+.remark p{margin: 0}
+
+.pinyou{clear: both; overflow: hidden; margin-bottom: 10px; margin: 10px; background: #fff; box-shadow:0 0 10px #ccc}
+.pinyou .hd{background:#05c1af; height: 40px; line-height: 40px; color: #fff; padding: 0 10px}
+.pinyou .hd .code{float: left;}
+.pinyou .hd .status{float: right;background-color: #fff;color: #05c1af; line-height: 24px; margin-top: 8px; font-size: 14px; padding: 0 10px}
+.pinyou .bd{border: 1px #ddd solid; border-top: 0; padding: 10px; overflow: hidden; clear: both; font-size: 14px; color: #666;}
+.pinyou .bd .maxWeight{margin-bottom: 5px;}
+.pinyou .bd .maxWeight span{color: #000; font-size: 16px;}
+.pinyou .my-progressbar{height: 10px; border-radius: 5px; clear: both; background-color: #dbdbdb; overflow: hidden;}
+.pinyou .my-progressbar span {background: #7bd7b8; height: 100%; display: block; float: left;border-radius: 7px;}
+.pinyou .bd .add{color: #05c1af; border-top:1px #dbdbdb solid; margin-top: 10px; padding: 5px 0}
+.pinyou .bd .date{font-size: 12px;}
+.pinyou .bd .date span{font-size: 12px;}
+
+.orderList{background: #fff; clear: both; overflow: hidden; margin-bottom: 5px; border-top: 1px #dbdbdb solid; border-bottom: 1px #dbdbdb solid; font-size: 14px}
+.orderList .hd{background: #f7f7f7; height: 36px; line-height: 36px; padding: 0 10px}
+.orderList .hd span{float: right; color: #f00}
+.orderList .fd{background: #f7f7f7; text-align: right; padding:5px 10px; font-size: 12px}
+.orderList .fd span{font-size: 12px}
+.orderList .fd .mui-btn{font-size: 12px;padding:3px 8px;}
+.cipt{position: absolute; top: -100px}
+.orderList .fdImage{text-align: right; clear: both; padding: 5px 0}
+.orderList .fdImage img{max-width: 100%;display: inline-block; margin: auto; margin-right: 5px; height: 50px}
+.orderDetail{clear: both; overflow: hidden; border-bottom: 1px #dbdbdb solid; padding: 5px;}
+.orderDetail:last-child{border: 0;}
+.orderDetail img{display: block; float: left; width: 60px;}
+.orderDetail li{margin-left: 70px;}
+.orderDetail li p{line-height:20px; margin: 0}
+
+.goodsDetail{clear: both; overflow: hidden; padding: 5px}
+.goodsDetail img{float:left; width:50px; display:block}
+.goodsDetail .info{margin-left:60px; font-size: 1.2rem}
+
+/* 支付成功 */
+.payOk{clear: both; overflow: hidden;}
+.payOk .hd{height: 60px; line-height: 60px; padding-left: 10px; font-size: 1.6rem; color: #5eb95e}
+.payOk .hd i{background-color:#5eb95e;color: #fff; border-radius: 50%; padding: 5px }
+.payOk .bd{text-align: center; background: #fff; border-bottom: 1px #dbdbdb solid; padding: 20px 0}
+.payOk .bd span{font-size: 3rem}
+.payOk .fd{text-align: left; background: #fff;}
+.payOk .fd p{border-bottom: 1px #dbdbdb solid; padding: 10px; margin: 0}
+.payOk .fd p span{float: right;}
+#uploadfile{display: none;}
+
+.payType{clear: both; background: #fff; overflow: hidden;}
+.payType li{clear: both; height:40px; border-bottom: 1px #dbdbdb solid; line-height: 40px; padding: 0 10px; cursor: pointer; }
+.payType li p{float: left; border: 0}
+.payType li span{float: right; width: 16px; height: 16px; border:1px #dbdbdb solid; border-radius: 50%; margin-top: 11px}
+.payType li span.active{ background: #05c1af; border-color: #05c1af }
+
+.qrcode{background: #fff; padding:10px 20px; text-align: center;}
+.qrcode img{width: 65%}
+.cardIntr{text-align: center; font-size: 12px; color: #999;background: #fff; margin-bottom: 5px}
+.jietu{border: 2px #ddd dotted; min-height: 50px; cursor: pointer; margin: 10px; text-align: center; color: #999}
+.jietu img{display: block; max-width: 100%; margin: auto}
+
+.myTable{width: 100%; background: #fff; clear: both; margin-top: 10px}
+.myTable tr{border-bottom: 1px #dbdbdb solid;}
+.myTable tr th{background: #f7f7f7}
+.myTable tr td,.myTable tr th{padding: 5px; text-align: center; border-right: 1px #dbdbdb solid}
+
+.wuliu{border: 1px #dbdbdb solid; clear: both; overflow: hidden; margin: 0 5px; padding: 5px; margin-bottom: 5px; background: #f7f7f7; border-radius: 5px}
+.wuliu .bs{clear: both; overflow: hidden;}
+.wuliu .bs p{margin: 0;padding: 3px 0}
+.wuliu .wimg{clear: both; overflow: hidden;}
+.wuliu .wimg a{display: block; overflow: hidden; text-align: center;}
+.wuliu .wimg img{width: 80%;display: block; margin: auto}
+
+.serverBox{overflow: hidden; padding:0 5px }
+.serverBox li{border:1px #ddd solid;padding:5px;float:left;margin-right:10px;white-space:nowrap;margin-bottom:5px;cursor:pointer; font-size: 12px}
+.serverBox li.active{color:red;border-color:red}
+.base{clear: both; overflow:hidden;}
+.base p{border:1px #f1f1f1 solid; padding: 5px; margin-bottom: 5px; font-size: 12px; background: #f7f7f7}
+
+.my-pop{background-color:transparent; width: 80%; box-shadow: none; left: 10%; top:30%; position: fixed;}
+.down{clear: both; overflow: hidden;}
+.down img{display: block}
+.down .hd{clear: both;}
+.down .bd{background: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; padding: 20px; overflow: hidden; padding-right: 0}
+.down .bd li{float: left; width: 50%; padding-right: 20px; box-sizing: border-box}

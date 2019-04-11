@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title><{:C('site.name')}></title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<include file="Public:cssjs" />
+</head>
+<body>
+
+<div id="wrap">
+	<header class="am-header am-header-default">
+		<h1 class="am-header-title"><{:C('site.name')}></h1>
+		<div class="am-header-right am-header-nav">
+        	<a href="<{:U('Index/password')}>">修改密码</a>
+      	</div>
+	</header>
+	<div class="page">	
+		<ul class="order">
+			<volist name="list" id="vo" empty="$empty">
+			<li onclick="window.location.href='<{:U('Index/view',array('id'=>$vo['id']))}>'">
+				<h2><span style="margin-left:0"><{$vo.name}> <{$vo.mobile}></span>			
+				<em><{$vo.createTime|date="Y-m-d H:i:s",###}></em></h2>
+				<div style="clear: both; overflow: hidden;">
+					<p style="float: left;">车型：<{$vo.chexing}></p>
+					<p style="float: right;">
+					<eq name="vo.flag" value="0">
+					<a href="<{:U('Lottery/index',array('id'=>$vo['id']))}>" class="am-btn am-btn-xs am-btn-warning">去抽奖</a>
+					<else/>
+					<span style="color: #f60; border: 0"><{$vo.prize.value}><{$vo.prize.prize}>元</span>
+					</eq>
+					</p>
+				</div>
+			</li>
+			</volist>
+		</ul>
+
+		<{$page}>
+
+		<script>
+		$(function(){
+			$("#pageC").change(function(){
+			  window.location.href=$(this).val();
+			})
+		})  
+		</script>
+	</div>	
+	<footer>
+		<div class="footSingleBtn" id="payBtn" onclick="window.location.href='<{:U('Index/add')}>'">抽奖用户资料提交</div>
+	</footer>
+</div>
+<script>
+$("#searchBtn").click(function(){
+	keyword = $("#keyword").val();
+	if (keyword!='') {
+		window.location.href= encodeURI("/index.php/Home/Index/index/keyword/"+keyword);
+	}
+});
+</script>
+</body>
+</html>
+

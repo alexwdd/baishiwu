@@ -1,0 +1,187 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">店铺名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="name" value="<{$list.name}>" class="layui-input" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">logo</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="logo" id="logo" value="<{$list.logo}>" placeholder="图片地址" class="layui-input">
+		</div>
+		<div class="layui-inline">
+			<input type="button" value="上传" class="layui-btn" onclick="uploadfile('<{:U('Upload/image')}>','logo');"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" lay-verify="required" default="<{$list.cityID}>" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">用户名</label>
+		<div class="layui-input-inline">
+			<input type="text" name="username" value="<{$list.username}>" lay-verify="__username" lay-verType="tips" placeholder="请输入用户名" class="layui-input">		
+		</div>
+		<p class="layui-form-mid layui-word-aux">请输入用户名，2-8个字符之间</p>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">密码</label>
+		<div class="layui-input-inline">
+			<input type="password" id="password" name="password" lay-verify="_password" class="layui-input">
+		</div>
+		<p class="layui-form-mid layui-word-aux">不修改请留空</p>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系人</label>
+		<div class="layui-input-inline">
+			<input type="text" name="linkman" value="<{$list.linkman}>" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">手机号</label>
+		<div class="layui-input-inline">
+			<input type="text" name="mobile" value="<{$list.mobile}>" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">座机</label>
+		<div class="layui-input-inline">
+			<input type="text" name="tel" value="<{$list.tel}>" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">详细地址</label>
+		<div class="layui-input-block">
+			<input type="text" name="address" value="<{$list.address}>" class="layui-input" placeholder="详细地址">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-inline">
+			<input type="number" name="sort" value="<{$list.sort}>" class="layui-input">
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">备注</label>
+		<div class="layui-input-block">
+			<textarea name="desc" class="layui-textarea"><{$list.desc}></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">在线支付</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="pay" value="1" title="开启" <php>if($list['pay']==='1')echo checked;</php>>
+			<input type="radio" name="pay" value="0" title="关闭" <php>if($list['pay']==='0')echo checked;</php>>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="status" value="1" title="开启" <php>if($list['status']==='1')echo checked;</php>>
+			<input type="radio" name="status" value="0" title="关闭" <php>if($list['status']==='0')echo checked;</php>>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">显示</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="show" value="1" title="显示" <php>if($list['show']==='1')echo checked;</php>>
+			<input type="radio" name="show" value="0" title="隐藏" <php>if($list['show']==='0')echo checked;</php>>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Agent/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+	<input type="hidden" name="id" />
+</form>
+<!--上传文件-->
+<form style="display:none;" id='myupload' action="" method='post' enctype='multipart/form-data'>
+<input id="fileupload" type="file" name="file">
+</form>
+<div id="uploading" style="display:none;">
+	<div class="wrapper">
+		<div class="load-bar">   
+			<div class="load-bar-inner" data-loading="0"> <span id="counter">0%</span> </div> 
+		</div>  
+		<p>请等待... </p>
+	</div>
+</div>
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+function uploadfile(url,o){
+	layui.use(['layer', 'form'], function(){
+		var layer = layui.layer;
+		$("#fileupload").click();
+		//文件上传js
+		var btn = $(".uploadbtn");
+		var upload="";
+		$("#myupload").attr("action",url);
+		$("#fileupload").bind("change",function(){
+			if($(this).val()!=""){
+				$("#myupload").ajaxSubmit({
+					dataType:  'json',
+					beforeSend: function() {
+						btn.val("上传中...");
+						upload=layer.open({
+						  type: 1,
+						  title: false,
+						  closeBtn: 1,
+						  shadeClose: false,
+						  area: ['420px', '100px'],
+						  content: $('#uploading')
+						});
+		    		},
+		    		uploadProgress: function(event, position, total, percentComplete) {
+		        		var percentVal = percentComplete + '%';
+		        		var left=$(".load-bar").width()*percentComplete/100;
+		        		$("#counter").html(percentVal).css("left",(left-35)+"px");
+		        		$(".load-bar-inner").css("width",left+"px");
+		        		$("#filesize").val(percentVal);
+
+		    		},
+					success: function(res) {	
+						res = JSON.parse(res);		
+						$("#fileupload").unbind("change");
+						layer.close(upload);
+						$('#uploading').css("display","none");
+						btn.val("本地上传");
+						$("#myupload")[0].reset();
+						console.log(res);
+						if(res.status == '1'){	
+							$("#"+o).val(res.results.data.url);
+						}else{
+							layer.msg('上传失败', {time:2000, icon:2});
+						}
+					},
+					error:function(xhr){
+						btn.val("上传失败");
+					}
+				})
+			}
+		})
+	})
+}
+</script>

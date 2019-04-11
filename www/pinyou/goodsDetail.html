@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/js/cart.js"></script>
+</head>
+<body>
+
+<div class="mui-content" id="vm" v-cloak>
+	<div class="pyInfo">
+		<div class="hd">包裹信息</div>
+		<div class="bd">
+			<li>
+				<div class="mui-pull-left">运单号</div>
+				<div class="mui-pull-right">{{info.order}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">快递公司</div>	
+				<div class="mui-pull-right">{{info.company}}</div>
+			</li>
+
+			<li>
+				<div class="mui-pull-right"><button type="button" class="mui-btn my-btn" style="color: #fff" @click="search">查询快递信息</button></div>		
+			</li>
+
+			<li>
+				<div class="mui-pull-left">包裹预估重量</div>
+				<div class="mui-pull-right">{{info.weight}}kg</div>
+			</li>
+
+			<li>
+				<div class="mui-pull-left">包裹实测重量</div>
+				<div class="mui-pull-right" v-if="info.weight_a == 0" style="color:#f00">未测量</div>
+				<div class="mui-pull-right" v-else>{{info.weight_a}}kg</div>
+			</li>
+
+			<li>
+				<div class="mui-pull-left">包裹状态</div>
+				<div class="mui-pull-right green" v-if="info.status == 1">已到仓库</div>
+				<div class="mui-pull-right" v-if="info.status == 0" style="color:#f00">未到仓库</div>
+			</li>
+
+			<li>
+				<div class="mui-pull-left">入团时间</div>
+				<div class="mui-pull-right">{{info.time|time}}</div>
+			</li>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">包裹所有者</div>
+		<div class="bd">
+			<li>
+				<div class="mui-pull-left">寄件人</div>
+				<div class="mui-pull-right green">{{info.contact}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">微信号</div>
+				<div class="mui-pull-right green">{{info.wechat}}</div>
+			</li>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">商品简单描述和备注</div>
+		<div class="bd">
+			<p>{{info.detail}}</p>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">
+			<a :href="'detail.html?articleid='+info.articleid">
+			所参拼团
+			<span class="mui-pull-right"><i class="mui-icon mui-icon-arrowright"></i></span>
+			</a>
+		</div>	
+		<div class="pinyou" style="margin: 0">
+		<a :href="'detail.html?articleid='+pinyou.articleid">
+			<div class="hd" style="margin: 0; font-weight: normal;">
+				<div class="code">{{pinyou.articleid}}号团			
+					<span v-if="pinyou.type == 0">个人团</span>
+					<span v-if="pinyou.type == 2">常驻图</span>
+				</div>
+				<div class="status" v-if="pinyou.status == 0">等待包裹</div>
+				<div class="status" v-else-if="pinyou.status == 1">包裹到齐</div>
+				<div class="status" v-else-if="pinyou.status == 2">等待发货</div>
+				<div class="status" v-else-if="pinyou.status == 3" style="color:#f00">成功发货</div>
+				<div class="status" v-else>发货失败</div>
+			</div>
+		</a>
+		</div>	
+	</div>
+	
+	<div v-show="isShow">
+		<div class="block"></div>
+		<div class="footAction danger" @click="del()">删除包裹</div>
+	</div>
+</div>
+<script>
+vm = new Vue({
+	el : "#vm",
+	data : {
+		isShow:false,
+		open:false,
+		status :[],
+		info : [],
+		pinyou : [],
+	},
+	created : function(){
+		var that = this;
+		mui.showLoading('数据加载中');
+		$.post(
+			config.goodsInfo,
+			request,
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					data = res.body;	
+					that.info = data;
+					that.pinyou = data.pinyou;
+					//判断用户
+					if(request.userid){
+						var userid = request.userid;
+					}else{
+						var userid = -1;
+					}			
+					if (userid == data.userid && data.status==0){	
+						that.isShow = true;
+					};
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+	},
+	methods :{
+		search:function(){
+			that = this;
+			url = 'https://m.kuaidi100.com/index_all.html?type='+that.info.company+'&postid='+that.info.order+'&callbackurl=http://www.worldmedia.top/www/pinyou/goodsDetail.html?goodsid='+that.info.goodsid;
+			window.location.href= url;
+		},
+		del:function(){
+			var that = this;
+			mui.showLoading('数据加载中');
+			$.post(
+				config.goodsDel,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						mui.toast('操作成功');
+						//mui.back();
+						window.location.href='app://goback';
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		}
+	},
+	updated : function(){
+
+	}
+});
+
+Vue.filter('time', function (value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+    	month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+    	day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+})
+</script>
+</body>
+</html>

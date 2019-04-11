@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<ul class="mui-table-view">
+        <li class="mui-table-view-cell" v-for="item in lists">
+            <a :href="item.url" class="mui-navigate-right" style="text-align: center; padding:20px 0">
+                {{item.name}}
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+mui.ready(function(){
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			cityID : 0,
+			type : '',
+			userid : 0,
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			var request = GetRequest();
+			that.cityID = request.cityID;
+			that.type = request.type;
+			if (request.userid) {
+				that.userid = request.userid;
+			}			
+			if (request.type=='zf'){
+				that.lists = [
+					{name : '租房','url':'category.html?cityID='+that.cityID+'&type='+that.type+'&houseType=0&userid='+that.userid},
+					{name : '卖房','url':'category.html?cityID='+that.cityID+'&type='+that.type+'&houseType=1&userid='+that.userid}
+				]
+			}else if(request.type=='zp'){
+				that.lists = [
+					{name : '招聘',jobtype : 0,'url':'category.html?cityID='+that.cityID+'&type='+that.type+'&jobtype=0&userid='+that.userid},
+					{name : '求职',jobtype : 1,'url':'category.html?cityID='+that.cityID+'&type='+that.type+'&jobtype=1&userid='+that.userid}		
+				]
+			}   
+		}		
+	});
+	
+})
+</script>
+</body>
+</html>

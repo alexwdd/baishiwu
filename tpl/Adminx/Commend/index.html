@@ -1,0 +1,77 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="标题" class="layui-input"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">分类</label>
+				<div class="layui-input-inline">
+					<select name="cid">
+						<option value="">--请选择--</option>
+						<volist name="category" id="vo">
+						<option value="<{$vo.id}>"><{$vo.name}></option>
+						</volist>
+					</select>					
+				</div>
+			</div>	
+		</form>
+		
+	    <div class="layui-col-md12">
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Commend/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Commend/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>	
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>
+				<p field="id" title="ID" width="80"/>
+				<p field="articleid" title="文章ID" width="80"/>
+				<p field="cityID" title="城市" width="100" dict="city"/>		
+				<p field="typeName" title="分类" width="100"/>
+				<p field="thumb_b" title="图片" width="60" templet="#imageTpl"/>	
+				<p field="title" title="标题" width="50%"/>
+				<p field="sort" title="排序" width="80" edit='text'/>				
+			</div>
+          
+          	<script type="text/html" id="userTpl">
+				{{# if(d.userid == 0){ }}
+				管理员
+				{{# }else{ }}
+				会员
+				{{# } }}				
+			</script>
+			<script type="text/html" id="imageTpl">
+				{{# if(d.image == ''){ }}
+				<img src="<{:STATICS}>/image/image.jpg" style="width:30px;height30px" />
+				{{# }else{ }}
+				<img src="{{d.image}}" style="width:30px;height30px"/>
+				{{# } }}				
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+layui.use('table', function(){
+
+	table = layui.table; 
+	table.on('edit(fsDatagrid)', function(obj){
+		var value = obj.value //得到修改后的值
+		,data = obj.data //得到所在行所有键值
+		,field = obj.field; //得到字段
+		$.post("<{:U('commend/edit')}>", {id:data.id,field:field,val:value}, function (data) {}, "json");
+	});
+});
+</script>

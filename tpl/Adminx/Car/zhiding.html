@@ -1,0 +1,54 @@
+<layout name='layout' />
+
+<form class="layui-form">	
+	<div class="layui-form-item">
+		<label class="layui-form-label">标题</label>
+		<div class="layui-input-block">
+			<div class="layui-form-mid"><strong><{$list.title}></strong></div>
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">截止日期</label>
+		<div class="layui-input-inline">
+			<input type="text" name="endDate" lay-verify="required" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" />
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">应收金额</label>
+		<div class="layui-input-inline">
+			<input type="number" step="0.01" name="money" class="layui-input" placeholder="必填" lay-verify="required" />
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">上传凭证</label>
+		<div class="layui-inline">
+			<img class="thumb" id="picname_src" src="<{:STATICS}>/image/image.jpg" />
+			<input type="hidden" name="picname" id="picname" />
+		</div>
+		<div class="layui-inline">
+			<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="picname"
+			 >上传图片</button>
+			<input type="button" value="删除" class="layui-btn layui-btn-small" onclick="delImage('picname')"/>
+		</div>
+	</div>
+
+	<hr>
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button class="layui-btn" lay-submit="" lay-filter="save" url="<{:U('Car/zhiding')}>">新增</button>
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+
+	<input type="hidden" name="articleid" value="<{$list.articleid}>" />
+</form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>

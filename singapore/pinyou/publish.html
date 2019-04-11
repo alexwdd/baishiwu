@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发起拼邮-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">    
+		<h5 class="sortName">货物类型</h5>
+		<ul class="mui-table-view mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="javascript:void(0)" id="sortName"></a>
+	        </li>
+	    </ul>
+		
+		<h5 class="sortName">填写拼团信息</h5>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">取货地址（必填）</a>
+	        </li>
+	    </ul>
+
+	    <ul class="mui-table-view mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="javascript:void(0)">满足发货最低包裹重量:10kg</a>
+	        </li>
+	    </ul>
+	  
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" readonly="readonly" style="width: 70%">
+
+		        <button id="statusBtn" type="button" class="mui-btn" style="padding: 8px 0; margin-right: 10px; margin-top: 3px"></button>
+		    </div>
+	    </div>	
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div> 	   
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="团长留言(必填)" rows="3"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">发布</button>
+	    </div>
+	    <input type="hidden" name="cityID" id="cityID" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="goodstype" id="goodstype" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />
+        <input type="hidden" name="maxWeight" value="10" />
+        <input type="hidden" name="address" id="address" checkType="required" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	</form>
+</div>
+<script>
+mui.ready(function(){
+	mui.showLoading('数据加载中');
+	$("#cityID").val(request.cityID);
+	if (request.cityID==39){
+        $("#phone").attr("placeholder","联系电话：87654321（必填）");
+    }
+
+	$("#goodstype").val(request.goodstype);
+	if (request.goodstype==1) {
+		$("#sortName").html('普通货');
+	}else{
+		$("#sortName").html('敏感货');
+	}
+	$.post(
+		config.userinfo,
+		{			
+	        userid:request.userid
+	   	},
+	   	function(res){
+        	mui.hideLoading();
+			if(res.code=='0'){
+				data = res.body;	
+				$("#userid").val(data.userid);
+				$("#password").val(data.password);		
+				$("#openid").val(data.openid);
+				if (data.name!=''){
+					$("#contact").val(data.name);
+				}else{
+					$("#contact").val(data.nickname);
+				}				
+				$("#phone").val(data.phone);
+				$("#wechat").val(data.wechat);
+
+				//用户认证
+				if (data.phone==''){
+					mui.alert('请先完成手机认证，才能在发布拼团信息！', '系统消息', function(){
+						window.location.href = '../account/auth.html?userid='+data.userid+"&cityID="+data.cityID;
+					}) 
+					$("#statusBtn").html('未认证');
+				}else{
+					$("#statusBtn").html('已认证').addClass("mui-btn-success");
+				}
+			}else{
+				mui.toast(res.desc);
+			}
+    	},
+    	"json"
+    );
+	
+	$('#submitBtn').click(function(){
+	    var res = muiFormCheck('#myForm');
+	    //提交
+	    if(res){
+	    	//预处理
+	    	var data = mui.getFormData('#myForm');
+
+	    	if (data.cityID==2){
+                data.detail = data.detail+"\n联系时请说明是在堪城圈看到的^-^";
+            }
+            if (data.cityID==9){
+                data.detail = data.detail+"\n记得关注微信公众号阿德莱德眼, 微信分享信息请加adleye3";
+            } 
+            if (data.cityID==39){
+                data.detail = data.detail+"\n联系时请说明是在新加坡圈看到的^-^";
+            }
+
+	    	$('#submitBtn').attr("disabled","disabled");
+	    	mui.post(config.pinyouSubmit,data,function(r){
+				if (r.code=='0'){
+					mui.alert('拼邮发布成功！等待客服认证信息！', '系统消息', function(){
+						window.location.href = 'app://goback';
+					})          
+				}else{
+					$('#submitBtn').removeAttr('disabled');
+					mui.toast(r.desc);
+				}
+			},'json');
+	    }
+	});
+})
+
+function setAddress(address,lng,lat){
+	$("#address").val(address);
+	$("#address_str").html('<span>'+address+'</span>');
+	$("#longitude").val(lng);
+	$("#latitude").val(lat);
+}
+//setAddress("山水华府(宋城路) 开封市  鼓楼区","114.326546","34.784466")
+</script>
+</script>
+</body>
+</html>

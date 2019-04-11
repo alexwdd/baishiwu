@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>手机认证-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<div class="mui-row auth">
+	        <div class="mui-col-xs-2 mid" id="quhao">(+61)</div>
+	        <div class="mui-col-xs-10">
+	            <input type="text" name="phone" id="phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="格式：0410123456（必填）" >
+	        </div>
+    	</div>
+
+    	<div class="mui-row auth">
+	        <div class="mui-col-xs-7"><input type="text" name="code" id="code" class="mui-input-clear" checkType="required" checkMsg="请输入验证码" placeholder="验证码" ></div>
+	        <div class="mui-col-xs-5">
+	            <button type="button" id="btnYzm" onclick="getSms()" class="mui-btn mui-btn-primary my-btn">发送验证码</button>
+	        </div>
+    	</div>	    
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">完成</button>
+	    </div>
+	    <input type="hidden" name="account" id="account" />
+
+	</form>
+</div>
+
+<script>
+var cityID;
+mui.ready(function(){
+	var request = GetRequest();
+	cityID = request.cityID;
+	$("#account").val(request.userid);
+	$('#submitBtn').click(function(){
+	    var res = muiFormCheck('#myForm');
+	    //提交
+	    if(res){
+	    	var data = mui.getFormData('#myForm');	    	
+	    	mui.post(config.verifyPhone,data,function(r){
+				if (r.code=='0'){
+					mui.alert('手机认证成功！', '系统消息', function(){
+						//window.location.href = 'app://goback';
+						fromurl = document.referrer;
+						if (fromurl!='' && fromurl!=undefined) {
+							window.location.href=fromurl;
+						}else{
+							mui.back();
+						}
+					})          
+				}else{
+					mui.toast(r.desc);
+				}
+			},'json');
+	    }
+	});
+})
+
+function getSms(){
+	var mobile = $("#phone").val();
+
+	if (mobile==''){
+		mui.toast("请输入手机号码");
+		return false;
+	}
+
+	if (!checkMobile(mobile)) {
+		mui.toast("手机号码格式错误");
+		return false;
+	}
+
+	mui.showLoading('处理中...');
+	time();
+	$.ajax({
+        url : config.getcode,
+        dataType : 'json',
+        type : 'post',
+        data : {phone:mobile,type:3},
+        success : function(r){
+            mui.hideLoading();
+            if(r.code=='0'){            
+            	mui.alert('验证码已成功发送！', '系统消息');
+            }else{
+            	mui.toast(r.desc);
+            }            
+        }
+    });
+}
+
+var wait = 60;
+function time() {
+	var o = $("#btnYzm");
+    if (wait == 0) {
+    	o.removeAttr('disabled');
+        o.html("验证码");
+        wait = 60;
+
+        var btnYzm = document.getElementById("btnYzm");
+        if (btnYzm != undefined) {
+            btnYzm.disabled = false;
+        }
+    } else {
+        o.attr("disabled","disabled");
+        o.html("(" + wait + ")秒");
+        wait--;
+        setTimeout(function () {
+            time(o)
+        },1000)
+    }
+}
+
+function checkMobile(v){
+    if(v==""){
+        return false;
+    }else{
+    	if (cityID==39){
+        	var pattern = /^[0-9]{8}$/;
+    	}else{
+    		var pattern = /^[0-9]{10}$/;
+    	}
+        flag = pattern.test(v);
+        if(!flag){
+            return false;
+        }else{
+            return true;
+            }
+    }
+}
+</script>
+</body>
+</html>

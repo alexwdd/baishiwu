@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>我的拼团-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="tabMenu">
+		<li class="active"><a href="pinyou.html" id="czUrl">我发布的</a></li>
+		<li><a href="jion.html" id="grUrl">我参与的</a></li>
+	</div>
+	
+	<div class="empty" v-show="empty"><img src="../static/image/empty.png"><p>空空如也~</p></div>
+
+	<div class="pinyou" v-for="vo in lists">
+	<a :href="'app://pinyoudetail?articleid='+vo.articleid">
+		<div class="hd">
+			<div class="code">{{vo.articleid}}号团			
+				<span v-if="vo.goodstype == 1">普通货</span>
+				<span v-if="vo.goodstype == 2">一级敏感货</span>
+				<span v-if="vo.goodstype == 3">二级敏感货</span>
+			</div>
+
+			<div class="status" v-if="vo.status == 0">等待包裹</div>
+			<div class="status" v-else-if="vo.status == 1">包裹到齐</div>
+			<div class="status" v-else-if="vo.status == 2">等待发货</div>
+			<div class="status" v-else-if="vo.status == 3" style="color:#f00">成功发货</div>
+			<div class="status" v-else>发货失败</div>
+		</div>
+		<div class="bd">
+			<div class="maxWeight">预估重量：<span>{{vo.maxWeight}}kg</span></div>
+			<div class="my-progressbar">
+				<span :style="{ width: vo.width + '%' }"></span>
+			</div>
+			<div class="add">{{vo.address}}</div>
+			<div class="user">
+				<p class="rz" v-if="vo.auth == 1">已实名认证，可随时加入</p>
+				<p v-if="vo.auth == 0" style="color:#f00">未实名认证</p>
+				<p>
+					<span class="mui-pull-left">本团团长：<i>{{vo.contact}}</i></span>
+					<span class="mui-pull-right">{{vo.time|time}}</span>
+				</p>
+			</div>
+		</div>
+	</a>
+	</div>
+</div>
+<script>
+mui.ready(function(){
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			empty:false,
+			page : 1,
+			canScroll : 1,
+			next : 1,	
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+
+		methods: {
+        	goPage (page) {
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		request.page = that.page;
+        		//request.auth = 1;   
+
+        		if (request.userid) {
+        			$("#czUrl").attr("href","pinyou.html?userid="+request.userid);
+        			$("#grUrl").attr("href","jion.html?userid="+request.userid);
+        		}
+        		$.post(
+					config.myPinyou,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.articles;
+							if (data.length==0){
+								that.empty = true;
+							};
+							$.each(data,function(){
+								width = this.currentWeight/this.maxWeight*100;
+								if(width>100){width=100}
+								this.width = width;
+							})		
+							that.lists = that.lists.concat(data);	
+							that.canScroll = 1;				
+							that.next = res.body.next;
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+
+    Vue.filter('status', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/js/cart.js"></script>
+</head>
+<body>
+
+<div class="mui-content" id="vm" v-cloak>
+	<div class="pyInfo">
+		<div class="hd">拼团信息</div>
+		<div class="bd">
+			<li>
+				<div class="mui-pull-left">本团状态</div>
+				<div class="mui-pull-right green" v-if="info.status == 0">等待包裹</div>
+				<div class="mui-pull-right green" v-else-if="info.status == 1">包裹到齐</div>
+				<div class="mui-pull-right green" v-else-if="info.status == 2">等待发货</div>
+				<div class="mui-pull-right green" v-else-if="info.status == 3" style="color:#f00">成功发货</div>
+				<div class="mui-pull-right" style="color:#f00" v-else>发货失败</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">货物类型</div>	
+				<div class="mui-pull-right" v-if="info.goodstype == 1">普通货</div>
+				<div class="mui-pull-right" v-if="info.goodstype == 2">一级敏感货</div>
+				<div class="mui-pull-right" v-if="info.goodstype == 3">二级敏感货</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">认证状态</div>
+				<div class="mui-pull-right green" v-if="info.auth == 1">已实名认证，可随时加入</div>
+				<div class="mui-pull-right green" v-if="info.auth == 0" style="color:#f00">未实名认证</div>
+			</li>
+			
+			<template v-if="status.my == 1">
+			<li>
+				<div class="mui-pull-left">停止揽件</div>
+				<div class="mui-pull-right">					
+					<div class="mui-switch" id="mySwitch" v-bind:class="{'mui-active' : open}">
+						<div class="mui-switch-handle"></div>
+					</div>					
+				</div>
+			</li>
+			</template>
+
+			<li>
+				<div class="mui-pull-left">开团时间</div>
+				<div class="mui-pull-right">{{info.createTime|time}}</div>
+			</li>
+
+			<template v-if="info.status == 3">
+			<li>
+				<div class="mui-pull-left">国际物流公司</div>
+				<div class="mui-pull-right">{{info.company}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">物流单号</div>
+				<div class="mui-pull-right">{{info.order}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-right">
+					<button type="button" class="mui-btn my-btn" style="color: #fff" @click="copy">复制物流单号</button>
+					<button type="button" class="mui-btn my-btn" style="color: #fff" @click="search">查询快递信息</button>
+				</div>		
+			</li>
+			</template>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">预估包裹重量</div>
+		<div class="bd">
+			<div class="my-progressbar">
+				<span :style="{ width: info.width + '%' }"></span>
+			</div>
+			<div class="remark">预估拼团重量{{info.currentWeight}}kg</div>
+		</div>
+
+		<div class="hd">实际到库重量</div>
+		<div class="bd">
+			<div class="my-progressbar">
+				<span :style="{ width: info.widths + '%' }"></span>
+			</div>
+			<div class="remark">到库包裹重量{{info.currentWeight_a}}kg</div>
+			<div class="remark" style="color: #ccc; margin-top: 5px; line-height: 100%">够10kg团长即可通知发货</div>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">取货地址</div>
+		<div class="bd">
+			<div class="add green">{{info.address}}</div>
+			<div class="mapBox">	
+				<div @click="openMap" style="position:absolute; width:100%; height:200px; left:0; top:0; z-index:100"></div>			
+				<div id="map"></div>
+			</div>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">团长信息</div>
+		<div class="bd">
+			<li>
+				<div class="mui-pull-left">本团团长</div>
+				<div class="mui-pull-right green">{{info.contact}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">微信号</div>
+				<div class="mui-pull-right green">{{info.wechat}}</div>
+			</li>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd">团长留言</div>
+		<div class="bd">
+			<template v-if="status.my == 1">
+			<textarea style="margin-bottom: 0" name="detail" id="detail" placeholder="描述(必填)" rows="3" v-model="newDetail"></textarea>
+			<div v-show="showSave"><button v-on:click="updateDetail" type="button" class="mui-btn my-btn" style="color: #fff">保存</button></div>
+			</template>
+			<template v-else>
+			<p>{{info.detail}}</p>
+			</template>
+		</div>
+	</div>
+
+	<div class="pyInfo">
+		<div class="hd" style="line-height:33px;">包裹列表<a href="javascript:void(0)" class="mui-btn mui-btn-danger" style="float:right" @click="gotoBill" v-if="bill == 1">团账单</a></div>		
+		<div class="baoguo" v-for="vo in goods">
+			<template v-if="status.my == 1">
+			<a :href="'goodsDetail.html?goodsid='+vo.goodsid">			
+			<li>
+				<div class="mui-pull-left">包裹编号：{{vo.goodsid}}号</div>
+				<div class="mui-pull-right" style="color: #999">{{vo.createTime|time}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">{{vo.contact}}</div>
+				<div class="mui-pull-right green" v-if="vo.status == 0" style="color: #f00">未到仓库 <i class="mui-icon mui-icon-arrowright"></i></div>
+				<div class="mui-pull-right green" v-if="vo.status == 1">已到仓库 <i class="mui-icon mui-icon-arrowright"></i></div>
+			</li>
+			</a>
+			</template>
+			<template v-else>
+			<li>
+				<div class="mui-pull-left">包裹编号：{{vo.goodsid}}号</div>
+				<div class="mui-pull-right" style="color: #999">{{vo.createTime|time}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">{{vo.contact}}</div>
+				<div class="mui-pull-right green" v-if="vo.status == 0" style="color: #f00">未到仓库</div>
+				<div class="mui-pull-right green" v-if="vo.status == 1">已到仓库</div>
+			</li>
+			</template>
+		</div>
+	</div>
+	
+	<div class="block"></div>
+	<div class="footAction" v-on:click="doUpdate" :class="status.class" :id="status.id">{{status.msg}}</div>
+</div>
+<script>
+//alert(window.location.href);
+vm = new Vue({
+	el : "#vm",
+	data : {
+		open:false,
+		bill:0,
+		status :[],
+		info : [],
+		goods : [],
+		lng : '',
+		lat : '',
+		showSave : false,
+		oldDetail:'',
+		newDetail:''
+	},
+	watch: {
+	    newDetail: function (val) {
+	    	if (this.oldDetail != val){
+	    		this.showSave = true;
+	    	}else{
+	    		this.showSave = false;
+	    	}
+	    }
+	},
+	methods: {
+		gotoBill: function(){
+			that = this;
+	    	url = 'bill.html?articleid='+that.info.articleid+'&userid='+request.userid+'&openid='+request.openid+'&password='+request.password;
+	    	window.location.href = url;
+		},
+		openMap : function(){
+			that = this;
+	    	url = 'app://map?address='+that.info.address+'&lat='+that.lat+'&lon='+that.lng;
+	    	window.location.href = url;	        	
+   
+		},
+		copy:function(){
+			that = this;
+			window.location.href= 'app://copy?text='+that.info.order;
+		},
+		search:function(){
+			that = this;
+			window.location.href= that.info.companyUrl;
+		},
+		updateDetail:function(e){
+			var detail=document.getElementById("detail").value;
+			var userid=request.userid;
+			var that = this;
+			if(userid==null){
+				return false; 
+			}else{
+				if(detail==""){mui.toast("留言内容不可为空");return;}
+				mui.showLoading('数据加载中');
+				$.post(
+					config.userinfo,
+					{
+				        userid:userid
+				   	},
+				   	function(res){		        	
+						if(res.code=='0'){
+							data = res.body;	
+							$("#userid").val(data.userid);
+							$("#password").val(data.password);		
+							$("#openid").val(data.openid);
+							$.post(
+								config.pinyouEdit,
+								{										
+									articleid : request.articleid,
+									detail : detail,						
+							        userid:userid,
+							        password:data.password,
+							        openid:data.openid,
+							   	},
+							   	function(res){	
+							   		mui.hideLoading();	        	
+									if(res.code=='0'){
+										that.showSave = false;
+									}else{
+										mui.hideLoading();
+										mui.toast(res.desc);
+									}
+						    	},
+						    	"json"
+						    );
+						}else{
+							mui.hideLoading();
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+			}
+		},
+		doUpdate: function (e) {
+			that = this;			
+			if(e.target.id =='updateBtn'){//更新拼邮信息
+				var isActive = document.getElementById("mySwitch").classList.contains("mui-active");
+				if(isActive){
+				  var isStop = 1;
+				}else{
+				  var isStop = 0;
+				}
+				var detail=document.getElementById("detail").value;
+				var userid=request.userid;
+				mui("#writeBox").popover("toggle");
+				if(userid==null){
+					return false; 
+				}else{
+					if(detail==""){mui.toast("留言内容不可为空");return;}
+					mui.showLoading('数据加载中');
+					$.post(
+						config.userinfo,
+						{
+					        userid:userid
+					   	},
+					   	function(res){		        	
+							if(res.code=='0'){
+								data = res.body;	
+								$("#userid").val(data.userid);
+								$("#password").val(data.password);		
+								$("#openid").val(data.openid);
+								$.post(
+									config.pinyouEdit,
+									{										
+										articleid : request.articleid,
+										//detail : detail,
+										//isStop : isStop,
+								        userid:userid,
+								        password:data.password,
+								        openid:data.openid,
+								   	},
+								   	function(res){	
+								   		mui.hideLoading();	        	
+										if(res.code=='0'){
+											mui.toast("状态更新成功");
+										}else{
+											mui.hideLoading();
+											mui.toast(res.desc);
+										}
+							    	},
+							    	"json"
+							    );
+							}else{
+								mui.hideLoading();
+								mui.toast(res.desc);
+							}
+				    	},
+				    	"json"
+				    );
+				}
+			}
+
+			if(e.target.id =='jionBtn'){//更新拼邮信息
+				//userid=window.localStorage.getItem("userid");
+				userid=request.userid
+				//url = 'jion.html?articleid='+that.info.articleid+'&userid='+userid;
+				url = 'app://pinyoujoin?articleid='+that.info.articleid;
+				window.location.href = url
+			}
+		}
+	},
+	created : function(){
+		var that = this;
+		mui.showLoading('数据加载中');
+		$.post(
+			config.pinyouInfo,
+			request,
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					data = res.body;
+					width = data.currentWeight/data.maxWeight*100;
+					if(width>100){width=100}
+					data.width = width;
+
+					widths = data.currentWeight_a/10*100;
+					if(widths>100){widths=100}
+					data.widths = widths;
+
+					that.info = data;
+					if (data.isStop==1){
+						that.open = true;
+					};
+					that.lng = data.longitude;						
+					that.lat = data.latitude;						
+					that.goods = data.goods;					
+					that.oldDetail = data.detail;					
+					that.newDetail = data.detail;					
+
+					//判断用户
+					if(request.userid){
+						var userid = request.userid;
+					}else{
+						var userid = -1;
+					}
+
+					if (data.bill==1 && data.status==3){							
+						that.bill = 1;
+					};
+					if (data.userid == userid && userid>0 && data.status<3){
+						that.status.my = 1;
+						that.status.msg = '更新置顶';
+						that.status.class = '';
+						that.status.func = 'doUpdate';
+						that.status.id = 'updateBtn';						
+					}else{
+						if (data.isStop==1 || data.status>1){
+							that.status.my = 0;
+							that.status.msg = '本团已停止揽件，无法添加包裹';
+							that.status.class = 'danger';
+							that.status.id = 'dangerBtn';
+						}else{
+							that.status.my = 0;
+							that.status.msg = '加入本团，并添加包裹';
+							that.status.class = '';
+							that.status.id = 'jionBtn';
+						}
+					}
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+	},
+	updated : function(){
+		var that = this;
+		if (that.status.my==1){
+			document.getElementById("mySwitch").addEventListener("toggle",function(event){
+				var isActive = document.getElementById("mySwitch").classList.contains("mui-active");
+				if(isActive){
+				  var isStop = 1;
+				}else{
+				  var isStop = 0;
+				}
+				var userid=request.userid;
+				if(userid==null){
+					return false; 
+				}else{
+					$.post(
+						config.userinfo,
+						{
+					        userid:userid
+					   	},
+					   	function(res){		        	
+							if(res.code=='0'){
+								data = res.body;	
+								$("#userid").val(data.userid);
+								$("#password").val(data.password);		
+								$("#openid").val(data.openid);
+								$.post(
+									config.pinyouEdit,
+									{										
+										articleid : request.articleid,
+										isStop : isStop,
+								        userid:userid,
+								        password:data.password,
+								        openid:data.openid,
+								   	},
+								   	function(res){
+										if(res.code=='0'){						
+										}else{				
+											mui.toast(res.desc);
+										}
+							    	},
+							    	"json"
+							    );
+							}else{
+								mui.toast(res.desc);
+							}
+				    	},
+				    	"json"
+				    );
+				}
+			})
+
+			mui('.mui-switch')['switch']();
+		}
+	
+		//初始化地图对象，加载地图
+
+		lng = parseFloat(that.lng);
+		lat = parseFloat(that.lat);
+
+		var map; 
+	    var cairo = {lat:lat, lng:lng};
+
+	    map = new google.maps.Map(document.getElementById('map'), {
+	    	disableDefaultUI: true,
+	    	center: cairo,
+	    	zoom: 17
+	    });
+	    var marker = new google.maps.Marker({position: cairo, map: map});
+
+	    /*var map = new BMap.Map("map");
+		var point = new BMap.Point(that.lng, that.lat);
+		map.centerAndZoom(point, 15);
+		//map.disableDragging();
+
+		var myLabel = new BMap.Label("", {offset:new BMap.Size(-10,-20), position:point});  //label的位置					
+		myLabel.setStyle({               //给label设置样式，任意的CSS都是可以的
+			position: 'absolute',
+			border: 'none',
+			background: 'none',
+			zIndex: '1'
+		});
+		
+		var con = '<div class="marker"></div>';
+		myLabel.setContent(con);
+		map.addOverlay(myLabel);                        //把label添加到地图上*/
+
+	}
+});
+
+Vue.filter('time', function (value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+    	month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+    	day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+})
+</script>
+</body>
+</html>

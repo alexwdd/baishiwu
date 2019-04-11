@@ -1,0 +1,76 @@
+<layout name='layout' />
+
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">设置</h1>
+</header>
+
+<include file="Public:nav" />
+
+<div class="mui-content">
+	<div class="userInfo">
+		<div class="face">
+		<empty name="user.headimg">
+		<img src="{:RES}/image/face.png"/>
+		<else/>
+		<img src="{$user.headimg}"/>
+		</empty>
+		</div>
+		<div class="info">
+			<p>昵称：{$user.nickname}</p>
+			<p>手机：{$user.phone}</p>
+			<p>注册日期：{$user.createTime|date="Y-m-d H:i:s",###}</p>
+		</div>
+		<!-- <div class="setting"><a href="{:U('Member/setting',['agentid'=>$agent['id'],'token'=>$token])}"><i class="mui-icon mui-icon-gear"></i></a></div> -->
+	</div>
+
+	<ul class="mui-table-view" style="margin-top: 10px;">
+		<li class="mui-table-view-cell">
+			<a href="{:U('order/index',['agentid'=>$agent['id'],'token'=>$token])}" class="mui-navigate-right">全部订单</a>
+		</li>
+	</ul>
+
+	<div class="myOrder">
+		<li>
+			<a href="{:U('Order/index',array('payStatus'=>'0','agentid'=>$agent['id'],'token'=>$token))}">
+				<i class="icon icon-bankcard"></i>
+				<p>待付款<gt name="number1" value="0"><span class="red">({$number1})</span></gt></p>
+			</a>
+		</li>
+		<li>
+			<a href="{:U('Order/index',array('payStatus'=>'1','agentid'=>$agent['id'],'token'=>$token))}">
+				<i class="mui-icon mui-icon-compose"></i>
+				<p>待审核<gt name="number2" value="0"><span class="red">({$number2})</span></gt></p>
+			</a>
+		</li>
+		<li>
+			<a href="{:U('Order/index',array('payStatus'=>'2','agentid'=>$agent['id'],'token'=>$token))}">
+				<i class="icon icon-shubao"></i>
+				<p>待发货<gt name="number3" value="0"><span class="red">({$number3})</span></gt></p>
+			</a>
+		</li>
+		<li>
+			<a href="{:U('Order/index',array('payStatus'=>'3','agentid'=>$agent['id'],'token'=>$token))}">
+				<i class="icon icon-gift"></i>
+				<p>已发货<gt name="number4" value="0"><span class="red">({$number4})</span></gt></p>
+			</a>
+		</li>		
+	</div>
+	
+	<ul class="mui-table-view" style="margin-top: 10px;">
+		<li class="mui-table-view-cell">
+			<a href="{:U('address/index',['agentid'=>$agent['id'],'token'=>$token])}" class="mui-navigate-right">收货地址</a>
+		</li>
+		<li class="mui-table-view-cell">
+			<a href="{:U('Member/about',['agentid'=>$agent['id'],'token'=>$token])}" class="mui-navigate-right">关于我们</a>
+		</li>
+		<li class="mui-table-view-cell">
+			<a href="{:U('Member/feedback',['agentid'=>$agent['id'],'token'=>$token])}" class="mui-navigate-right">投诉建议</a>
+		</li>
+		<li class="mui-table-view-cell">
+			<a href="{:U('Member/help',['agentid'=>$agent['id'],'token'=>$token])}" class="mui-navigate-right">帮助</a>
+		</li>
+	</ul>
+</div>
+
+<input type="hidden" id="activeIndex" value="member" />

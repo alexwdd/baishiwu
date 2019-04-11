@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style type="text/css">
+.subway{clear: both; overflow: hidden; padding:10px;}
+.subway .hd{clear: both; overflow: hidden;}
+.subway .hd p{float: left; font-size: 16px; line-height: 33px; color: #999}
+.subway .hd span{float: right;}
+.subway .bd{clear: both; overflow: hidden;}
+.subway .bd li{clear: both; overflow: hidden; border: 1px #dbdbdb solid; font-size: 14px; height: 30px; line-height: 30px; margin-bottom: 10px; padding-left: 10px;}
+.subway .bd li p{float: left; margin: 0}
+.subway .bd li span{cursor: pointer; float: right; display: block; width: 30px; background: #f7f7f7; text-align: center;}
+.subway .bd li span i{font-size: 14px;}
+.sheshi{clear: both; overflow: hidden;}
+.sheshi li{float: left; width: 33.333%; padding: 5px;}
+.sheshi li span{background: #f7f7f7; display: block;line-height: 40px; text-align: center; cursor: pointer;}
+.sheshi li span.active{background: #7507C2;color: #fff}
+</style>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">	 
+		<h5 class="sortName">添加照片</h5>
+		<div class="insert-img" id="insert-img">
+	        <a href="javascript:;" onclick="uploadMultiFile('insert-btn');" class="insert-btn" id="insert-btn"><i class="icon icon-zhaoxiangji"></i></a>
+	    </div>   
+	    
+	    <input type="file" id="uploadfile"/>  
+
+		<h5 class="sortName">{{typeName}}分类</h5>
+		<ul class="mui-table-view mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="javascript:void(0)" id="sortName"></a>
+	        </li>
+	    </ul>
+		
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">地址</a>
+	        </li>
+	    </ul>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" id="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述"></textarea>
+		    </div>
+	    </div> 
+		
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="Into" id="Into" class="mui-input-clear dateBtn" data-options='{"type":"date"}' placeholder="入住时间(选填)" checkMsg="请输入入住时间" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="singleType" id="singleType" class="mui-input-clear" checkType="required" checkMsg="请选择出租类型" placeholder="出租类型(必填)" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="remark" id="chuzu" class="mui-input-clear" placeholder="出租时长(短租<1月<长租，选填)" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="subway">
+		    	<div class="hd">
+		    		<p>地铁线路</p>
+		    		<span><button class="mui-btn" type="button" id="addBtn">添加</button></span>
+		    	</div>
+		    	<div class="bd" id="result"></div>
+		    </div>
+		    <input type="hidden" name="subway" id="subway" value="">
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="sheshi">
+		    	<li v-for="item in sheshi"><span @click="selectHandle(item)" :class="{active: item.checked}">{{item.name}}</span></li>
+		    </div>
+		    <input type="hidden" name="facility" v-model="sheshiValue">
+	    </div> 
+	    
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="price" id="price" placeholder="租金（0为面议，必填）" checkType="required" checkMsg="请输入租金" style="width: 70%">
+		        <button type="button" id="unitBtn" class="mui-btn mui-btn-outlined" style="padding: 8px 0; margin-right: 10px; margin-top: 3px">/月</button>
+		    </div>
+	    </div> 
+	
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" class="mui-input-clear" placeholder="联系电话 格式：0410123456" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div>     
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">发布</button>
+	    </div>	     
+	    <input type="hidden" name="cityID" id="cityID" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="sort" id="sort" checkType="required" checkMsg="信息不完整"/>        
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="houseType" id="houseType" v-model="houseType" />    
+        <input type="hidden" name="address" id="address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" id="imgpath" />
+	    <input type="hidden" name="thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" id="thumb_b" />
+	</form>
+</div>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var singleTypePicker = new $.PopPicker();
+		var chuzuPicker = new $.PopPicker();
+		var unitPicker = new $.PopPicker();
+		var cityData = {};
+
+		mui.showLoading('数据加载中');
+		var request = GetRequest();  		
+		$.post(
+			config.subway,
+			request,
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					cityData = res.body.subway;
+					//级联示例
+					var cityPicker = new $.PopPicker({
+						layer: 2
+					});
+					cityPicker.setData(cityData);
+					var showCityPickerButton = doc.getElementById('addBtn');
+					var cityResult = doc.getElementById('result');
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker.show(function(items) {			
+							html = '<li><p>'+items[0].text + "-" + items[1].text+'</p><span><i class="mui-icon mui-icon-trash"></i></span></li>';
+							cityResult.innerHTML = cityResult.innerHTML + html;
+							if (doc.getElementById('subway').value==''){		
+								doc.getElementById('subway').value = items[0].text + "-" + items[1].text;
+							}else{
+								doc.getElementById('subway').value = doc.getElementById('subway').value+','+items[0].text + "-" + items[1].text;
+							}
+						});
+					}, false);
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+
+
+		singleTypePicker.setData(['床位出租','普通房','主人房','保姆房','工作室','车库','储藏室','厅房/隔间']);
+		chuzuPicker.setData(['短租','长租','短租/长租']);
+		unitPicker.setData(['/天','/周','/月','/年']);
+		var singleTypeBtn = doc.getElementById('singleType');
+		var chuzuBtn = doc.getElementById('chuzu');
+		var unitBtn = doc.getElementById('unitBtn');
+
+		var singleTypeResult = doc.getElementById('singleType');
+		var chuzuResult = doc.getElementById('chuzu');
+		var unitResult = doc.getElementById('unitBtn');
+		if (singleTypeBtn){
+			singleTypeBtn.addEventListener('tap', function(event) {
+				singleTypePicker.show(function(items) {
+					singleTypeResult.value = items[0];
+				});
+			}, false);
+		}
+
+		if (chuzuBtn){
+			chuzuBtn.addEventListener('tap', function(event) {
+				chuzuPicker.show(function(items) {
+					chuzuResult.value = items[0];
+				});
+			}, false);
+		}
+
+		if (unitBtn){
+			unitBtn.addEventListener('tap', function(event) {
+				unitPicker.show(function(items) {
+					unitResult.innerText = items[0];
+				});
+			}, false);
+		}
+
+		//出售
+		var chushouPicker = new $.PopPicker();
+		chushouPicker.setData(['中介','卖家']);
+		var chushouObj = doc.getElementById('chushou');
+		if (chushouObj){
+			chushouObj.addEventListener('tap', function(event) {
+				chushouPicker.show(function(items) {
+					chushouObj.value = items[0];
+				});
+			}, false);
+		}
+		//-----------------------------------------	
+
+		var btns = $('.dateBtn');
+		btns.each(function(i, btn) {
+			btn.addEventListener('tap', function() {
+				var optionsJson = this.getAttribute('data-options') || '{}';
+				var options = JSON.parse(optionsJson);
+				var id = this.getAttribute('id');
+				var thatBtn = this;
+				var picker = new $.DtPicker(options);
+				picker.show(function(rs) {
+					thatBtn.value = rs.text;
+					picker.dispose();
+				});
+			}, false);
+		});	
+	});
+})(mui, document);
+
+vue = new Vue({
+	el : "#vm",
+	data : {
+		houseType : 0,
+		typeName : '租房',
+		sheshi:[],
+		sheshiValue:''
+	},
+	created : function(){
+		that = this;
+		mui.showLoading('数据加载中');
+		var request = GetRequest();  		
+		$.post(
+			config.carBrand,
+			{cateid:7},
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					data = res.body;
+					for (var i = 0; i < data.length; i++) {
+						data[i]['checked'] = false;
+					}
+					that.sheshi = data;
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+	},
+	methods:{
+		selectHandle(e){
+			var str = '';
+			for (var i = 0; i < this.sheshi.length; i++) {
+				if (this.sheshi[i].itemid == e.itemid){
+					this.sheshi[i].checked = !this.sheshi[i].checked;
+				}
+				if (this.sheshi[i].checked){
+					if (str==''){
+						str = this.sheshi[i].name;
+					}else{
+						str += ',' + this.sheshi[i].name;
+					}
+				}
+			}
+			this.sheshiValue = str;
+		}
+	}
+});
+
+$(function(){
+	$("#result").on('click',"span",function(){
+		$(this).parent().remove();
+		var str = '';
+		$("#result li").each(function(index){
+			if (index==0){
+				str = $(this).find('p').html();
+			}else{
+				str += ','+$(this).find('p').html();
+			}
+		})
+		$("#subway").val(str);
+	})
+})
+</script>
+
+<script type="text/javascript" src="../static/js/publish.js"></script>
+</body>
+</html>

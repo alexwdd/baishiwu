@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>个人中心</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<include file="Public:cssjs" />
+</head>
+<body>
+
+<div id="wrap">
+	<div class="page">
+		<div class="wo">
+			<img src="<{$user.face|getFace=###}>" />
+			<div class="baseInfo">
+				<p>用户名：<{$user.nickname}></p>
+				<p>注册日期：<{$user.createTime|date="Y-m-d H:i:s",###}></p>
+				<p>现金钱包：<{$user.fine.money}>元</p>
+				<p>级别：<span><{$user.group.shortName}></span></p>		
+			</div>
+			<div class="setting"><i class="icon icon-setting" onclick="window.location.href='<{:U('Member/setting')}>'"></i></div>
+		</div>
+
+		<ul class="nav">			
+			<li>
+				<a href="<{:U('Member/bank')}>">
+					<div class="img am-icon-credit-card clr1"></div>
+					<span>收款账户</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>
+			<li>
+				<a href="<{:U('Member/message')}>">
+					<div class="img am-icon-wechat clr2"></div>
+					<span>消息</span>
+					<i class="icon icon-arrow-right"></i>
+					<gt name="msg" value="0"><em><{$msg}></em></gt>
+				</a>
+			</li>
+			<li>
+				<a href="<{:U('Member/qr')}>">
+					<div class="img am-icon-qrcode clr3"></div>
+					<span>我的名片</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>
+			<li>
+				<a href="<{:U('Member/password')}>">
+					<div class="img am-icon-key clr4"></div>
+					<span>修改登录密码</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>
+			<li>
+				<a href="<{:U('Member/paypassword')}>">
+					<div class="img am-icon-key clr6"></div>
+					<span>修改交易密码</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>
+			<li>
+				<a href="<{:U('Member/about')}>">
+					<div class="img am-icon-headphones clr7"></div>
+					<span>关于我们</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>	
+			<li>
+				<a href="<{:U('Login/signout')}>">
+					<div class="img am-icon-sign-out clr8"></div>
+					<span>退出</span>
+					<i class="icon icon-arrow-right"></i>
+				</a>
+			</li>			
+			
+		</ul>
+	</div>
+	
+	<input type="hidden" id="activeIndex" value="member">
+	<include file="Public:footerbar" />
+</div>
+
+</body>
+</html>
+

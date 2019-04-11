@@ -1,0 +1,83 @@
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,mark,menu,nav,nav li,nav ul,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,var,video{margin:0;padding:0;border:0;vertical-align:baseline;font:inherit;font-size:100%}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+ol,ul{margin:0;padding:0;list-style:none}
+blockquote,q{quotes:none}
+blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}
+table{border-collapse:collapse;border-spacing:0}
+a{text-decoration:none}
+.txt-rt{text-align:right}
+.txt-lt{text-align:left}
+.txt-center{text-align:center}
+.float-rt{float:right}
+.float-lt{float:left}
+.clear{clear:both}
+.pos-relative{position:relative}
+.pos-absolute{position:absolute}
+.vertical-base{vertical-align:baseline}
+.vertical-top{vertical-align:top}
+.underline{margin:0 0 20px 0;padding-bottom:5px;border-bottom:1px solid #eee}
+nav.vertical ul li{display:block}
+nav.horizontal ul li{display:inline-block}
+img{max-width:100%}
+body{background:url(../image/bg.jpg) no-repeat center bottom;background-size:cover;font-size:100%;font-family:Montserrat,sans-serif}
+.login-form{padding:100px 0 50px 0}
+.login-form h1{margin-bottom:2em;color:#ffdf81;text-align:center;text-transform:uppercase;font-weight:800;font-size:2em}
+.top-login{position:relative;display:block;margin:0 auto 4em;width:130px;height:130px;background:#fff;-webkit-transform:rotate(45deg) translate3d(0,0,0);-moz-transform:rotate(45deg) translate3d(0,0,0);-o-transform:rotate(45deg) translate3d(0,0,0);transform:rotate(45deg) translate3d(0,0,0);-ms-transform:rotate(45deg) translate3d(0,0,0)}
+.top-login span{position:absolute;top:11px;left:11px;display:block;margin:0 auto;width:105px;height:105px;border:2px solid #F36}
+.top-login span img{margin:20px 0 0 20px;-webkit-transform:rotate(-45deg) translate3d(0,0,0);-moz-transform:rotate(-45deg) translate3d(0,0,0);-o-transform:rotate(-45deg) translate3d(0,0,0);transform:rotate(-45deg) translate3d(0,0,0);-ms-transform:rotate(-45deg) translate3d(0,0,0)}
+.login-top{display:block;margin:0 auto;width:460px}
+.login-ic{margin-bottom:1.5em;padding:8px;background:rgba(255,255,255,.32)}
+.login-ic i{float:left;display:inline-block;width:38px;height:38px;background:url(../image/m.png) no-repeat 6px 6px}
+.login-ic i.icon{background:url(../image/l.png) no-repeat 6px 6px}
+.login-ic i.check{background:url(../image/c.png) no-repeat 6px 6px}
+.login-ic input[type=text],.login-ic input[type=number],.login-ic input[type=password]{float:left;display:inline-block;margin-left:7px;padding:10px 16px;width:82%;outline:0;border:none;border-left:1px solid #fff;background:0 0;color:#fff;font-weight:400;font-size:15px}
+.log-bwn{text-align:center}
+.log-bwn input[type=submit]{display:inline-block;padding:13px 0;width:100%;outline:0;border:2px solid #ffdf81;background:#ffdf81;color:#7c4b22;text-transform:uppercase;font-weight:700;font-size:15px;cursor:pointer}
+.log-bwn input[type=submit]:hover{border:2px solid #fff;-webkit-transition:all .3s ease;-moz-transition:all .3s ease;-o-transition:all .3s ease;transition:all .3s ease}
+p.copy{margin-top:2em;color:#fff;text-align:center;font-size:1em}
+p.copy a{color:#fff;text-decoration:underline}
+p.copy a:hover{text-decoration:none}
+.ty{text-align: center; clear: both; color: #fcecdd; margin-top: 1rem}
+@media (max-width:1024px){p.copy{margin-top:1em}
+.login-form{padding:60px 0 40px 0}
+}
+@media (max-width:768px){body{min-height:929px}
+}
+@media (max-width:768px){body{min-height:auto}
+}
+@media (max-width:600px){.login-top{width:425px}
+.login-ic input[type=text],.login-ic input[type=password]{width:79%}
+}
+@media (max-width:480px){p.copy{padding:0 .5em;font-size:.9em;line-height:1.8em}
+}
+@media (max-width:450px){.login-top{width:360px}
+.login-ic input[type=text],.login-ic input[type=password]{width:76%}
+.top-login{margin:0 auto 3em;width:85px;height:85px}
+.top-login span img{margin:5px 0 0 5px}
+.top-login span{top:5px;left:5px;width:75px;height:75px}
+.login-form h1{margin-bottom:1em;font-size:1.7em}
+p.copy{margin-top:1em}
+.login-form{padding:40px 0 45px 0}
+.login-ic{margin-bottom:1em;padding:3px}
+.log-bwn input[type=submit]{padding:10px 0}
+p.copy{font-size:.8em}
+body{min-height:672px}
+}
+@media (max-width:384px){.login-top{width:340px}
+.login-ic input[type=text],.login-ic input[type=password]{width:75%}
+body{min-height:600px}
+}
+@media(max-width:320px){.login-top{width:280px}
+.login-ic input[type=text],.login-ic input[type=password]{width:70%}
+.login-form{padding:50px 0 45px 0}
+body{min-height:540px}
+}
+.verify{float:right;height:40px}
+
+::-webkit-input-placeholder {color:#ccc;}
+:-moz-placeholder {color:#ccc;}
+::-moz-placeholder {color:#ccc;}
+:-ms-input-placeholder {color:#ccc;}
+.top-logo{text-align: center;}
+.top-logo span{display: block;}
+.top-logo span img{width: 100px;}

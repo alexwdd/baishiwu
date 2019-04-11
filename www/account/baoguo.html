@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>我的包裹-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="tabMenu">
+		<li :class="{active:status == 'a'}"><a href="javascript:void(0)" @click="setValue('a')">全部</a></li>
+		<li :class="{active:status == 0}"><a href="javascript:void(0)" @click="setValue(0)">未到仓库</a></li>
+		<li :class="{active:status == 1}"><a href="javascript:void(0)" @click="setValue('1')">已到仓库</a></li>
+	</div>
+	
+	<div class="pyInfo">
+		<div class="baoguo" v-for="vo in goods">
+			<a :href="'app://goodsdetail?goodsid='+vo.goodsid">			
+			<li>
+				<div class="mui-pull-left">包裹编号：{{vo.goodsid}}号</div>
+				<div class="mui-pull-right" style="color: #999">{{vo.createTime|time}}</div>
+			</li>
+			<li>
+				<div class="mui-pull-left">{{vo.contact}}</div>
+				<div class="mui-pull-right green" v-if="vo.status == 0" style="color: #f00">未到仓库 <i class="mui-icon mui-icon-arrowright"></i></div>
+				<div class="mui-pull-right green" v-if="vo.status == 1">已到仓库 <i class="mui-icon mui-icon-arrowright"></i></div>
+			</li>
+			</a>
+		</div>
+	</div>
+</div>
+<script>
+mui.ready(function(){
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			page : 1,
+			canScroll : 1,
+			next : 1,	
+			status:'a',
+			goods : []
+		},
+		created : function(){
+			var that = this;
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+
+		methods: {
+			setValue(v) {
+	            this.status = v;
+	            this.goods = [];
+	            this.page = 1;
+	            this.goPage(this.page);
+	        },
+        	goPage (page) {
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		request.page = that.page;
+        		request.status = that.status;  
+        		$.post(
+					config.goodsList,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.articles;			
+							that.goods = that.goods.concat(data);	
+							that.canScroll = 1;				
+							that.next = res.body.next;
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+
+    Vue.filter('status', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+});
+
+</script>
+
+</body>
+</html>

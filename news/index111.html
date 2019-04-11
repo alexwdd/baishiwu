@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" type="text/css" href="./css/hui.css" />
+<style>
+*{font-size: 14px;}
+li{list-style: none;}
+.news-title{border-bottom: 1px #ddd solid;padding: 10px; overflow: hidden;}
+.news-title h1{font-size: 17px;  font-weight: normal; margin-bottom: 10px}
+.news-title .date{color: #666; font-size: 12px}
+.news-title .date span{color: #666; font-size: 12px}
+.baseInfo{clear: both; overflow: hidden; margin: 10px;}
+.baseInfo li{float: left; width: 50%; text-align: left; font-size: 14px; line-height: 30px;}
+.baseInfo li.long{width: 100%}
+.intr{border: 1px #dbdbdb solid; clear: both; overflow: hidden; margin: 10px;}
+.intr .hd{height: 30px; line-height: 30px; border-bottom: 1px #dbdbdb solid; background: #f7f7f7; padding-left: 10px;}
+.intr .bd{padding: 10px;}
+.ad img{width: 100%}
+.hui-swipe-items{text-align: center;}
+.hui-swipe-items img{height: 300px;}
+.quick{clear: both; background: #fff; overflow: hidden; padding: 10px 0}
+.quick li{float: left; width: 50%; padding: 0 10px; box-sizing: border-box;}
+.quick li img{width: 100%; display: block;}
+</style>
+</head>
+<body>
+<div class="hui-wrap">
+    <div class="ad"><a href="http://www.worldmedia.top/news/image/ad1.gif"><img src="http://www.worldmedia.top/news/image/ad1.gif"></a></div>
+    <div class="news-title">
+        <h1 id="title"></h1>
+        <div class="date">更新日期：<span id="date"></span></div>
+    </div>
+
+    <div style="padding:10px;">
+        <div class="hui-swipe" id="swipe">
+            <div class="hui-swipe-items" id="banner"></div>
+        </div>
+    </div>
+
+    <div class="baseInfo" id="baseInfo"></div>
+    <div class="intr">
+        <div class="hd">说明</div>
+        <div class="bd" id="detail"></div>
+    </div>
+
+    <div class="ad"><a href="http://www.worldmedia.top/news/image/ad4.jpg"><img src="http://www.worldmedia.top/news/image/ad4.jpg"></a></div>
+
+    <div class="ad"><a href="http://www.worldmedia.top/news/image/ad3.jpg"><img src="http://www.worldmedia.top/news/image/ad3.jpg"></a></div>
+
+    <div class="quick">
+      <li><a href="https://itunes.apple.com/cn/app/id1386824572?l=zh&ls=1&mt=8"><img src="http://www.worldmedia.top/news/image/appstore.png"></a></li>
+      <li><a href="https://play.google.com/store/apps/details?id=com.ldw.life"><img src="http://www.worldmedia.top/news/image/googleplay.png"></a></li>
+    </div>
+</div>
+
+<script src="./js/hui.js" type="text/javascript" charset="utf-8"></script>
+<script src="./js/hui-swipe.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+hui.loading('数据加载中');
+request = GetRequest();
+id = request.articleid;
+var type = request.type;
+if (id!='' && type!=''){
+    url = '/V1/Article/share/articleid/'+id+'/type/'+type;
+    hui.getJSON(url, function(data){
+        if (data.code==-1){
+            hui.closeLoading();
+            hui.toast(data.desc); 
+        }else{
+            hui.closeLoading();
+            hui("#title").html(data.body.title);
+            hui("#date").html(data.body.updateTime);
+            if (data.body.images.length>0){
+                _html = '';
+                for (var i = 0; i < data.body.images.length; i++) {
+                    _html += '<div class="hui-swipe-item"><img src="'+data.body.images[i]+'"></div>';
+                };
+                hui("#banner").html(_html);
+                var swipe = new huiSwpie('#swipe');
+                swipe.autoPlay = false;
+                swipe.run();
+            };
+            switch(type){
+                case 'sp':
+                  res = createErshou(data.body);
+                  break;
+                case 'zp':
+                  res = createJob(data.body);
+                  break;
+                case 'tc':
+                  res = createTongcheng(data.body);
+                  break;
+                case 'zf':
+                  res = createHouse(data.body);
+                  break;
+                case 'esc':
+                  res = createCar(data.body);
+                  break;
+                case 'ms':
+                  res = createFood(data.body);
+                  break;
+                case 'sh':
+                  res = createLife(data.body);
+                  break;
+                case 'xp':
+                  res = createXinpin(data.body);
+                  break;
+                default:
+                  res = '';
+            }
+            hui("#baseInfo").html(res);
+            hui("#detail").html(data.body.detail);
+        }
+    }, function(){
+        hui.toast('读取失败'); 
+    })
+};
+
+function GetRequest() {   
+   var url = location.search; //获取url中"?"符后的字串   
+   var theRequest = new Object();   
+   if (url.indexOf("?") != -1) {   
+      var str = url.substr(1);   
+      strs = str.split("&");   
+      for(var i = 0; i < strs.length; i ++) {   
+         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);   
+      }   
+   }   
+   return theRequest;   
+}
+//二手
+function createErshou(data){
+    _html = '';
+    if (data.price==0){
+        _html += '<li>价格：面议</li>';
+    }else{
+        _html += '<li>价格：'+data.price+'</li>';
+    }
+    if (data.contact!=''){
+        _html += '<li>联系人：'+data.contact+'</li>';
+    }
+
+    if (data.contact!=''){
+        _html += '<li>电话：'+data.phone+'</li>';
+    }
+
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+
+    if (data.contact!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    return _html;
+}
+//同城
+function createTongcheng(data){
+    _html = '';
+    _html += '<li class="long">活动时间：'+data.begin+' - '+data.end+'</li>';
+    _html += '<li class="long">地点：'+data.address+'</li>';
+    if (data.price==0){
+        _html += '<li>费用：免费</li>';
+    }else{
+        _html += '<li>费用：'+data.price+'/人</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.links!=''){
+        _html += '<li class="long">网址：'+data.links+'</li>';
+    }
+    return _html;
+}
+//招聘
+function createJob(data){
+    _html = '';
+    _html += '<li class="long">公司：'+data.company+'</li>';
+    _html += '<li>签证类型：'+data.visa+'</li>';
+    _html += '<li>上班时间：'+data.work+'</li>';
+    _html += '<li class="long">邮箱：'+data.email+'</li>';
+    if (data.price==0){
+        _html += '<li>薪资：面议</li>';
+    }else{
+        _html += '<li>薪资：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    if (data.links!=''){
+        _html += '<li class="long">网址：'+data.links+'</li>';
+    }
+    return _html;
+}
+
+//房产
+function createHouse(data){
+    _html = '';
+    _html += '<li>'+data.houseType+'</li>';
+    _html += '<li>'+data.remark+'</li>';
+    _html += '<li>类型：'+data.singleType+'</li>';
+    _html += '<li>入住时间：'+data.Into+'</li>';
+    _html += '<li>卧室数：'+data.bedrooms+'</li>';
+    _html += '<li>停车位：'+data.parks+'</li>';
+    _html += '<li>淋浴数：'+data.showers+'</li>';
+    _html += '<li>卫生间数：'+data.toilets+'</li>';
+    if (data.price==0){
+        _html += '<li>价格：面议</li>';
+    }else{
+        _html += '<li>价格：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    return _html;
+}
+//二手车
+function createCar(data){
+    _html = '';
+    _html += '<li>品牌：'+data.brand+'</li>';
+    _html += '<li>变速箱：'+data.trans+'</li>';
+    _html += '<li>里程数：'+data.mileage+'万</li>';
+    _html += '<li>年份：'+data.year+'</li>';
+    if (data.price==0){
+        _html += '<li>价格：面议</li>';
+    }else{
+        _html += '<li>价格：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    return _html;
+}
+//美食外卖
+function createFood(data){
+    _html = '';
+    _html += '<li class="long">优惠信息：'+data.discount+'</li>';
+    _html += '<li>营业时间：'+data.time+'</li>';
+    _html += '<li>配送范围：'+data.area+'</li>';
+    if (data.price==0){
+        _html += '<li>人均消费：面议</li>';
+    }else{
+        _html += '<li>人均消费：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    if (data.links!=''){
+        _html += '<li class="long">网址：'+data.links+'</li>';
+    }
+    return _html;
+}
+//生活服务
+function createLife(data){
+    _html = '';
+    _html += '<li class="long">优惠信息：'+data.discount+'</li>';
+    if (data.price==0){
+        _html += '<li>人均消费：面议</li>';
+    }else{
+        _html += '<li>人均消费：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    if (data.links!=''){
+        _html += '<li class="long">网址：'+data.links+'</li>';
+    }
+    return _html;
+}
+//新品
+function createXinpin(data){
+    _html = '';
+    _html += '<li class="long">优惠信息：'+data.discount+'</li>';
+    if (data.price==0){
+        _html += '<li>人均消费：面议</li>';
+    }else{
+        _html += '<li>人均消费：'+data.price+'</li>';
+    }
+    _html += '<li>联系人：'+data.contact+'</li>';
+    _html += '<li>电话：'+data.phone+'</li>';
+    if (data.wechat!=''){
+        _html += '<li>微信：'+data.wechat+'</li>';
+    }
+    if (data.address!=''){
+        _html += '<li class="long">地址：'+data.address+'</li>';
+    }
+    if (data.links!=''){
+        _html += '<li class="long">网址：'+data.links+'</li>';
+    }
+    return _html;
+}
+</script>
+</body>
+</html>

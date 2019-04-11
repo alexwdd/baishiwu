@@ -1,0 +1,135 @@
+<layout name='layout' />
+
+<style>
+.welcome{height: 200px; overflow: auto;}
+</style>
+
+
+<div class="mui-content" style="margin-top:0">
+    
+    <div class="indexHeader">
+        <eq name="is_weixin" value="1">
+        <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+        <else/>
+        <a href="app://goback"><i class="mui-icon mui-icon-left-nav"></i></a>
+        </eq>
+        <!-- <a href="{:U('index/index',array('agentid'=>$agent['id'],'token'=>$token))}"><i class="mui-icon mui-icon-home"></i></a> -->
+        <div class="title">{$agent.name}</div>
+        <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>
+
+        <a href="javascript:void(0)" class="cartIcon"><i class="icon icon-cart"></i><span class="mui-badge" id="barNumber" style="display: none;"></span></a>
+    </div>
+
+    <div id="topPopover" class="mui-popover my-pop">
+        <div class="down">
+            <div class="hd"><img src="{:RES}/image/down{$app.css}.png"></div>
+            <div class="bd">
+                <li><a href="{$app.aUrl}"><img src="{:RES}/image/googleplay.png"></a></li>
+                <li><a :href="{$app.iUrl}"><img src="{:RES}/image/appstore.png"></a></li>
+            </div>
+        </div>
+    </div> 
+
+    <script>
+    var is_weixin = {$is_weixin};
+    $(function(){
+        $(".cartIcon").click(function(){
+            if (is_weixin==1){
+                mui('#topPopover').popover('toggle');
+                return false;
+            }else{
+                window.location.href = '{:U('store/cart',array('agentid'=>$agent['id'],'token'=>$token))}';
+            }
+        })
+    })
+    </script>
+
+    <div class="topSearch">
+        <div class="search" onclick="window.location.href='{:U('store/search',array('agentid'=>$agent['id'],'token'=>$token))}'">        
+            <div class="class="indexIpt" style="padding-left: 10px; color: #999">商品名称</div>
+        </div>
+        <div class="act" onclick="window.location.href='{:U('store/search',array('agentid'=>$agent['id'],'token'=>$token))}'"><i class="mui-icon mui-icon-search" id="searchBtn"></i></div>
+        <div class="act cateBtn"><a href="{:U('store/category',array('agentid'=>$agent['id'],'token'=>$token))}">分类</a></div>
+    </div>
+
+    <div style="height:92px;clear:both"></div>
+
+    <div class="mui-slider">
+        <div class="mui-slider-group mui-slider-loop">  
+            <div class="mui-slider-item">
+            <a href="{$first.url}"><img src="{$first.image}" style="display:block"></a>
+            </div>
+
+            <volist name="list" id="vo">
+            <div class="mui-slider-item">
+            <a href="{$vo.url}"><img src="{$vo.image}" style="display:block"></a>
+            </div>
+            </volist>
+
+            <div class="mui-slider-item">
+            <a href="{$last.url}"><img src="{$last.image}" style="display:block"></a>
+            </div>
+        </div>
+        
+        <div class="mui-slider-indicator">
+            <volist name="list" id="vo">
+            <div class='mui-indicator'></div>
+            </volist>
+        </div>
+    </div>
+    
+    <div class="indexTitle">
+        <p>推荐商品</p>
+        <span><a href="{:U('store/index',['id'=>$vo['id'],'agentid'=>$agent['id'],'token'=>$token])}">更多</a></span>
+    </div>
+    <div class="productList" style="margin-top:2px">
+        <volist name="goods" id="vo">
+        <li>
+            <div class="item">
+                <a href="{:U('store/detail',['id'=>$vo['id'],'agentid'=>$agent['id'],'token'=>$token])}">
+                <img src="{$vo.picname}">    
+                <p class="mui-ellipsis">{$vo.name}</p>
+                <span><i>$</i> {$vo.price}</span>
+                </a>
+            </div>
+        </li>
+        </volist>
+    </div>
+</div>
+
+<input type="hidden" id="activeIndex" value="index" />
+<script>
+mui.init();
+mui.ready(function(){ 
+    //规格菜单
+    $(function(){
+        $.get("/store/store/ajaxCartNumber?agentid={$agent.id}&token={$token}&temp="+new Date().getTime(),function(res){
+            if (res >0){
+                $("#barNumber").show().html(res);
+            };            
+        });
+        <notempty name="agent.notice">
+        if(!getCookie('first')){
+            mui.alert('<div class="welcome">{$agent.notice}</div>', '欢迎访问{$agent.name}',null,function(){
+                setCookie('first','1',0);
+            });            
+        }
+        </notempty>
+    })
+})
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue;
+}
+//获取cookie
+function getCookie(cname) {
+    var arr, reg = new RegExp("(^| )" + cname + "=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        return (arr[2]);
+    else
+        return null;
+
+}
+</script>

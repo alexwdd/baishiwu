@@ -1,0 +1,58 @@
+<layout name='layout' />
+
+<div class="admin-main">
+	<form id="ajaxForm" class="layui-form" method="post" action="<{:U('Setting/insert')}>">
+		<div class="layui-tab">
+			<ul class="layui-tab-title">
+				<foreach name="group_list" item="vo" key="k">
+             		<a href="<{:U('Setting/index',array('inc_type'=>$k))}>"><li <if condition="$k eq 'agent'">class="layui-this"</if>><{$vo}></li></a>
+             	</foreach> 
+			</ul>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">加盟申请</label>
+			<div class="layui-input-block">
+      			<input type="radio" name="isReg" value="1" title="开启" <php>if($config['isReg']==='1')echo checked;</php>>
+				<input type="radio" name="isReg" value="0" title="关闭" <php>if($config['isReg']==='0')echo checked;</php>>
+    		</div>
+  		</div>
+
+  		<div class="layui-form-item">
+			<label class="layui-form-label">提现申请</label>
+			<div class="layui-input-block">
+      			<input type="radio" name="isTixian" value="1" title="开启" <php>if($config['isTixian']==='1')echo checked;</php>>
+				<input type="radio" name="isTixian" value="0" title="关闭" <php>if($config['isTixian']==='0')echo checked;</php>>
+    		</div>
+  		</div>
+
+  		<div class="layui-form-item">
+    		<label class="layui-form-label">下单服务费</label>
+			<div class="layui-input-inline">
+				<input type="number" name="buyPercent" value="<{$config.buyPercent}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">%</div>
+  		</div>
+
+  		<div class="layui-form-item">
+			<label class="layui-form-label">提现金额</label>
+			<div class="layui-input-inline">
+				<input type="number" name="txBeishu" value="<{$config.txBeishu}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">的倍数</div>
+
+    		<label class="layui-form-label">手续费</label>
+			<div class="layui-input-inline">
+				<input type="number" name="txPercent" value="<{$config.txPercent}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">%</div>
+  		</div>
+  		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+			</div>
+		</div>
+		<input type="hidden" name="inc_type" value="<{$inc_type}>">
+	</form>
+</div>

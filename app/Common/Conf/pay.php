@@ -1,0 +1,17 @@
+<?php
+return array(
+	'XINJIAPO_PAY'=>array(
+		'APP_ID'=>'wxd60c7a5b0c3f24e8',
+		'MCH_KEY'=>'htYEVpmOwz3oj1IdTU3kmqOE24GOL0xC',
+		'MCH_ID'=>'1528612281',
+		
+		'PHONE_NAME'=>'SGLIFECIRCLE',
+		'PHONE_PASSWORD'=>'E271A24F15C1A06A76CCC3C9D410DC54C4274CA5',
+	),
+
+	'AOZHOU_PAY'=>array(
+		'APP_ID'=>'wx2e8d4431ba2f21e6',
+		'MCH_KEY'=>'htYEVpmOwz3oj1IdTkfisqOE24GOL0xC',
+		'MCH_ID'=>'1528612271'
+	)
+);

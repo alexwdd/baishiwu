@@ -1,0 +1,132 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<form class="layui-form">
+	<div class="layui-row grid-demo">
+		<div class="layui-col-md12" style="padding: 10px 0">
+			<button class="layui-btn layui-btn-sm" type="button" onclick="window.history.go(-1)"><i class="layui-icon">&#xe603;</i>返回</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" onclick="window.location.reload()">刷新</button>
+	    </div>
+		<div class="layui-col-md4">
+			<fieldset class="layui-elem-field">
+				<legend>订单详情</legend>
+				<div class="layui-field-box">
+					<div class="layui-form">
+						<div class="layui-form-item">
+							<label class="layui-form-label">寄件人</label>
+							<div class="layui-form-mid"><{$list.sendName}>，<{$list.sendPhone}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">收件人</label>
+							<div class="layui-form-mid"><{$list.name}>，<{$list.mobile}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">地址</label>
+							<div class="layui-form-mid"><{$list.address}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">订单号</label>
+							<div class="layui-form-mid"><{$list.order_no}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">总金额</label>
+							<div class="layui-form-mid">￥<{$list.money}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">运费</label>
+							<div class="layui-form-mid">￥<{$list.payment}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">支付状态</label>
+							<div class="layui-form-mid"><{$list.payStatus|getPayStatus}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">订单状态</label>
+							<div class="layui-form-mid"><{$list.status|getOrderStatus}></div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">提交日期</label>
+							<div class="layui-form-mid"><{$list.createTime|date="Y-m-d H:i:s",###}></div>
+						</div>
+	
+						<div class="layui-form-item layui-form-text">
+							<label class="layui-form-label">订单备注</label>
+							<div class="layui-input-block">
+								<textarea name="remark" class="layui-textarea"><{$list.remark}></textarea>
+							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">发货日期</label>
+							<div class="layui-input-inline">
+						    	<gt name="list.sendTime" value="0">value="<{$list.sendTime|date="Y-m-d",###}>"</gt>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+
+		<div class="layui-col-md8">
+			<fieldset class="layui-elem-field">
+				<legend>包裹详情</legend>
+				<div class="layui-field-box">					
+					<volist name="list.baoguo" id="vo">
+				    <div class="orderList">
+				        <div class="hd"><{$vo.typeName}></div>				        
+			        	<table class="layui-table" style="margin: 0">
+							<colgroup>
+							    <col width="60">
+							    <col>
+							    <col>
+							    <col>			
+							    <col>			
+							</colgroup>
+							<thead>
+						    <tr>
+							    <th>名称</th>
+							    <th>名称</th>
+							    <th>规格</th>
+								<th>单价</th>
+								<th>数量</th>		
+						    </tr> 
+							</thead>
+				  			<tbody>
+								<volist name="vo.goods" id="f">
+								<tr>
+									<td><img src="<{$f.picname}>" style="height: 40px"></td>
+									<td><{$f.pname}></td>
+									<td><{$f.pram}></td>
+									<td><{$f.price}></td>
+									<td><{$f.number}></td>
+								</tr>		
+								</volist>
+							</tbody>
+						</table>				        
+				        <div class="fd">  
+				        	<div class="wuliu">
+				        		<volist name="vo.wuliu" id="w">
+				        		<li>
+				        		<{$w.wuliu}>，单号：<{$w.number}>		
+				        		</li>
+				        		</volist>
+				        	</div>
+				        </div>				        
+				    </div>
+				    </volist>			    
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	<input type="hidden" name="id" value="{$list.id}">
+	</form>
+</div>

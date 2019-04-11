@@ -1,0 +1,6 @@
+body,.mui-content{background-color: #f5f5f5;}
+*{-webkit-user-select: auto;}
+a {color: #000;}
+.mb10{margin-bottom: 10px;}
+.mui-input-group .mui-input-row:after {left: 0;}
+.mui-table-view-cell:after {left: 0;}

@@ -1,0 +1,130 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-tab">
+		<ul class="layui-tab-title">
+			<foreach name="group_list" item="vo" key="k">
+         		<a href="<{:U('Setting/index',array('inc_type'=>$k))}>"><li <if condition="$k eq 'basic'">class="layui-this"</if>><{$vo}></li></a>
+         	</foreach> 
+		</ul>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">应用名称</label>
+		<div class="layui-input-block">
+			<input type="text" name="name" value="<{$config.name}>" lay-verify="required" placeholder="请输入网站名称" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">LOGO</label>
+
+		<div class="layui-inline">
+			<img class="thumb" id="logo_src" src="<?php if($config['logo']!=""){ ?><{$config.logo}><?php }else{ ?><{:STATICS}>/image/image.jpg<?php } ?>" />
+			<input type="hidden" name="logo" id="logo" value="<{$config['logo']}>"/>
+		</div>
+
+		<div class="layui-inline">
+			<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="logo"
+			 >上传图片</button>
+
+			<input type="button" value="删除" class="layui-btn layui-btn-small" onclick="delImage('logo')"/>
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">系统状态</label>
+		<div class="layui-input-block">				
+			<input type="radio" name="isClose" value="0" title="开启" <php>if($config['isClose']==='0')echo checked;</php>>	
+			<input type="radio" name="isClose" value="1" title="关闭" <php>if($config['isClose']==='1')echo checked;</php>>			
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">关闭时信息</label>
+		<div class="layui-input-block">
+  			<input type="text" name="closeInfo" value="<{$config.closeInfo}>" lay-verify="required" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">汇率1澳元=</label>
+		<div class="layui-input-inline">
+			<input type="text" name="huilv" value="<{$config.huilv}>" lay-verify="required" placeholder="请输入汇率" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux">RMB</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">网址</label>
+		<div class="layui-input-block">
+			<input type="text" name="domain" value="<{$config.domain}>" lay-verify="url" placeholder="请输入网址" class="layui-input">
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">版权所有</label>
+		<div class="layui-input-block">
+			<input type="text" name="copyright" value="<{$config.copyright}>" lay-verify="required" placeholder="请输入公司或单位名称" class="layui-input">
+		</div>
+	</div>		
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">信箱</label>
+		<div class="layui-input-block">
+			<input type="text" name="email" value="<{$config.email}>" class="layui-input">
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">微信</label>
+		<div class="layui-input-block">
+			<input type="text" name="weixin" value="<{$config.weixin}>" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">微博</label>
+		<div class="layui-input-block">
+			<input type="text" name="weibo" value="<{$config.weibo}>" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea name="description" class="layui-textarea"><{$config.description}></textarea>
+			<p>一般不超过200个字</p>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">登录安全码</label>
+		<div class="layui-input-inline">
+  			<input type="number" name="safecode" value="<{$config.safecode}>" lay-verify="required" class="layui-input">
+		</div>
+		</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">超级管理员</label>
+		<div class="layui-input-inline">
+			<input type="text" name="admin" value="<{$config.admin}>" class="layui-input">
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Setting/insert')}>"><i class="layui-icon">&#xe642;</i>保存</button>
+    </div>
+	<input type="hidden" name="inc_type" value="<{$inc_type}>">
+</form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>
+

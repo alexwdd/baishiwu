@@ -1,0 +1,79 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="ID/邮箱/昵称/手机/姓名" class="layui-input"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">认证</label>
+				<div class="layui-input-inline">
+					<select name="authentication" id="authentication" class="fsSelect" dict="authentication" addNull="1"></select>					
+				</div>
+			</div>
+
+			<div class="layui-inline">
+				<label class="layui-form-mid">状态</label>
+				<div class="layui-input-inline">
+					<select name="disable" class="fsSelect" dict="disable" addNull="1"></select>	
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">注册方式</label>
+				<div class="layui-input-inline">
+					<select name="oauth" class="fsSelect" dict="oauth" addNull="1"></select>
+				</div>
+			</div>
+		</form>
+		
+	    <div class="layui-col-md12">
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Member/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Member/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>
+
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>	
+                <p field="id" title="ID" width="80"/>	
+				<p field="cityID" title="城市" width="150" dict="city" sort="true"/>		
+				<p field="nickname" title="昵称" width="150"/>				
+				<p field="headimg" title="头像" width="60" templet="#faceTpl"/>				
+				<p field="phone" title="手机" width="150"/>
+				<p field="openid" title="openid" width="150"/>	
+				<p field="email" title="邮箱" width="150" />
+				<p field="oauth" title="注册方式" width="100" dict="oauth"/>
+				<p field="name" title="姓名" width="120"/>
+				<p field="wachat" title="微信号" width="150"/>
+				<p field="authentication" title="认证" width="100" dict="authentication" sort="true"/>
+				<p field="disable" title="状态" width="100" dict="disable" sort="true"/>
+				<p field="createTime" title="注册日期" width="180" sort="true"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="80"/>
+			</div>
+
+			<script type="text/html" id="faceTpl">
+				{{# if(d.headimg == ''){ }}
+				<img src="<{:RES}>/image/face.jpg" style="width:30px;height:30px" />
+				{{# }else{ }}
+				<img src="{{d.headimg}}" style="width:30px;height30px"/>
+				{{# } }}				
+			</script>
+
+			<script type="text/html" id="barDemo">
+ 				<a class="layui-btn layui-btn-xs" lay-event="top" topUrl="<{:U("Member/edit")}>&id={{d.id}}" topWidth="80%" topHeight="80%" topTitle="编辑">编辑</a>
+			</script>
+	    </div>
+	</div>
+</div>

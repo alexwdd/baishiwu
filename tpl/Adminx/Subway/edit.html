@@ -1,0 +1,39 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="name" value="<{$list.name}>" lay-verify="required" placeholder="请输入线路名称" class="layui-input">
+		</div>
+	</div>
+	
+	<?php if ($_SESSION['administrator']) {?>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" lay-verify="required" default="<{$list.cityID}>" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+	</div>
+	<?php }else{ ?>
+	<input type="hidden" name="cityID" value="<{$list.cityID}>">
+	<?php } ?>
+
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-inline">
+			<input type="text" name="sort" id="sort" value="<{$list.sort}>" class="layui-input">
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button id="subBtn" class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Subway/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>	
+	<input type="hidden" name="id" value="<{$list['id']}>" />
+</form>

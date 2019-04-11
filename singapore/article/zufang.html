@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>租房-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="paramMenu">
+		<li @click="showSubway">地铁站 <i class="mui-icon mui-icon-arrowdown"></i></li>
+		<li @click="showTypes">出租类型 <i class="mui-icon mui-icon-arrowdown"></i></li>
+	</div>
+	<div class="paramBox" v-show="param1">
+		<div class="subwayList">
+			<div class="left">				
+				<li :class="{active:vo.checked}" v-for="vo in subwayList" @click="changeSubway(vo)">{{vo.text}}</li>
+			</div>
+			<div class="right">
+				<li :class="{active:vo.checked}" v-for="vo in line" @click="changeLine(vo)">{{vo.text}}</li>
+			</div>
+		</div>
+		<div class="action">
+			<li @click="resetSubway">重置</li>
+			<li class="active" @click="search">确认</li>
+		</div>
+	</div>
+
+	<div class="paramBox" v-show="param2">
+		<div class="typeList">
+			<li :class="{active:vo.checked}" v-for="vo in typeList" @click="changeType(vo)">{{vo.name}}</li>
+		</div>
+		<div class="action">
+			<li @click="resetType">重置</li>
+			<li class="active" @click="search">确认</li>
+		</div>
+	</div>
+	<div class="masker" v-show="masker" @click="closeAll"></div>
+
+	<div class="block" style="height: 45px"></div>
+	<template v-if="showType == 'big'">
+	<ul class="picList">
+		<li v-for="item in lists">			
+			<a :href="item.url">
+			<div class="mui-slider">
+				<div class="mui-slider-group">				    
+				    <div class="mui-slider-item" v-for="banner in item.images" style="height:180px;background-position: center; background-repeat: no-repeat;background-size: cover;" v-bind:style="{backgroundImage:'url('+banner+')'}"></div>
+				</div>
+
+				<div class="slider-money">
+					<span v-if="item.price > 0">${{item.price}}</span>
+					<span v-else>面议</span>
+					<div class="tag4" v-if="item.tag4 !='' ">{{item.tag4}}</div>
+				</div>
+
+				<div class="slider-tag">
+					<span class="tag1" v-if="item.tag1 !=''">{{item.tag1}}</span>
+					<span class="tag2" v-if="item.tag2 !=''">{{item.tag2}}</span>
+					<span class="tag3" v-if="item.tag3 !=''">{{item.tag3}}</span>
+				</div>				
+			</div>	
+			<div class="info">
+				<h1>{{item.title}}</h1>
+				<p><i class="icon icon-weizhi"></i> {{item.address}}</p>
+			</div>
+			</a>			
+		</li>		
+	</ul>
+	</template>
+	<template v-else>
+	<ul class="articleList">
+		<li v-for="item in lists">
+			<a :href="item.url">
+			<div class="img" v-bind:style="{backgroundImage:'url('+item.thumb_s+')'}" ></div>			
+			<div class="info">
+				<h1>{{item.title}}</h1>
+				<p><i class="icon icon-weizhi"></i> {{item.address}}</p>
+				<p>
+					<span class="mui-pull-left" v-if="item.price > 0">
+					 <i class="icon icon-meiyuan"></i> ${{item.price}}
+					</span>
+					<span v-else>
+					 <i class="icon icon-meiyuan"></i> 面议
+					</span>					
+					<span class="mui-pull-right">{{item.updateTime|time}}</span>
+				</p>
+			</div>
+			</a>
+		</li>		
+	</ul>	
+	</template>	
+</div>
+
+<script>
+mui.ready(function(){	
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			page : 1,
+			type : 'zf',
+			canScroll : 1,
+			next : 1,
+			showType:request.showType,
+			lists : [],
+			param1:false,
+			param2:false,
+			masker:false,	
+			subwayList:[],
+			typeList:[
+				{name:'不限',checked:true},
+				{name:'床位出租',checked:false},
+				{name:'普通房',checked:false},
+				{name:'主人房',checked:false},
+				{name:'保姆房',checked:false},
+				{name:'工作室',checked:false},
+				{name:'车库',checked:false},
+				{name:'储藏室',checked:false},
+				{name:'厅房/隔间',checked:false}
+			],
+			line:[],
+			subwayStr:'',
+			typeStr:'',
+		},
+		watch:{
+			masker(val) {			
+				let h = $(window).height();
+				if(val){
+				    $(".articleList").css({height:(h-46)+"px"});
+				}else{
+					$(".articleList").css({height:"auto"});
+				}
+			}
+		},
+		created : function(){
+			mui.showLoading('数据加载中');
+			var that = this;
+			$.post(
+				config.subway,
+				{cityID:39},
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body.subway;
+						for(i in data){
+							for(j in data[i]['children']){
+								data[i]['children'][j]['checked'] = false;
+							}
+							data[i]['checked'] = false;
+						}
+						data[0]['checked'] = true;
+						that.subwayList = data;	
+						that.line = data[0]['children'];	
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+		methods: {
+			closeAll(){
+				this.param1 = false;
+				this.param2 = false;
+				this.masker = false;
+			},
+			showSubway(){
+				if (this.param1){
+					this.param1 = false;
+					this.param2 = false;
+					this.masker = false;
+				}else{
+					this.param1 = true;
+					this.param2 = false;
+					this.masker = true;
+				}				
+			},
+			showTypes(){
+				if (this.param2){
+					this.param1 = false;
+					this.param2 = false;
+					this.masker = false;
+				}else{
+					this.param1 = false;
+					this.param2 = true;
+					this.masker = true;
+				}
+			},
+			changeSubway(e){
+				this.line = e.children;
+				for(i in this.subwayList){			
+					if (this.subwayList[i]['value']==e.value){
+						this.subwayList[i]['checked'] = true;
+					}else{
+						this.subwayList[i]['checked'] = false;
+					}
+				}
+			},
+			changeLine(e){
+				data = this.subwayList;
+				this.subwayStr = '';
+				for(i in data){
+					for(j in data[i]['children']){
+						if (data[i]['children'][j]['value']==e.value){
+							data[i]['children'][j]['checked'] = !data[i]['children'][j]['checked'];
+						}
+						if (data[i]['children'][j]['checked']){
+							if (this.subwayStr==''){
+								this.subwayStr = data[i]['children'][j]['text'];
+							}else{
+								this.subwayStr += ','+data[i]['children'][j]['text'];
+							}
+						}
+					}
+				}
+			},
+			changeType(e){
+				data = this.typeList;	
+				this.typeStr = '';			
+				for(i in data){
+					if (data[i]['name']==e.name){
+						data[i]['checked'] = !data[i]['checked'];
+					}else{
+						data[i]['checked'] = false
+					}
+					if (data[i]['checked']){
+						this.typeStr = data[i]['name'];
+					}
+				}
+			},
+			resetSubway(){
+				data = this.subwayList;
+				this.subwayStr = '';
+				for(i in data){
+					for(j in data[i]['children']){					
+						data[i]['children'][j]['checked'] = false;
+					}
+				}
+				//this.search();
+			},
+			resetType(){
+				data = this.typeList;
+				this.typeStr = '';
+				for(i in data){
+					data[i]['checked'] = false;
+				}
+				//this.search();
+			},
+			search(){
+				this.closeAll();
+				this.lists = [];
+				this.page = 1;
+				this.goPage(this.page);
+			},
+        	goPage (page) {
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		var request = GetRequest();
+        		request.page = that.page;
+        		request.type = that.type;
+        		request.houseType = 0;
+        		request.status = 1;
+        		if (that.typeStr!='' && that.typeStr!='不限'){
+        			request.singleType = that.typeStr;
+        		}
+        		if (that.subwayStr!=''){
+        			request.subway = that.subwayStr;
+        		}
+        		$.post(
+					config.articleList,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.articles;	
+							$.each(data,function(index){
+								if (this.html==''){
+									data[index]['url'] = 'app://articledetail?articleid='+this.articleid+'&type='+that.type
+								}else{
+									data[index]['url'] = 'app://html?url='+this.html+'&title='+this.title;
+								}
+								
+								if (this.thumb_s==''){
+									data[index]['thumb_s'] = '/www/static/image/xjp_320.jpg';
+								};
+								data[index]['images']=this.image.split(";"); //字符分割
+								if (this.sortName!='' && this.sortName!=null){
+									data[index]['tag1'] = this.sortName;
+								}else{
+									data[index]['tag1'] = '';
+								}
+								
+							  	if (this.houseType==0){//出租
+							  		data[index]['tag2'] = this.singleType;
+							  		if (this.Into!='') {
+							  			data[index]['tag3'] = '入住：'+this.Into;
+							  		}else{
+							  			data[index]['tag3'] = '';
+							  		}				
+							  	}else{//出售
+							  		data[index]['tag2'] = '';
+							  		if (this.bedrooms >0){
+							  			data[index]['tag2'] += this.bedrooms+'卧';
+							  		}
+							  		if (this.toilets >0){
+							  			data[index]['tag2'] += this.toilets+'卫';
+							  		}
+							  		if (this.showers >0){
+							  			data[index]['tag2'] += this.showers+'浴';
+							  		}
+							  		if (this.parks >0){
+							  			data[index]['tag2'] += this.parks+'车位';
+							  		}
+							  	}										
+								data[index]['tag4'] = this.remark;
+							})
+							that.lists = that.lists.concat(data);
+							that.canScroll = 1;				
+							that.next = res.body.next;				
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	},
+    	updated : function(){
+			mui('.mui-slider').slider();
+		}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+	
+})
+</script>
+</body>
+</html>

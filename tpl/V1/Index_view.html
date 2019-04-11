@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>订单详情</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<include file="Public:cssjs" />
+<include file="Public:sdk-js" />
+<script type="text/javascript" src="<{:RES}>/js/game.js"></script>
+</head>
+<body>
+<div id="wrap">
+	<div class="page">
+		<div class="myForm">
+
+			<div class="my-form-group">
+				<label>姓名</label>
+				<div class="my-form-static"><{$list.name}></div>
+			</div>
+			<div class="my-form-group">
+				<label>手机</label>
+				<div class="my-form-static"><{$list.mobile}></div>
+			</div>
+			<div class="my-form-group">
+				<label>身份证</label>
+				<div class="my-form-static"><{$list.sn}></div>
+			</div>			
+			<div class="my-form-group">
+				<label>车型</label>
+				<div class="my-form-static"><{$list.chexing}>/<{$list.chexing1}></div>
+			</div>
+			<div class="my-form-group">
+				<label>发动机号</label>
+				<div class="my-form-static"><{$list.fadongji}></div>
+			</div>
+			<div class="my-form-group">
+				<label>车架号</label>
+				<div class="my-form-static"><{$list.chejia}></div>
+			</div>
+			<eq name="list.flag" value="1">	
+			<div class="my-form-group">
+				<label>奖项</label>
+				<div class="my-form-static"><{$list.prize.value}><{$list.prize.prize}>元</div>
+			</div>
+			<div class="my-form-group">
+				<label>抽奖时间</label>
+				<div class="my-form-static"><{$list.prize.useTime|date="Y-m-d H:i:s",###}></div>
+			</div>
+			<else/>
+			<div class="my-form-group">
+				<a href="<{:U('Lottery/index',array('id'=>$list['id']))}>" class="am-btn am-btn-warning am-block">去抽奖</a>
+			</div>
+			</eq>
+			<div class="my-form-group">
+				<label>下单时间</label>
+				<div class="my-form-static"><{$list.createTime|date="Y-m-d H:i:s",###}></div>
+			</div>			
+			<div class="piao">
+				<a href="<{$list.fapiao}>"><img src="<{$list.fapiao}>"></a>
+				<a href="<{$list.sanbao}>"><img src="<{$list.sanbao}>"></a>
+				<a href="<{$list.hege}>"><img src="<{$list.hege}>"></a>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">昵称</label>
+		<div class="layui-form-mid">
+			<strong><{$list.nickname}></strong>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">手机</label>
+		<div class="layui-form-mid">
+			<strong><{$list.phone}></strong>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">邮箱</label>
+		<div class="layui-form-mid">
+			<strong><{$list.email}></strong>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">密码</label>
+		<div class="layui-input-inline">
+			<input type="password" id="password" name="password" lay-verify="_password" class="layui-input">
+		</div>
+		<p class="layui-form-mid layui-word-aux">不修改请留空</p>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="disable" value="0" title="正常" <php>if($list['disable']==='0')echo checked;</php>>
+			<input type="radio" name="disable" value="1" title="禁用" <php>if($list['disable']==='1')echo checked;</php>>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">认证</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="authentication" value="0" title="未认证" <php>if($list['authentication']==='0')echo checked;</php>>
+			<input type="radio" name="authentication" value="1" title="已认证" <php>if($list['authentication']==='1')echo checked;</php>>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select id="cityID" name="cityID" default="<{$list.cityID}>" lay-verify="required">
+				<option value="">==请选择==</option>
+				<volist name="city" id="vo">
+					<option value="<{$vo.id}>"><{$vo.name}></option>
+				</volist>
+			</select>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Member/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+	<input type="hidden" name="id"  />
+</form>

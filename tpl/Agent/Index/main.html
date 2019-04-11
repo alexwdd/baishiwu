@@ -1,0 +1,52 @@
+<layout name='layout' />
+
+<div class="admin-main">
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>系统信息</legend>
+	</fieldset>  
+	<div class="layui-tab-content">
+        <div class="count">
+            <li>
+                <div class="countItem">
+                    <label>今日订单</label>
+                    <p><span>{$count.number1}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>本月订单</label>
+                    <p><span>{$count.number2}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>上月订单</label>
+                    <p><span>{$count.number3}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>本年订单</label>
+                    <p><span>{$count.number4}</span></p>
+                </div>
+            </li>  
+
+            <li>
+                <div class="countItem">
+                    <label>总订单</label>
+                    <p><span>{$count.order}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>待付款</label>
+                    <p><span>{$count.order1}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>待确认</label>
+                    <p><span>{$count.order2}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>已付款</label>
+                    <p><span>{$count.order3}</span></p>
+                </div>
+                <div class="countItem">
+                    <label>已发货</label>
+                    <p><span>{$count.order4}</span></p>
+                </div>
+            </li>      
+        </div>   
+    </div>
+</div>

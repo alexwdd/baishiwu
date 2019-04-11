@@ -1,0 +1,61 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" hidden>
+			<div class="layui-form-item">
+		    	<button class="layui-btn" id="moveBtn" lay-submit="" lay-filter="save" url="<{:U('Tuan/movesave')}>">移动</button>
+			</div>
+			<input type="hidden" name="articleid" id="articleid">
+			<input type="hidden" name="goodsid" value="<{$goodsid}>">
+		</form>
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Tuan/move')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-10"></table>	
+	        <div class="fsDatagridCols">
+				<p field="cityID" title="城市" width="80" dict="city" sort="true"/>		
+				<p field="articleid" title="团号" width="100"/>
+				<p field="type" title="团类型" width="100" dict="tuanType"/>				
+				<p field="goodstype" title="货物类型" width="100" dict="goodstype"/>
+				<p field="maxWeight" title="最大重量(kg)" width="130"/>
+				<p field="localWeight" title="当前重量" width="130"/>
+				<p field="address" title="取货地址" width="180" />
+				<p field="contact" title="联系人" width="100"/>
+				<p field="phone" title="电话" width="120"/>
+				<p field="status" title="状态" width="100" dict="baoguo" sort="true"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="80"/>
+			</div>
+
+			<script type="text/html" id="barDemo">
+ 				<a class="layui-btn layui-btn-xs" onclick="doMove({{d.articleid}})">选择</a>
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+function doMove(id){
+	layui.use("layer",function(){
+		$("#articleid").val(id);
+		layer = layui.layer;
+		layer.msg('确定吗？', {
+			time:0,
+			btn: ['确定', '取消'],
+			yes: function(index){
+		    	$("#moveBtn").click();
+			}
+		});
+	})	
+}
+layui.use('table', function(){
+	form = layui.form; 
+	//监听性别操作
+	form.on('switch(auth)', function(obj){
+		url = '<{:U('Tuan/status')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"auth",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

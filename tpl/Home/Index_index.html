@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><{$list.name}></title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<include file="Public:cssjs" />
+<!-- 移动端适配 -->
+<script>
+var html = document.querySelector('html');
+changeRem();
+window.addEventListener('resize', changeRem);
+
+function changeRem() {
+    var width = html.getBoundingClientRect().width;
+    html.style.fontSize = width / 10 + 'px';
+}
+</script>
+
+</head>
+<body>
+
+<div id="wrap" <notempty name="list.background">style="background-image:url(<{$list.background}>)"</notempty>>
+    <p class="time"><{$list.startTime|date="m.d",###}>-<{$list.endTime|date="m.d",###}></p>
+    <!--星星-->
+    <div class="stars-box">
+        <span class="stars"></span>
+        <span class="stars"></span>
+        <span class="stars"></span>
+        <span class="stars"></span>
+        <span class="stars"></span>
+        <span class="stars"></span>
+        <span class="stars"></span>
+    </div>
+    <!--主体-->
+    <div class="main">
+        <p class="rule"></p>
+
+        <a href="<{:U('Index/my',array('userid'=>$userid))}>" id="myWin">
+            <p class="my"></p>
+        </a>
+        <!--游戏区域-->
+        <div class="box">
+            <span class="coin"></span>
+            <h2>您今日还有 <span id="change"> <{$diffNumber}> </span> 次抽奖机会</h2>
+            <ul class="light clearfix">
+                <li class="fl">
+                    <p class="blin"></p>
+                    <p class=""></p>
+                    <p class="blin"></p>
+                    <p class=""></p>
+                </li>
+                <li class="fr">
+                    <p class=""></p>
+                    <p class="blin"></p>
+                    <p class=""></p>
+                    <p class="blin"></p>
+                </li>
+            </ul>
+            <!--九宫格-->
+            <ul class="play clearfix">
+            	<?php for($i=0 ; $i<count($prize) ; $i++) { ?>
+
+            	<eq name="i" value="4">
+            	<!--开始按钮-->
+                <li id="btn"></li>
+            	</eq>
+
+            	<li class="prize">
+                    <div>
+                        <img src="<{$image[$i]}>">
+                        <p><{$prize[$i]}></p>
+                    </div>
+                </li>
+            	<?php } ?>                
+            </ul>
+        </div>        
+    </div>
+
+    <!--游戏规则弹窗-->
+    <div id="mask-rule">
+        <div class="box-rule">
+            <span class="star"></span>
+            <h2>活动规则说明</h2>
+            <span id="close-rule"></span>
+            <div class="con">
+                <div class="text"><{$list.content|n2br}></div>
+            </div>
+        </div>
+    </div>
+    <!--中奖提示-->
+    <div id="mask">
+        <div class="blin"></div>
+        <div class="caidai"></div>
+        <div class="winning">
+            <div class="red-head"></div>
+            <div class="red-body"></div>
+            <div id="card">
+                <a href="<{:U('Index/my',array('userid'=>$userid))}>" target="_self" class="win"></a>
+            </div>
+            <a href="<{:U('Index/my',array('userid'=>$userid))}>" target="_self" class="btn"></a>
+            <span id="close"></span>
+        </div>
+    </div>
+</div>
+
+<div class="history">
+    <ul class="mulitline">
+        <volist name="history" id="vo">
+        <li><{$vo.name}>，获得<{$vo.prize}></li>
+        </volist>
+    </ul>
+</div>
+
+<notempty name="list.bottom">
+<div class="ad"><a href="<{$list.link}>"><img src="<{$list.bottom}>"></a></div>
+</notempty>
+
+<script type="text/javascript" src="<{:RES}>/js/common.js"></script>
+<script>
+ $(function(){ 
+    //多行应用@Mr.Think 
+    var _wrap=$('ul.mulitline');//定义滚动区域 
+    var _interval=2000;//定义滚动间隙时间 
+    var _moving;//需要清除的动画 
+    _wrap.hover(function(){ 
+    clearInterval(_moving);//当鼠标在滚动区域中时,停止滚动 
+    },function(){ 
+    _moving=setInterval(function(){
+        var _field = _wrap.find('li:first'); //此变量不可放置于函数起始处,li:first取值是变化的 
+    var _h=_field.height();//取得每次滚动高度 
+    _field.animate({marginTop:-_h+'px'},600,function(){ 
+    _field.css('marginTop',0).appendTo(_wrap);//隐藏后,将该行的margin值置零,并插入到最后,实现无缝滚动 
+    }) 
+    },_interval)//滚动间隔时间取决于_interval 
+    }).trigger('mouseleave');//函数载入时,模拟执行mouseleave,即自动滚动 
+}); 
+
+$(function () {
+    var $blin = $(".light p"),//所有彩灯
+        $prize = $(".play li").not("#btn"),//含谢谢参与的所有奖品
+        $change = $("#change"),//显示剩余机会
+        $btn = $("#btn"),//开始抽奖按钮
+        length = $prize.length,//奖品总数
+        data = {count: <{$diffNumber}>},//次数
+        bool = true,//判断是否可点击,true为可点击
+        mark = 0,//标记当前位置，区间为0-7
+        is_weixin = <{$is_weixin}>,
+        userid = <{$userid}>,
+        status = <{$flag}>,
+        timer;//定时器
+    init();
+    //默认动画效果
+    function init() {
+        timer = setInterval(function () {
+            //不能调用animate函数，不然标记会有问题
+            $blin.toggleClass("blin");//彩灯动画
+            //九宫格动画
+            /*length++;
+            length %= 8;
+            $prize.eq(length - 1).removeClass("select");
+            $prize.eq(length).addClass("select");
+
+            //位置标记的改变
+            mark++;
+            mark %= 8;*/
+        }, 1000);
+    }
+
+    //点击抽奖
+    $btn.click(function () {
+        if (status==0){
+            layer.open({
+                content: '活动已经终止'
+            });
+            return false;
+        };
+        if (status==1){
+            layer.open({
+                content: '活动尚未开始'
+            });
+            return false;
+        };
+        if (status==2){
+            layer.open({
+                content: '活动已经结束'
+            });
+            return false;
+        };
+        if (is_weixin==1){
+            layer.open({
+                content: '<div class="appText">请下载<{$appName}>APP参与抽奖，更多精彩活动等着你来！</div><div class="appList"><li><a href="<{$iUrl}>"><img src="<{:RES}>/image/appstore.png" /></a></li><li><a href="<{$aUrl}>"><img src="<{:RES}>/image/googleplay.png" /></a></li></div>'
+            });
+            return false;
+        };
+    	if (userid==0){
+    		window.location.href = 'app://login';
+    	}else{
+    		if (bool) {//若未按下
+	            bool = false;
+	            if (data.count > 0) {//若还有次数
+	                data.count--;
+	                $change.html(data.count);
+	                clickFn();
+	            } else { 
+                    //询问框
+                    bool = true;
+                    layer.open({
+                        content: '哎呀，机会用完了，分享活动给朋友，多一次抽奖机会哦！',
+                        btn: ['去分享', '取消'],
+                        yes: function(index){
+                            window.location.href='app://shareWX?id=<{$list.id}>';
+                            layer.close(index);
+                        }
+                    });
+	            }
+	        }
+    	}        
+    });
+
+    //点击旋转
+    function clickFn() {
+        clearInterval(timer);//点击抽奖时清除定时器
+        $.ajax({
+			url : '<{:U('Index/play')}>',
+			dataType : 'json',
+			type : 'post',
+			data : {aID:<{$list.id}>,userid:userid},
+			success : function(r){
+				if (r.status==0) {					
+					layer.open({content: r.info});
+				}else{					
+					res = r.url;
+					var random = res.key;
+			        var mark = res.key;
+			        //默认先转4圈
+			        random += 40;//圈数 * 奖品总数
+			        //调用旋转动画
+			        for (var i = 1; i <= random; i++) {
+			            setTimeout(animate(), 2 * i * i);//第二个值越大，慢速旋转时间越长
+			        }
+			        //停止旋转动画
+			        setTimeout(function () {
+			            //console.log("中了" + res.prize);
+			            setTimeout(function () {
+			                bool = true;
+			                win();
+			            }, 1000);
+			        }, 2 * random * random);
+				}
+			}
+		});
+    }
+
+    //动画效果
+    function animate() {
+        return function () {
+            $blin.toggleClass("blin");//彩灯动画
+            //九宫格动画
+            length++;
+            length %= 8;
+            $prize.eq(length - 1).removeClass("select");
+            $prize.eq(length).addClass("select");
+        }
+    }
+
+    //中奖信息提示
+    $("#close,.win,.btn").click(function () {
+        clearInterval(timer);//关闭弹出时清除定时器
+        init();
+    });
+});
+</script>
+</body>
+</html>
+

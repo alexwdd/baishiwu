@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style type="text/css">
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+    color: #05c1af;
+    border-bottom: 2px solid #05c1af;
+    background: 0 0;
+}
+</style>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="navBox">
+		<div class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="height:40px">
+		    <div class="mui-scroll" style="height:40px">
+		        <a :class="['mui-control-item', { 'mui-active': vo.checked } ]" v-for="vo in cate" @click="selectCate(vo)">{{vo.title}}</a>
+		    </div>
+		</div>
+	</div>
+
+	<div class="block" style="height: 41px"></div>
+
+	<div class="empty" v-show="empty"><img src="../static/image/empty.png"><p>空空如也~</p></div>
+	<template v-if="showType == 'big'">
+	<ul class="picList">
+		<li v-for="item in lists">			
+			<a :href="item.url">
+			<div class="mui-slider">
+				<div class="mui-slider-group">				    
+				    <div class="mui-slider-item" v-for="banner in item.images" style="height:180px;background-position: center; background-repeat: no-repeat;background-size: cover;" v-bind:style="{backgroundImage:'url('+banner+')'}"></div>
+				</div>
+
+				<div class="slider-money">
+					<span v-if="item.price == 0">{{price}}</span>
+					<span v-else-if="item.price == 0.10">自助</span>
+					<span v-else-if="item.price == 0.1">自助</span>
+					<span v-else>{{fixHead}}${{item.price}}</span>
+					<div class="tag4" v-if="item.tag4 !='' ">{{item.tag4}}</div>
+				</div>
+				
+				<div class="slider-tag">
+					<span class="tag1" v-if="item.tag1 !=''">{{item.tag1}}</span>
+					<span class="tag2" v-if="item.tag2 !=''">{{item.tag2}}</span>
+					<span class="tag3" v-if="item.tag3 !=''">{{item.tag3}}</span>
+				</div>				
+			</div>	
+			<div class="info">
+				<h1>{{item.title}}</h1>
+				<p v-if="item.address !='' "><i class="icon icon-weizhi"></i> {{item.address}}</p>
+			</div>
+			</a>			
+		</li>		
+	</ul>
+	</template>
+	<template v-else>
+	<ul class="articleList">
+		<li v-for="item in lists">			
+			<a :href="item.url">
+			<div class="img" v-bind:style="{backgroundImage:'url('+item.thumb_s+')'}" ></div>			
+			<div class="info">
+				<h1>{{item.title}}</h1>
+				<p><i class="icon icon-weizhi"></i> {{item.address|empty}}</p>
+				<p>
+					<span class="mui-pull-left" v-if="item.price == 0">
+					<i class="icon icon-meiyuan"></i> {{price}}
+					</span>
+					<span class="mui-pull-left" v-else-if="item.price == '0.10'"><i class="icon icon-meiyuan"></i> 自助</span>
+					<span class="mui-pull-left" v-else-if="item.price == '0.1'"><i class="icon icon-meiyuan"></i> 自助</span>
+					<span v-else>					 
+					 <i class="icon icon-meiyuan"></i> {{fixHead}}${{item.price}}
+					</span>					
+					<span class="mui-pull-right">{{item.updateTime|time}}</span>
+				</p>
+			</div>
+			</a>			
+		</li>		
+	</ul>		
+	</template>	
+</div>
+
+<script>
+vm = new Vue({
+	el : "#vm",
+	data : {
+		cate:[{title:'全部',id:0,checked:true}],
+		flag : true,
+		activeID:0,
+		empty:false,
+		page : 1,
+		canScroll : 1,
+		next : 1,
+		type : 'sp',
+		showType:request.showType,
+		lists : [],
+		fixHead:'',
+		price:'详情请咨询'
+	},
+	created : function(){
+		var that = this;
+		that.goPage(that.page);
+		$(window).scroll(function(){
+			if(that.canScroll==0 || that.next==0){//不要重复加载
+				return;
+			}
+			if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+				that.page++;   
+				that.goPage(that.page); // 执行增加页面数据操作
+			} 
+		});
+	},
+	methods: {
+		selectCate(e){
+			data = this.cate;
+			for(i in data){
+				if (data[i]['id']==e.id){
+					data[i]['checked'] = !data[i]['checked'];
+				}else{
+					data[i]['checked'] = false
+				}
+				if(data[i]['checked']){
+					this.activeID = data[i]['id'];
+				}								
+			}
+			this.lists = [];
+			this.page = 1;
+			this.empty = false;
+			this.goPage(this.page);
+		},
+    	goPage (page) {
+    		var that = this;
+    		that.canScroll = 0;
+    		mui.showLoading('数据加载中');
+    		var request = GetRequest();
+    		request.page = that.page;  
+    		that.type = request.type;
+  
+    		if (that.activeID != 0){
+    			request.sort = that.activeID;
+    		}
+    		if (that.type=='tc') {
+    			that.price = '免费';
+    		}; 
+    		if (that.type=='ms') {
+    			that.price = '详情请咨询';
+    			that.fixHead = '人均:';
+    		}; 		
+    		$.post(
+				config.articleList,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						if (that.flag){
+							cate = res.body.cate;
+							for (var i = 0; i < cate.length; i++) {
+								cate[i]['checked'] = false;
+							}
+							that.cate = that.cate.concat(cate);
+							that.flag = false;
+						}	
+						data = res.body.articles;
+						if (data.length==0){
+							that.empty = true;
+						}
+						$.each(data,function(index){	
+							data[index]['tag1'] = '';	
+							data[index]['tag2'] = '';	
+							data[index]['tag3'] = '';	
+							data[index]['tag4'] = '';	
+							if (this.html==''){
+								data[index]['url'] = 'app://articledetail?articleid='+this.articleid+'&type='+that.type
+							}else{
+								data[index]['url'] = 'app://html?url='+this.html+'&title='+this.title;
+							}					
+							if (this.thumb_s==''){
+								if (this.cityID==39){
+									data[index]['thumb_s'] = '/www/static/image/xjp_320.jpg';
+								}else{
+									data[index]['thumb_s'] = '/www/static/image/default_320.jpg';
+								}									
+							};
+							data[index]['images']=this.image.split(";"); //字符分割
+
+							switch(that.type){
+								case 'tc':
+								  	data[index]['tag1'] = this.sortName;
+								  	if (this.begin !='' ) {
+										data[index]['tag2'] = '开始：'+this.begin;
+									}else{
+										data[index]['tag2'] = '';
+									}
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+								case 'zf':										
+									if (this.sortName!='' && this.sortName!=null){
+										data[index]['tag1'] = this.sortName;
+									}	
+								  	
+								  	if (this.houseType==0){//出租
+								  		data[index]['tag2'] = this.singleType;
+								  		if (this.Into!='') {
+								  			data[index]['tag3'] = '入住：'+this.Into;
+								  		}else{						
+								  			data[index]['tag3'] = '';
+								  		}
+								  	}else{//出售
+								  		data[index]['tag2'] = '';
+								  		data[index]['tag3'] = '';
+								  		if (this.bedrooms >0){
+								  			data[index]['tag2'] += this.bedrooms+'卧';
+								  		}
+								  		if (this.toilets >0){
+								  			data[index]['tag2'] += this.toilets+'卫';
+								  		}
+								  		if (this.showers >0){
+								  			data[index]['tag2'] += this.showers+'浴';
+								  		}
+								  		if (this.parks >0){
+								  			data[index]['tag2'] += this.parks+'车位';
+								  		}
+								  	}										
+									data[index]['tag4'] = this.remark;
+									break;										
+								case 'sp':
+									data[index]['tag1'] = this.sortName;
+									data[index]['tag2'] = '';
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+								case 'zp':
+									data[index]['tag1'] = this.sortName;
+									data[index]['tag2'] = '';
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+								case 'esc':									
+								  	data[index]['tag1'] = this.brand;
+									data[index]['tag2'] = this.trans;
+									data[index]['tag3'] = this.year;
+									if (parseFloat(this.mileage) > 0) {				
+										data[index]['tag4'] = this.mileage+'万公里';
+									}else{
+										data[index]['tag4'] = '';
+									}
+									break;									
+								case 'ms':
+								  	data[index]['tag1'] = this.sortName;
+									data[index]['tag2'] = this.feature;
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+								case 'sh':
+								  	data[index]['tag1'] = this.sortName;
+								  	data[index]['tag2'] = this.feature;	
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+								case 'xp':
+								  	data[index]['tag1'] = this.sortName;
+									data[index]['tag2'] = this.feature;
+									data[index]['tag3'] = '';
+									data[index]['tag4'] = '';
+									break;
+							}		
+						})	
+						that.lists = that.lists.concat(data);	
+						that.canScroll = 1;				
+						that.next = res.body.next;				
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+    	}
+	},
+	updated : function(){
+		mui('.mui-slider').slider();
+		var w = $(".nav ul").width();
+		$(".nav").width(w);
+	}
+});
+
+Vue.filter('time', function (value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+    	month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+    	day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+})
+
+Vue.filter('empty', function (value) {
+    if (value=='' || value==null || value==undefined) {
+    	return '详情请咨询'
+    }else{
+    	return value
+    }
+})
+</script>
+</body>
+</html>

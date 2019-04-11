@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">	    
+		<h5 class="sortName">{{typeName}}分类</h5>
+		<ul class="mui-table-view mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="javascript:void(0)" id="sortName"></a>
+	        </li>
+	    </ul>
+		
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">地址</a>
+	        </li>
+	    </ul>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" id="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group mb10" v-if="jobtype == 0">
+		    <div class="mui-input-row">
+		        <input type="text" name="job" id="job" class="mui-input-clear" placeholder="职位,如:餐厅服务员(选填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="work" id="work" class="mui-input-clear" checkMsg="请选择工作类型" placeholder="工作类型(选填)" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="visa" id="visa" class="mui-input-clear" checkMsg="请选择签证类型" placeholder="签证类型(选填)" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="company" id="company" class="mui-input-clear" :placeholder="company">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="email" id="email" class="mui-input-clear" placeholder="邮箱(选填)">
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10" v-if="jobtype == 0">
+		    <div class="mui-input-row">
+		        <input type="text" name="links" id="links" class="mui-input-clear" placeholder="相关链接(选填)">
+		    </div>
+	    </div> 
+	    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="price" id="price" placeholder="薪资（0为面议，必填）" checkType="required" checkMsg="请输入薪资" style="width: 70%">
+		        <button type="button" id="unitBtn" class="mui-btn mui-btn-outlined" style="padding: 8px 0; margin-right: 10px; margin-top: 3px">/周</button>
+		    </div>
+	    </div> 
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div>     
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">发布</button>
+	    </div>	     
+	    <input type="hidden" name="cityID" id="cityID" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="sort" id="sort" checkType="required" checkMsg="信息不完整"/>        
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="jobtype" id="jobtype" v-model="jobtype" />    
+        <input type="hidden" name="address" id="address" checkType="required" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" id="imgpath" />
+	    <input type="hidden" name="thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" id="thumb_b" />
+	</form>
+</div>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var workPicker = new $.PopPicker();
+		var visaPicker = new $.PopPicker();
+		var unitPicker = new $.PopPicker();
+		workPicker.setData(['Full Time','Part Time','Contract','Casual']);
+		visaPicker.setData(['PR','Citizen','工作签证','学生签证','所有签证']);
+		unitPicker.setData(['/小时','/天','/周','/月','/年']);
+		var workBtn = doc.getElementById('work');
+		var visaBtn = doc.getElementById('visa');
+		var unitBtn = doc.getElementById('unitBtn');
+		var workResult = doc.getElementById('work');
+		var visaResult = doc.getElementById('visa');
+		var unitResult = doc.getElementById('unitBtn');
+		workBtn.addEventListener('tap', function(event) {
+			workPicker.show(function(items) {
+				workResult.value = items[0];
+			});
+		}, false);
+		visaBtn.addEventListener('tap', function(event) {
+			visaPicker.show(function(items) {
+				visaResult.value = items[0];
+			});
+		}, false);
+		unitBtn.addEventListener('tap', function(event) {
+			unitPicker.show(function(items) {
+				unitResult.innerText = items[0];
+			});
+		}, false);
+		//-----------------------------------------			
+	});
+})(mui, document);
+
+vue = new Vue({
+	el : "#vm",
+	data : {
+		jobtype : '',
+		typeName : '招聘',
+		company : '职位，如：餐厅服务员(选填)',
+		msg : '请输入求职岗位',
+		jobtype : ''
+	},
+	created : function(){
+		that = this;
+		var request = GetRequest();
+		jobtype = request.jobtype;
+		if (jobtype!=0 && jobtype!=1) {
+			mui.alert('参数错误！', '系统消息', function(){
+				window.history.go(-1);
+			}) 
+		};
+		that.jobtype = jobtype
+	}
+});
+</script>
+
+<script type="text/javascript" src="../static/js/publish.js"></script>
+</body>
+</html>

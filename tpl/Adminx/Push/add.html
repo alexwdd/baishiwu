@@ -1,0 +1,79 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+	    <label class="layui-form-label">城市</label>
+	    <div class="layui-input-inline">
+	    	<select name="city" id="city" lay-verify="required">
+	    		<option value="">==请选择==</option>
+	    		<volist name="city" id="vo">
+	    		<option value="<{$vo.city}>"><{$vo.name}></option>
+	    		</volist>
+	    	</select>
+	    </div>
+	</div>
+
+	<div class="layui-form-item">
+	    <label class="layui-form-label">内容</label>
+	    <div class="layui-input-block">
+	    	<input type="text" name="title" lay-verify="required" autocomplete="off" class="layui-input"/>
+	    </div>
+	</div>
+
+	<div class="layui-form-item">
+	    <label class="layui-form-label">类型</label>
+	    <div class="layui-input-inline">
+	    	<select name="type" id="type" lay-verify="required" lay-filter="type">
+	    		<option value="">==请选择==</option>
+	    		<option value="1">文章</option>
+	    		<option value="2">帖子</option>
+	    	</select>
+	    </div>
+	</div>
+
+	<div class="layui-form-item" id="article" style="display: none;">
+	    <label class="layui-form-label">链接地址</label>
+	    <div class="layui-input-block">
+	    	<input type="text" name="url" autocomplete="off" class="layui-input"/>
+	    </div>
+	</div>
+
+	<div class="layui-form-item" id="tiezi" style="display: none;">
+	    <label class="layui-form-label">模块</label>
+	    <div class="layui-input-inline">
+	    	<select name="model" id="model">
+	    		<option value="">==请选择==</option>
+	    		<volist name=":C('infoArr')" id="vo">
+	    		<option value="<{$vo.py}>"><{$vo.name}></option>
+	    		</volist>>
+	    	</select>
+	    </div>
+
+	    <label class="layui-form-label">帖子ID</label>
+	    <div class="layui-input-inline">
+	    	<input type="text" name="articleID" autocomplete="off" class="layui-input"/>
+	    </div>
+	</div>
+	
+	<hr/>
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button class="layui-btn" lay-submit="" lay-filter="save" url="<{:U('Push/add')}>">发送</button>
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+</form>
+<script type="text/javascript">
+layui.use(['form'],function(){
+	var form = layui.form;
+	form.on('select(type)',function(e){
+		if(e.value==1){
+			$("#article").show();
+			$("#tiezi").hide();
+		}else{
+			$("#tiezi").show();
+			$("#article").hide();
+		}
+		form.render();
+	})
+})
+</script>

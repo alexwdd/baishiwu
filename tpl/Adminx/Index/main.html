@@ -1,0 +1,21 @@
+<layout name='layout' />
+
+<div class="admin-main">
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>系统信息</legend>
+	</fieldset>  
+	<div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table">
+                <tbody>
+                    <volist name="info" id="v">
+                    <tr>
+                        <td><{$key}></td>
+                        <td><{$v}></td>
+                    </tr>
+                    </volist>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+</div>

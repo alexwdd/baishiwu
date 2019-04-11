@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/js/cart.js"></script>
+<style type="text/css">
+.mui-preview-image.mui-fullscreen {
+position: fixed;
+z-index: 20;
+background-color: #000;
+}
+.mui-preview-header,
+.mui-preview-footer {
+position: absolute;
+width: 100%;
+left: 0;
+z-index: 10;
+}
+.mui-preview-header {
+height: 44px;
+top: 0;
+}
+.mui-preview-footer {
+height: 50px;
+bottom: 0px;
+}
+.mui-preview-header .mui-preview-indicator {
+display: block;
+line-height: 25px;
+color: #fff;
+text-align: center;
+margin: 15px auto 4;
+width: 70px;
+background-color: rgba(0, 0, 0, 0.4);
+border-radius: 12px;
+font-size: 16px;
+}
+.mui-preview-image {
+display: none;
+-webkit-animation-duration: 0.5s;
+animation-duration: 0.5s;
+-webkit-animation-fill-mode: both;
+animation-fill-mode: both;
+}
+.mui-preview-image.mui-preview-in {
+-webkit-animation-name: fadeIn;
+animation-name: fadeIn;
+}
+.mui-preview-image.mui-preview-out {
+background: none;
+-webkit-animation-name: fadeOut;
+animation-name: fadeOut;
+}
+.mui-preview-image.mui-preview-out .mui-preview-header,
+.mui-preview-image.mui-preview-out .mui-preview-footer {
+display: none;
+}
+.mui-zoom-scroller {
+position: absolute;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+left: 0;
+right: 0;
+bottom: 0;
+top: 0;
+width: 100%;
+height: 100%;
+margin: 0;
+-webkit-backface-visibility: hidden;
+}
+.mui-zoom {
+-webkit-transform-style: preserve-3d;
+transform-style: preserve-3d;
+}
+.mui-slider .mui-slider-group .mui-slider-item img {
+width: auto;
+height: auto;
+max-width: 100%;
+max-height: 100%;
+}
+.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+width: 100%;
+}
+.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+display: inline-table;
+}
+.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+display: table-cell;
+vertical-align: middle;
+}
+.mui-preview-loading {
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+display: none;
+}
+.mui-preview-loading.mui-active {
+display: block;
+}
+.mui-preview-loading .mui-spinner-white {
+position: absolute;
+top: 50%;
+left: 50%;
+margin-left: -25px;
+margin-top: -25px;
+height: 50px;
+width: 50px;
+}
+.mui-preview-image img.mui-transitioning {
+-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+transition: transform 0.5s ease, opacity 0.5s ease;
+}
+@-webkit-keyframes fadeIn {
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+}
+@keyframes fadeIn {
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+}
+@-webkit-keyframes fadeOut {
+0% {
+  opacity: 1;
+}
+100% {
+  opacity: 0;
+}
+}
+@keyframes fadeOut {
+0% {
+  opacity: 1;
+}
+100% {
+  opacity: 0;
+}
+}
+p img {
+max-width: 100%;
+height: auto;
+}
+</style>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="mui-slider">
+		<div class="mui-slider-group">
+		    <!--第一个内容区容器-->
+		    <div class="mui-slider-item my-slider-img" v-for="item in banner" style="height:180px;background-position: center; background-repeat: no-repeat;background-size: cover;" v-bind:style="{backgroundImage:'url('+item+')'}">
+		    	<img :src="item" style="opacity:0;width:100%" data-preview-src="" data-preview-group="1"/>
+		    </div>
+		</div>
+
+		<div class="mui-slider-indicator">
+	  		<div class="mui-slider-indicator">
+				<div class="mui-indicator" v-for="item in banner"></div>	
+			</div>
+	  	</div>
+	</div>
+
+	<div class="infoDetail">
+		<div class="title">{{info.title}}</div>
+		<div class="base">
+			<div class="price" v-if="info.price == 0">{{price}}</div>
+			<div class="price" v-else-if="info.price == 0.1">自助</div>
+			<div class="price" v-else>{{fixHead}}${{info.price}}</div>
+			<div class="fav" id="fav" v-on:click="doFav" v-html="fav"></div>			
+		</div>
+
+		<div class="tag">
+			<span class="my-badge my-badge-green">{{info.sortName}}</span>
+			<span class="my-badge my-badge-auth" v-if="info.auth == 1">已实名认证</span>
+		</div>		
+
+		<div class="content">
+			<div class="hd">描述</div>
+			<div class="bd">{{info.detail}}</div>
+		</div>
+
+		<div class="list">
+			<component :is="currentComponent" :info="info"></component>
+			<li>
+				<p><i class="icon icon-sousuo- green"></i> 联系人</p>
+				<span>{{info.contact}}</span>
+			</li>
+			<li>
+				<p><i class="icon icon-shouji green"></i> 联系电话</p>
+				<span>{{info.phone}}</span>
+			</li>
+			<li>
+				<p><i class="icon icon-weixin green"></i> 微信</p>
+				<span>{{info.wechat}}</span>
+			</li>
+		</div>
+
+		<div class="mapBox">
+			<div class="add">{{info.address}}</div>
+			<div @click="openMap" style="position:absolute; width:100%; height:200px; left:0; top:0; z-index:100"></div>
+			<div id="map"></div>
+		</div>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
+
+
+
+		<div class="comment">
+			<div class="hd">
+				<h4>最新评论</h4>
+				<span><a href="#writeBox"><i class="icon icon-pinglun"></i> 写评论</a></span>
+			</div>
+			<div class="bd">
+				<li v-for="item in comments">
+					<div class="userInfo">
+						<div class="face"><img :src="item.headimg"></div>
+						<div class="name">{{item.nickname}}</div>
+						<div class="date">{{item.time|time}}</div>
+					</div>
+					<div class="con">{{item.content}}</div>
+				</li>				
+			</div>			
+			<div class="fd">
+				<a :href="'comments.html?articleid='+info.articleid+'&type='+type+'&commentid='+commentid">查看全部评论 <i class="mui-icon mui-icon-arrowright"></i></a>
+			</div>
+		</div>
+
+		<div id="writeBox" class="mui-popover mui-popover-action mui-popover-bottom"  style="background: #F2F2F2;">
+			<div class="mui-content-padded">
+				<textarea type="text" class="mui-pull-left" id="pinlunTXT" style="width:100%;height: 100px;font-size: 14px;border-radius: 10px;" placeholder="点评..."></textarea>
+				<a class="mui-btn mui-btn-blue my-btn mui-pull-right" style="margin-bottom: 15px;" id="pinlunUP">发送</a>
+			</div>
+		</div>
+		
+		<div v-show="showBtn">
+			<div class="block"></div>
+			<div class="footAction" v-on:click="doUpdate" style="width:70%">更新置顶</div>
+			<div class="footAction" v-on:click="doEdit" style="width:30%;left:70%; background:#f1f1f1;color:#05c1af"><i class="mui-icon mui-icon-compose"></i>编辑</div>
+		</div>
+	</div>
+</div>
+
+<script src="../static/mui/js/mui.zoom.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/js/mui.previewimage.js" type="text/javascript" charset="utf-8"></script>
+<script>
+//mui.ready(function(){	
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			banner : [],
+			info : [],
+			lng : '',
+			lat : '',
+			type:'',
+			fixHead:'',
+			price:'详情请咨询',
+			commentid :0,
+			fav:'<i class="icon icon-star"></i> 收藏',
+			comments :[],
+			currentComponent: request.type,
+			showBtn:false
+		},
+		components: {
+        	sp: {
+          		props:["info"],
+            	template: ``
+          	},
+          	tc: {
+          		props:["info"],
+            	template: `<div>
+            	<li><p>开始时间</p><span>{{info.begin|empty}}</span></li>
+            	<li><p>结束时间</p><span>{{info.end|empty}}</span></li>
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>`
+          	},
+          	zf: {
+          		props:["info"],
+            	template: `<div>
+            	<template v-if="info.houseType == 0">
+            	<li><p>出租类型</p><span>{{info.singleType|empty}}</span></li>
+            	<li><p>出租时长</p><span>{{info.remark|empty}}</span></li>   
+            	<li><p>入住时间</p><span>{{info.Into|empty}}</span></li>
+            	<li><p>设施</p><span>{{info.facility|empty}}</span></li>
+            	<li><p>地铁</p><span>{{info.subway|empty}}</span></li>
+            	<li><p>卧室数</p><span>{{info.bedrooms|empty}}</span></li>
+            	<li><p>停车位数</p><span>{{info.parks|empty}}</span></li>
+            	<li><p>淋浴数</p><span>{{info.showers|empty}}</span></li>
+            	<li><p>卫生间数</p><span>{{info.toilets|empty}}</span></li>         	
+            	</template>
+
+            	<template v-if="info.houseType == 1">
+            	<li><p>卖家类型</p><span>{{info.remark|empty}}</span></li>
+            	<li><p>设施</p><span>{{info.facility|empty}}</span></li>
+            	<li><p>地铁</p><span>{{info.subway|empty}}</span></li>
+            	<li><p>卧室数</p><span>{{info.bedrooms|empty}}</span></li>
+            	<li><p>停车位数</p><span>{{info.parks|empty}}</span></li>
+            	<li><p>淋浴数</p><span>{{info.showers|empty}}</span></li>
+            	<li><p>卫生间数</p><span>{{info.toilets|empty}}</span></li>
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>
+            	</template>
+            	`
+          	},
+          	zp: {
+          		props:["info"],
+            	template:`<div>
+            	<li><p>工作类型</p><span>{{info.work|empty}}</span></li>
+            	<li><p>签证类型</p><span>{{info.visa|empty}}</span></li>
+            	<template v-if="info.jobtype == 0">
+            	<li><p>公司名称</p><span>{{info.company|empty}}</span></li>
+            	</template>
+            	<template v-if="info.jobtype == 1">
+            	<li><p>期望职位</p><span>{{info.company|empty}}</span></li>
+            	</template>
+            	<li><p>邮箱</p><span>{{info.email|empty}}</span></li>
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>
+            	</div>`
+          	},
+          	esc: {
+          		props:["info"],
+            	template:`<div>
+            	<li><p>汽车品牌</p><span>{{info.brand|empty}}</span></li>
+            	<li><p>变速箱</p><span>{{info.trans|empty}}</span></li>
+            	<li><p>里程数</p><span>{{info.mileage|empty}}万</span></li>
+            	<li><p>出厂年份</p><span>{{info.year|empty}}</span></li>
+            	</div>`
+          	},
+          	ms: {
+          		props:["info"],
+            	template:`<div>
+            	<li><p>平台优惠</p><span>{{info.discount|empty}}</span></li>
+            	<li><p>营业时间</p><span>{{info.time|empty}}</span></li>
+            	<li><p>配送范围</p><span>{{info.area|empty}}</span></li>
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>
+            	<li><p>特色标签</p><span>{{info.feature}}</span></li>
+            	</div>`
+          	},
+          	sh: {
+          		props:["info"],
+            	template:`<div>
+            	<template v-if="info.discount != ''">
+            	<li><p>平台优惠</p><span>{{info.discount|empty}}</span></li>
+            	</template>
+            	<template v-if="info.links != ''">
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>
+            	</template>
+            	</div>`
+          	},
+          	xp: {
+          		props:["info"],
+            	template:`<div>
+            	<template v-if="info.discount != ''">
+            	<li><p>平台优惠</p><span>{{info.discount|empty}}</span></li>
+            	</template>
+            	<template v-if="info.links != ''">
+            	<li><p>相关链接</p><span><a :href="'app://html?url='+info.links+'&title=相关链接'">{{info.links}}</a></span></li>
+            	</template>
+            	<template v-if="info.feature != ''">
+            	<li><p>特色标签</p><span>{{info.feature}}</span></li>
+            	</template>
+            	</div>`
+          	},
+        },
+		methods: {
+			openMap : function(){
+				that = this;
+		    	url = 'app://map?address='+that.info.address+'&lat='+that.lat+'&lon='+that.lng;
+		    	window.location.href = url;	        	
+	   
+			},
+			doFav: function (e) {
+				var that = this;
+				var product ={
+					'id': that.info.articleid,
+					'type':request.type,
+					'title':that.info.title,
+					'thumb_s':that.info.thumb_s,
+					'price':that.info.price,								
+					'address':that.info.address,
+					'time':that.info.updateTime,
+				};
+				cart.addproduct(product,'myFav');	
+				that.fav = '<i class="icon icon-xingxing"></i> 已收藏';
+			},
+			doEdit:function(){
+				that = this;
+				if (that.type=='zf'){
+					url = 'edit_'+that.type+that.info.houseType+'.html?articleid='+that.info.articleid+'&type='+that.type;
+				}else if (that.type=='zp'){
+					url = 'edit_'+that.type+that.info.jobtype+'.html?articleid='+that.info.articleid+'&type='+that.type;
+				}else{
+					url = 'edit_'+that.type+'.html?articleid='+that.info.articleid+'&type='+that.type;
+				}
+				
+				if (request.userid!='' && request.userid!=undefined) {
+					url += '&userid='+request.userid;
+				}
+				if (request.password!='' && request.password!=undefined) {
+					url += '&password='+request.password;
+				}
+				if (request.openid!='' && request.openid!=undefined) {
+					url += '&openid='+request.openid;
+				}
+				window.location.href = url;
+			},
+			doUpdate:function(){
+				that = this;
+				$.post(
+					config.articleTime,
+					{										
+						articleid : that.info.articleid,
+						type : that.type,
+				        userid:request.userid,
+				        password:request.password,
+				        openid:request.openid,
+				   	},
+				   	function(res){	
+				   		mui.hideLoading();	        	
+						if(res.code=='0'){
+							mui.toast("状态更新成功");
+						}else{
+							mui.hideLoading();
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+			}
+		},
+		created : function(){
+			var that = this;
+    		mui.showLoading('数据加载中');
+    		that.type = request.type;
+    		that.commentid = request.commentid;
+    		if (that.type=='tc') {
+    			that.price = '免费';
+    		}; 
+    		if (that.type=='ms') {
+    			that.price = '详情请咨询';
+    			that.fixHead = '人均:';
+    		}; 
+
+    		if (request.userid!='' && request.userid!=undefined) {
+    			console.log(config.checkIsMy);
+    			$.post(
+					config.checkIsMy,
+					request,
+				   	function(res){
+						if(res.code=='0'){
+							that.showBtn = true;
+						}
+			    	},
+			    	"json"
+			    );    			
+    		}
+
+    		$.post(
+				config.articleInfo,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body;										
+						that.banner = data.images;
+						that.info = data;
+						that.lng = data.longitude;						
+						that.lat = data.latitude;						
+						that.comments = data.comments;	
+						if (request.type=='ms' || request.type=='esc' || request.type=='sh' || request.type=='xp'){
+							that.info.auth = 1;
+						}
+
+						//添加到足迹
+						var product ={
+							'id': that.info.articleid,
+							'type':request.type,
+							'title':that.info.title,
+							'thumb_s':that.info.thumb_s,
+							'price':that.info.price,								
+							'address':that.info.address,
+							'time':that.info.updateTime,
+							'sortName':that.info.sortName
+						};
+						cart.addproduct(product,'myHistory');	
+
+						//检查是否收藏
+						if(localStorage.getItem('myFav')){
+							result = cart.existproduct(data.articleid,'myFav');
+							if (result){
+								that.fav = '<i class="icon icon-xingxing"></i> 已收藏';
+							}		
+						}
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		},
+		updated : function(){
+			setTimeout(function(){
+			    var gallery = mui('.mui-slider');
+			    gallery.slider({
+			         interval:1800//自动轮播周期，若为0则不自动播放，默认为0；
+			    });
+				mui.previewImage();
+			},5000);
+			var that = this;
+	
+			lng = parseFloat(that.lng);
+			lat = parseFloat(that.lat);
+
+			var map; 
+		    var cairo = {lat:lat, lng:lng};
+		    map = new google.maps.Map(document.getElementById('map'), {
+		    	disableDefaultUI: true,
+		    	center: cairo,
+		    	zoom: 17
+		    });
+		    var marker = new google.maps.Marker({position: cairo, map: map});		    
+			/*//初始化地图对象，加载地图			
+		    var map = new BMap.Map("map");
+			var point = new BMap.Point(that.lng, that.lat);
+			map.centerAndZoom(point, 15);
+			//map.disableDragging();
+
+			var myLabel = new BMap.Label("", {offset:new BMap.Size(-10,-20), position:point});  //label的位置					
+			myLabel.setStyle({               //给label设置样式，任意的CSS都是可以的
+				position: 'absolute',
+				border: 'none',
+				background: 'none',
+				zIndex: '1'
+			});
+			
+			var con = '<div class="marker"></div>';
+			myLabel.setContent(con);
+			map.addOverlay(myLabel);//把label添加到地图上*/
+
+		}
+	});
+
+	Vue.filter('room', function (value) {
+        if (value==0){
+        	return '详情请咨询';
+        }else{
+        	return value;
+        }
+    });
+
+    Vue.filter('empty', function (value) {
+        if (value=='' || value==null || value==undefined) {
+        	return '详情请咨询'
+        }else{
+        	return value
+        }
+    })
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    });
+
+    mui("#writeBox").on("tap","#pinlunUP",addpinlun); 
+
+    //添加评论
+	function addpinlun () { 
+		var type = request.type;
+		var articleid = request.articleid;
+		var comments=document.getElementById("pinlunTXT").value;
+		var commentid = request.commentid;
+		mui("#writeBox").popover("toggle");
+		if(commentid==null || commentid==undefined){
+			window.location.href = 'app://login';
+			return false; 
+		}else{
+			if(comments==""){mui.toast("评论内容不可为空");return;}
+			mui.showLoading('数据加载中');
+			$.post(
+				config.userinfo,
+				{
+			        userid:commentid
+			   	},
+			   	function(res){		        	
+					if(res.code=='0'){
+						data = res.body;	
+						$("#userid").val(data.userid);
+						$("#password").val(data.password);		
+						$("#openid").val(data.openid);
+						$.post(
+							config.sendComment,
+							{
+								articleid : articleid,
+								comments : comments,
+								type : type,
+						        userid:commentid,
+						        password:data.password,
+						        openid:data.openid,
+						   	},
+						   	function(res){	
+						   		mui.hideLoading();	        	
+								if(res.code=='0'){
+									mui.toast("评论已发送");
+									window.location.reload();
+								}else{
+									mui.hideLoading();
+									mui.toast(res.desc);
+								}
+					    	},
+					    	"json"
+					    );
+					}else{
+						mui.hideLoading();
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		}
+	} 
+//})
+</script>
+</body>
+</html>

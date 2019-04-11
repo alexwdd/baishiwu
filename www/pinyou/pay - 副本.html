@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<h5 class="billName">应付金额</h5>
+		<div class="payMoney">￥{{info.money}}</div>
+		<h5 class="billName">支付宝或微信扫码支付</h5>
+		<div class="qrcode">
+			<img src="http://y3.ifengimg.com/news_spider/dci_2013/09/b85234c4801f8b2d7771353867a7a0f8.jpg" alt="">
+			<p>长按二维码或屏幕截图可保存二维码</p>
+			<p style="font-weight:bold;color:#000;font-size:16px">支付时请备注：团号+会员名</p>
+		</div>
+		<div class="pyInfo">
+			<div class="bd">
+				<li>
+					<div class="mui-pull-left">支付状态</div>
+					<div class="mui-pull-right" v-html="info.status"></div>
+				</li>
+				<li>
+					<div class="mui-pull-left">团号</div>
+					<div class="mui-pull-right">{{info.articleid}}</div>
+				</li>
+				<li>
+					<div class="mui-pull-left">会员名</div>
+					<div class="mui-pull-right">{{info.nickname}}</div>
+				</li>
+			</div>
+		</div>
+
+	    <div class="jietu" onclick="uploadImage('jietu');"><img id="jietu_src" :src="src" /></div>
+
+	    <input type="file" id="uploadfile"/> 
+
+	    <input type="hidden" name="jietu" id="jietu" value="" checkType="required" checkMsg="请上传付款截图">
+	    
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">提交</button>
+	    </div>
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" /> 
+	</form>
+</div>
+<script>
+mui.ready(function(){	
+	//alert(window.location.href);
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			src:'../static/image/pay.png',
+			info : []
+		},
+		created : function(){
+			var that = this;
+    		mui.showLoading('数据加载中');
+    		var request = GetRequest();    		
+    		$.post(
+				config.pinyouMyBill,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body;
+						if (data.status==0){
+							data['status'] = '<span style="color:#f00">未支付</span>';
+						}else if (data.status==1){
+							data['status'] = '<span>待审核</span>';
+						}else if (data.status==2){
+							data['status'] = '<span style="color:#05c1af">已支付</span>';
+						}
+
+						if (data.jietu!=''){
+							that.src = data.jietu;
+						}
+						that.info = data;						
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		},
+		methods: {
+			doPay : function(){
+				request = GetRequest();  
+	    		url = 'pay.html?articleid='+request.articleid+'&userid='+request.userid+'&openid='+request.openid+'&password='+request.password;
+	    		window.location.href = url;
+			}
+		},
+    	updated : function(){
+
+		}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })	
+})
+</script>
+<script type="text/javascript" src="../static/js/pay.js"></script>
+</body>
+</html>

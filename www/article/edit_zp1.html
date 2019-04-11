@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>编辑-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">    
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" :value="info.title" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">{{info.address}}</a>
+	        </li>
+	    </ul>
+	    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述" :value="info.detail"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="work" id="work" :value="info.work" class="mui-input-clear" checkMsg="请选择工作类型" placeholder="工作类型(选填)" readonly="readonly">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="visa" id="visa" :value="info.visa" class="mui-input-clear" checkMsg="请选择签证类型" placeholder="签证类型(选填)" readonly="readonly">
+		    </div>
+	    </div>
+		<!--求职-->
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="company" id="company" :value="info.company" class="mui-input-clear" placeholder="职位，如：餐厅服务员(选填)">
+		    </div>
+	    </div>
+		
+		<div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="email" id="email" :value="info.email" class="mui-input-clear" placeholder="邮箱(选填)">
+		    </div>
+	    </div> 
+    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="price" id="price" :value="info.p1" placeholder="薪资（0为面议，必填）" checkType="required" checkMsg="请输入薪资" style="width: 70%">
+		        <button type="button" id="unitBtn" class="mui-btn mui-btn-outlined" style="padding: 8px 0; margin-right: 10px; margin-top: 3px">{{info.p2}}</button>
+		    </div>
+	    </div> 
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" :value="info.contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+		
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" :value="info.phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" :value="info.wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div>
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn" style="width: 67%; float: left;">编辑</button>
+	    	<button type="button" id="delBtn" class="mui-btn mui-btn-block" style="width: 30%;float: right;">删除</button>
+	    </div>	
+	    <input type="hidden" name="articleid" id="articleid" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>  
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="address" id="address" :value="info.address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" :value="info.longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" :value="info.latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" :value="info.image" id="imgpath" />
+	    <input type="hidden" name="thumb_s" :value="info.thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" :value="info.thumb_b" id="thumb_b" />
+	    <input type="hidden" name="status" value="0" />
+	</form>
+</div>
+<script src="../static/vue/vue.min.js"></script>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var workPicker = new $.PopPicker();
+		var visaPicker = new $.PopPicker();
+		var unitPicker = new $.PopPicker();
+		workPicker.setData(['Full Time','Part Time','Contract','Casual']);
+		visaPicker.setData(['PR','Citizen','工作签证','学生签证','所有签证']);
+		unitPicker.setData(['/小时','/天','/周','/月','/年']);
+		var workBtn = doc.getElementById('work');
+		var visaBtn = doc.getElementById('visa');
+		var unitBtn = doc.getElementById('unitBtn');
+		var workResult = doc.getElementById('work');
+		var visaResult = doc.getElementById('visa');
+		var unitResult = doc.getElementById('unitBtn');
+		workBtn.addEventListener('tap', function(event) {
+			workPicker.show(function(items) {
+				workResult.value = items[0];
+			});
+		}, false);
+		visaBtn.addEventListener('tap', function(event) {
+			visaPicker.show(function(items) {
+				visaResult.value = items[0];
+			});
+		}, false);
+		unitBtn.addEventListener('tap', function(event) {
+			unitPicker.show(function(items) {
+				unitResult.innerText = items[0];
+			});
+		}, false);
+		//-----------------------------------------			
+	});
+})(mui, document);
+</script>
+<script type="text/javascript" src="../static/js/edit.js"></script>
+</body>
+</html>

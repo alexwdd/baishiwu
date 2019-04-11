@@ -1,0 +1,57 @@
+<layout name='layout' />
+
+<div class="admin-main">
+
+	<form class="layui-form" method="post">
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">标题</label>
+			<div class="layui-input-block">
+				<div class="layui-form-mid"><strong>{$list.title}</strong></div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">姓名</label>
+			<div class="layui-input-block">
+				<div class="layui-form-mid">{$list.name}</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">手机</label>
+			<div class="layui-input-block">
+				<div class="layui-form-mid">{$list.mobile}</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">提交日期</label>
+			<div class="layui-input-block">
+				<div class="layui-form-mid">{$list.createTime|date="Y-m-d H:i:s",###}</div>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">内容</label>
+			<div class="layui-input-block">
+				<blockquote class="layui-elem-quote layui-quote-nm">{$list.content}</blockquote>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+			<label class="layui-form-label">回复</label>
+			<div class="layui-input-block">
+				<textarea name="reply" class="layui-textarea" lay-verify="required">{$list.reply}</textarea>
+			</div>
+		</div>
+	
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button id="subBtn" class="layui-btn" lay-submit="" lay-filter="edit" url="{:U('Feedback/reply')}">立即提交</button>
+				<button type="button" class="layui-btn layui-btn-primary" onclick="window.history.go(-1)">返回</button>
+			</div>
+		</div>
+		<input type="hidden" name="id" value="{$list['id']}" />
+	</form>
+</div>

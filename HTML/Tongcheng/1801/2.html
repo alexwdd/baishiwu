@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title><{$list.title}></title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.min.js" ></script>
+<link rel="stylesheet" href="<{:STATICS}>/css/app.css?v=1.04" type="text/css" />
+</head>
+<body>
+<div class="page">
+	<div class="title"><{$list.title}></div>
+	<div class="date">更新日期：<{$list.updateTime|date="Y-m-d H:i:s",###}></div>
+	<div class="baseInfo">
+		<li class="long">活动时间：</li>
+		<li class="long">地点：</li>
+		<li>人均费用：</li>
+		<li>联系人：</li>
+		<li>电话：</li>
+		<li>微信：</li>
+		<li class="long">网址：</li>
+	</div>
+	<div class="intr">
+		<div class="hd">说明</div>
+		<div class="bd"><{$list.intr}></div>
+	</div>
+	<div class="content"></div>
+</div>
+</body>
+</html>

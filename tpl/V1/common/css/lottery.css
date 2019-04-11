@@ -1,0 +1,12 @@
+﻿/* 大转盘样式 */
+.lottery{display:block;width:100%;margin-left:auto;margin-right:auto; padding: 20px;}
+.lottery .turnplate{display:block;width:100%;position:relative;}
+.lottery .turnplate canvas.item{width:100%;}
+.lottery .turnplate img.pointer{position:absolute;width:31.5%;height:42.5%;left:34.6%;top:22.5%;}
+
+.lotBox{background: #fff; padding: 10px; width: 96%; margin: 10px 2%; border-radius: 5px}
+.mypoint{text-align: center; font-size: 1.6rem}
+.mypoint span{ color:#c00; padding: 0 5px }
+.lotBox .hd{ line-height: 30px; height: 30px; font-weight: bold; color: #ea3836 }
+.lotteryHistory{background: #fff; clear: both; padding: 10px; overflow: hidden;}
+.lotteryHistory li{border-bottom: 1px #ddd solid; padding: 5px 0}

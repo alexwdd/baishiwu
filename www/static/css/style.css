@@ -1,0 +1,211 @@
+::-webkit-input-placeholder {color:#ccc;}
+:-moz-placeholder {color:#ccc;}
+::-moz-placeholder {color:#ccc;}
+:-ms-input-placeholder {color:#ccc;}
+ul,li{list-style: none; margin: 0; padding: 0}
+.green{color:#05c1af}
+
+.main{padding: 10px;}
+.my-btn{background-color: #05c1af;border: 1px solid #05c1af;}
+.sortName{font-size: 14px; padding:10px 15px; clear: both; overflow: hidden;}
+.noborder:before {height: 0px;}
+.insert-img{clear: both; overflow: hidden; background: #fff; padding: 10px;}
+.insert-img li{float: left; width: 120px; height: 110px; margin-right: 10px; list-style: none; position: relative;}
+.insert-img li img{width: 100%; height: *0px; border: 1px #ddd solid}
+.insert-img li i{position: absolute; right: 0; top:0;background: #111; color: #fff; display: block; width: 20px; height: 20px; text-align: center;line-height: 20px; font-size: 18px;}
+.insert-img li a{color: #666; position: absolute; left: 0; bottom: 0; width: 100%; text-align: center; font-size: 12px; height: 20px; line-height: 20px}
+.insert-img li a.active{background: #05c1af; color: #fff}
+.insert-img .insert-btn{display:block; float:left;height: 110px; width: 120px; text-align: center; line-height: 100px; border: 1px #ddd solid; margin: 0; padding: 0; font-size: 3rem; color: #666}
+.insert-img .insert-btn i{font-size: 3rem}
+#address_str{color: #ccc}
+#address_str span{color: #000}
+.address:before {height: 0px;}
+#uploadfile{display: none;}
+
+.navBox{width: 100%; height:40px; position: fixed; background: #fff; top: 0px; overflow-x: auto; background: #fff; z-index: 999}
+
+/*tab菜单*/
+.tabMenu{text-align: center; display: flex; background: #fff; height: 44px; line-height: 44px;}
+.tabMenu li{flex: 1;}
+.tabMenu li a{color: #666; display: block;}
+.tabMenu li.active{ border-bottom: 2px #05c1af solid}
+.tabMenu li.active a{color: #05c1af;}
+
+
+/* 文章列表 */
+.articleList{clear: both; overflow: hidden; margin: 0; padding:0}
+.articleList li{background-color: #fff; margin-bottom: 10px; list-style: none; padding: 10px; overflow: hidden;}
+.articleList li .img{float: left; width: 150px; height: 100px; background-size: cover;}
+.articleList li .info{margin-left: 160px}
+.articleList li .info h1{margin: 0; font-size: 16px; font-weight: normal; overflow: hidden;text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical; max-height: 32px;}
+.articleList li .info p{height:25px; line-height: 25px; margin: 0;overflow:hidden; white-space:nowrap; 
+text-overflow:ellipsis; 
+text-overflow: ellipsis;/* IE/Safari */ 
+-ms-text-overflow: ellipsis; 
+-o-text-overflow: ellipsis;/* Opera */ 
+-moz-binding: url("ellipsis.xml#ellipsis");/*FireFox*/ }
+.articleList li .info i{color: #05c1af}
+
+/* 大图列表 */
+.picList{clear: both; overflow: hidden;}
+.picList .mui-slider{position: relative; width: 100%; height: 180px;}
+.picList .slider-money{position: absolute; left: 0; bottom: 40px; z-index: 99; width: 100%}
+.picList .slider-money span{background: rgba(0,0,0,0.7); color: #05c1af;padding: 5px 10px; display:block; float: left; margin-right: 15px; margin-top: -5px}
+.picList .slider-money .tag4{background: #06c2b0; float: left;color: #fff; border-radius: 5px; padding: 3px 6px; font-size: 12px;}
+.picList .slider-tag{position: absolute; left: 5px; bottom: 5px; width: 100%; z-index: 99}
+.picList .slider-tag span{display: inline-block; color: #fff; border-radius: 5px; padding: 3px 6px; font-size: 12px;}
+.picList .slider-tag span.tag1{background: #2bc3fa}
+.picList .slider-tag span.tag2{background: #f54d8f}
+.picList .slider-tag span.tag3{background: #8d8e8f}
+.picList .info{clear: both; overflow: hidden; padding: 10px}
+.picList .info h1{font-size: 16px; font-weight: normal;}
+.picList .info p i{color:#05c1af }
+
+/* 文本列表 */
+.textList{clear: both; overflow: hidden; margin: 0; padding:0}
+.textList li{background-color: #fff; margin-bottom: 10px; list-style: none; padding: 10px; overflow: hidden;}
+.textList li h1{margin: 0; font-size: 17px;font-weight: normal; color: #000; font-weight:bold; margin-bottom: 10px}
+.textList li p{height:25px; line-height: 25px; margin: 0;overflow:hidden; white-space:nowrap; 
+text-overflow:ellipsis; 
+text-overflow: ellipsis;/* IE/Safari */ 
+-ms-text-overflow: ellipsis; 
+-o-text-overflow: ellipsis;/* Opera */ 
+-moz-binding: url("ellipsis.xml#ellipsis");/*FireFox*/ }
+.textList li i{color: #05c1af}
+.textList li .money{color:#05c1af; font-size: 17px }
+
+.my-badge{font-size: 14px; line-height: 24px; padding: 0 10px; display: block;float: left; margin-right: 10px}
+.my-badge:last-child{margin-right: 0}
+.my-badge-green{background: #def7f4; color: #05c1af}
+.my-badge-red{background: #ffeded; color: #ee7674}
+.my-badge-gray{background: #f5f5f5; color: #666}
+.my-badge-auth{background: #26ae60; color: #fff}
+
+.my-slider-img img{ height: 350px}
+
+.infoDetail{background-color: #fff; clear: both; overflow: hidden;}
+.infoDetail .title{font-weight: bold; padding: 10px;}
+.infoDetail .base{ clear: both; margin: 10px; overflow: hidden; color: #05c1af}
+.infoDetail .base .price{float: left; overflow: hidden;}
+.infoDetail .base .fav{float: right; overflow: hidden;}
+.infoDetail .tag{clear: both; margin: 10px;border-bottom:2px #ddd dashed;  overflow: hidden; padding-bottom: 10px}
+.infoDetail .content{clear: both; margin: 10px; overflow: hidden;}
+.infoDetail .content .hd{text-align: center; font-weight: bold; margin-bottom: 1em}
+.infoDetail .content .bd{color: #666}
+.infoDetail .list{clear: both; overflow: hidden; border-top: 1px #ddd solid}
+.infoDetail .list li{border-bottom: 1px #ddd solid; padding: 10px; clear: both; overflow: hidden;}
+.infoDetail .list li p{float: left; color: #666; margin: 0; font-size: 16px}
+.infoDetail .list li span{float: right; color: #000}
+.mapBox{height: 200px; width: 100%; position:relative;}
+.mapBox #map{width: 100%; height: 200px; position: absolute; left: 0; top: 0; z-index: 80}
+.mapBox .add{width: 80%; position:absolute; left: 10%; top: 100px; background: rgba(255,255,255,0.8); z-index: 99; text-align: center; padding: 10px; font-size: 14px}
+.mapBox .marker{background:url(../image/map.png); width:20px; height:30px; font-size:0px; background-size: cover}
+.infoDetail .comment{margin: 10px; clear: both; overflow: hidden;}
+.infoDetail .comment .hd{clear: both; overflow: hidden; border-bottom: 2px #ddd dashed; padding:10px 0}
+.infoDetail .comment .hd h4{float: left; margin: 0; color: #000}
+.infoDetail .comment .hd span{display: block; float: right;color: #05c1af}
+.infoDetail .comment .hd span a{color: #05c1af}
+.infoDetail .comment .bd{clear: both; overflow: hidden;}
+.infoDetail .comment .bd li{ border-bottom: 1px #ddd dashed; clear: both; overflow: hidden; padding: 10px 0}
+.infoDetail .comment .bd li .userInfo{clear: both; overflow: hidden; line-height: 50px;}
+.infoDetail .comment .bd li .userInfo .face{float: left; width: 50px; height: 50px;}
+.infoDetail .comment .bd li .userInfo .face img{width: 50px; height: 50px;border-radius:50%;}
+.infoDetail .comment .bd li .userInfo .name{float: left; margin-left: 10px}
+.infoDetail .comment .bd li .userInfo .date{float: right;}
+.infoDetail .comment .bd li .con{padding-left: 60px; clear: both; overflow: hidden;}
+.infoDetail .comment .fd{padding: 20px 10px; clear: both; overflow: hidden;}
+.infoDetail .comment .fd a{height: 50px; line-height: 50px;display: block; margin: auto 20%; text-align: center; border:1px #05c1af solid; border-radius: 25px; color: #05c1af}
+
+/* 手机认证 */
+.auth{ margin: 10px; }
+.auth .mid{line-height: 40px;}
+.auth input{width: 100%}
+.auth button{width: 80%; float: right; line-height: 28px}
+
+/* 拼邮 */
+.pinyou{clear: both; overflow: hidden; margin-bottom: 10px; margin: 10px}
+.pinyou .hd{background:#05c1af; height: 40px; line-height: 40px; color: #fff; padding: 0 10px}
+.pinyou .hd .code{float: left;}
+.pinyou .hd .code span{background-color: #fff; border-radius: 8px; margin-left: 10px; color: #05c1af; font-size: 12px; padding: 3px 10px}
+.pinyou .hd .code span.red{color: #f00}
+.pinyou .hd .status{float: right;background-color: #fff;color: #05c1af; line-height: 24px; margin-top: 8px; font-size: 14px; padding: 0 10px}
+.pinyou .bd{border: 1px #ddd solid; border-top: 0; padding: 10px; overflow: hidden; clear: both; font-size: 14px; color: #666;}
+.pinyou .bd .maxWeight{margin-bottom: 5px;}
+.pinyou .bd .maxWeight span{color: #000; font-size: 16px;}
+.my-progressbar{height: 14px; border-radius: 7px; clear: both; background-color: #aaaaaa; overflow: hidden;}
+.my-progressbar span {background: #ffc200; height: 100%; display: block; float: left;border-radius: 7px;}
+.pinyou .bd .add{color: #05c1af; border-top:1px #dbdbdb solid; margin-top: 10px; padding: 10px 0}
+.pinyou .bd .user{border-top:1px #dbdbdb solid; padding-top: 10px}
+.pinyou .bd .user p{margin: 0}
+.pinyou .bd .user p.rz{color: #26ae60}
+.pinyou .bd .user p span i{color:#05c1af; font-style: normal; }
+.pyInfo{clear: both; padding: 10px; background-color: #fff; border-bottom: 1px #ddd solid;overflow: hidden;}
+.pyInfo .hd{font-weight: bold; margin: 10px 0}
+.pyInfo .bd{clear: both; overflow: hidden;}
+.pyInfo .bd li{clear: both; overflow: hidden; font-size: 15px; padding: 5px 0}
+.pyInfo .bd .remark{color: #666; font-size: 12px; margin-top: 10px}
+.pyInfo .baoguo{ background: #f5f5f5; margin-top: 10px; clear: both; overflow: hidden; padding: 10px}
+.pyInfo .baoguo li{clear: both; overflow: hidden;line-height: 24px; font-size: 14px;}
+.pyInfo .baoguo li i{font-size: 14px}
+
+.block{clear: both; height: 70px; width: 100%;}
+.footAction{height: 50px; line-height: 50px; text-align: center; position: fixed; width: 100%;left: 0; bottom: 0; background: #05c1af; color: #fff; z-index: 999}
+.danger{background: #f00}
+
+.history{clear: both; overflow: hidden;}
+.history li{clear: both; border-bottom: 1px #dbdbdb solid; display: flex; padding: 10px 0; background-color: #fff}
+.history li i{display: block; width: 40px; text-align: center; color:#05c1af; font-size: 20px; margin-top: 5px}
+.history li .info{flex: 1}
+.history li .info h1{font-size: 16px; font-weight: normal; margin-bottom: 10px}
+.history li .info p{margin: 0}
+.history li .info p span{color: #05c1af; background-color:#def7f4; padding:3px 5px}
+
+.empty{text-align: center; margin-top: 40%; color: #999}
+.empty img{width: 40%;}
+
+[v-cloak] {display: none;}
+
+.showMap{width: 100%; height: 100%; position: relative;}
+.showMap .marker{background:url(../image/map.png); width:20px; height:30px; font-size:0px; background-size: cover; position: absolute; top: 50%; left: 50%; z-index: 999}
+.showMap .back{width: 40px; height: 40px; line-height: 40px; background: #fff; left: 10px; top: 10px; position: absolute; z-index: 99; color: #05c1af; text-align: center;}
+.showMap .infoList{position: absolute; left: 0; bottom: 0; background: #fff; width: 100%; z-index: 99;}
+.showMap .infoList .hd{text-align: center; height: 40px; padding-top: 8px}
+.showMap .infoList .hd .ico{height: 8px; text-align: center; background-image:url(../image/up.png);background-position: center; background-repeat: no-repeat;background-size: auto 8px;}
+.showMap .infoList .hd .down{background-image:url(../image/down.png);}
+.showMap .infoList .hd span{font-size: 12px; padding-top: 5px}
+.showMap .infoList .bd{height: 210px; overflow: auto; padding: 0 10px}
+.showMap .infoList .bd li{clear: both; border-top: 1px #dbdbdb solid; padding: 10px 0; display: flex;}
+.showMap .infoList .bd li .num{width: 16px; height: 16px; display: block; line-height: 16px; font-size: 12px; color: #fff; background:#05c1af;text-align: center; }
+.showMap .infoList .bd li .info{flex: 1; padding: 0 10px; font-size: 14px}
+.showMap .infoList .bd li .info h1{font-size: 14px; font-weight: normal; margin: 0; line-height: 120%}
+.showMap .infoList .bd li .info h1 span{font-size: 12px; padding-left: 15px; color: #05c1af}
+.showMap .infoList .bd li .info i{color:#05c1af }
+.showMap .infoList .bd li .juli{ font-size: 12px; width: 70px; height: 20px; line-height: 20px; text-align: right;}
+.showMap .infoList .bd li .juli span{background: #f1f1f1; border-radius: 5px; padding: 0 5px}
+.showMap #mapContainer{width: 100%; height: 100%}
+.showMap .mapInfo{width: 90%; position: absolute; left: 5%; bottom: 55%; z-index: 99;}
+.showMap .mapInfo .info{background: #fff;padding: 5px 0;clear: both;border-radius: 5px; width: 100%}
+.showMap .mapInfo .arrow{text-align: center; clear: both;}
+.showMap .mapInfo .arrow img{display: block; margin: auto}
+
+.mapShowInfo{clear: both; overflow: hidden;}
+.mapShowInfo .img{float: left; width: 30%;}
+.mapShowInfo .img img{width: 100%}
+.mapShowInfo .intr{margin-left: 32%;}
+.mapShowInfo .intr h1{font-size: 12px;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;line-clamp: 2;-webkit-box-orient: vertical; max-height: 24px}
+.mapShowInfo .intr p{overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;line-clamp: 2;-webkit-box-orient: vertical;font-size: 12px; max-height: 33px;}
+.mapShowInfo .intr p.mp,.mapShowInfo .intr p i{color: #05c1af}
+.mapShowInfo .intr p span{float: right; color: #8f8f94}
+.mapShowInfo .hd{font-weight: bold; font-size: 14px; margin-bottom: 5px}
+.mapShowInfo .price{color: #05c1af;font-weight: bold; margin-bottom: 5px}
+.mapShowInfo .tag{clear: both; overflow: hidden;}
+.mapShowInfo .tag1{background: #ddf9f4;color: #05c1af; float: left; white-space:nowrap; padding: 3px; margin-right: 5px}
+.mapShowInfo .tag2{background: #f4f4f4;color: #8d8d8d; float: left; white-space:nowrap; padding: 3px; margin-right: 5px}
+
+.mui-segmented-control.mui-scroll-wrapper .mui-control-item {
+    padding: 0 10px;
+}

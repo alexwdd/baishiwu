@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script type="text/javascript" src="<{:STATICS}>/js/jquery.min.js"></script>
+    <script src="<{:STATICS}>/layer_mobile/layer.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="<{:STATICS}>/amazeui/css/amazeui.min.css?v=1.04" type="text/css" />
+    <style>
+    body {
+        max-width: 100%;
+    }
+    .title {
+        height: 40px;
+        line-height: 40px;
+        margin-bottom: 10px;
+        text-align: center;
+        background: #ff8a00;
+        font-size: 16px;
+        color: #fff
+    }
+
+    .title span {
+        float: left;
+    }
+
+    .infoList {
+        clear: both;
+        overflow: hidden;
+    }
+
+    .infoList li {
+        background: #fff;
+        border-bottom: 1px #dbdbdb solid;
+        line-height: 40px;
+        list-style: none;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .infoList li p {
+        float: left;
+        margin: 0;
+        margin-left: 10px;
+    }
+
+    .infoList li span,
+    .infoList li i {
+        display: block;
+        float: right;
+        margin-right: 5px;
+        color: #999;
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+    <header data-am-widget="header" class="am-header am-header-default" style="background: #ff8a00; margin-bottom:10px">
+        <div class="am-header-left am-header-nav">
+            <a href="javascript:goback()" style="cursor: pointer;">
+            <i class="am-header-icon am-icon-chevron-left"></i>
+        </a>
+        </div>
+        <h1 class="am-header-title">
+      <a href="#title-link" class="">抽奖记录</a>
+    </h1>
+    </header>
+    <div class="infoList">
+        <volist name="list" id="vo">
+            <li>
+                <p>
+                    <{$vo.prize}>
+                </p>
+                <i class="am-icon-trash delete" data-id="<{$vo.id}>"></i>
+                <!--span><{$vo.createTime|date="Y-m-d H:i:s",###}></span-->
+            </li>
+        </volist>
+    </div>
+
+    <script>
+    $(function() {
+        $(".delete").click(function(){
+            var id = $(this).attr("data-id");
+            var that = $(this);
+            layer.open({
+                content: '确认要删除这条记录吗？'
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                    $.get('<{:U("index/del")}>?userid=<{$userid}>&id='+id,function(res){})
+                    that.parent().remove();
+                    layer.closeAll();
+                }
+            });
+        });
+    });
+
+    function goback() {
+        fromurl = document.referrer;
+        if (fromurl != '' && fromurl != undefined) {
+            window.location.href = fromurl;
+        } else {
+            window.history.go(-1)
+        }
+    }
+    </script>
+</body>
+
+</html>

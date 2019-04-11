@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<style>
+html,body{width: 100%; height: 100%}
+</style>
+</head>
+<body>
+<div class="showMap" id="vm" v-cloak>
+	<!-- <div class="back mui-icon mui-icon-back"></div> -->
+
+	<div class="infoList">
+		<div class="hd" id="btn">
+			<div class="ico down"></div>
+			<span id="num">{{num}}条信息</span>		
+		</div>
+		<div class="bd" id="infoBox">
+			<li v-for="(vo,index) in lists" @click="selectHandler(vo.latitude,vo.longitude,index)">
+				<div class="num">{{index+1}}</div>
+				<div class="info">
+					<h1>{{vo.title}}</h1>
+					<i class="icon icon-meiyuan"></i>${{vo.price}}
+				</div>
+				<div class="juli"><span>{{vo.distance|juli}}</span></div>
+			</li>
+
+			<p v-show="next" @click="loadmore" style="text-align:center">加载更多</p>
+		</div>
+	</div>
+
+	
+	<div id="mapContainer"></div>	
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
+<script src="../static/js/config.js"></script>
+<script>
+vm = new Vue({
+	el : "#vm",
+	data : {
+		first:1,
+		num:0,
+		info:[],
+		lists : [],
+		page : 1,
+		next : 0,
+		map:'',
+		markers : []
+	},
+	methods: {
+		selectHandler : function(lat,lng,index){			
+			that = this;
+			point = {lat:parseFloat(lat), lng:parseFloat(lng)}
+			that.map.setCenter(point);
+			that.map.setZoom(15);
+		    that.info = that.lists[index-0];
+		    let info = that.info;
+		    if (info.thumb_s!=''){
+	    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'"><div class="img"><img src="'+info.thumb_s+'" /></div><div class="intr"><h1>'+info.title+'</h1><p><i class="icon icon-weizhi"></i> '+info.address+'</p><p class="mp">$'+info.price+'<span>'+formatDate(info.updateTime)+'</span></p></div></a></div>';
+	    	}else{
+	    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'">';
+	    		contentString += '<div class="hd">'+info.title+'</div>';
+	    		contentString += '<div class="price">$'+info.price+'</div>';
+	    		contentString += '<div class="tag">';
+	    		if (info.sortName!=''){
+	    			contentString += '<div class="tag1">'+info.sortName+'</div>';
+	    		}
+	    		if (info.work!=''){
+	    			contentString += '<div class="tag2">'+info.work+'</div>';
+	    		}
+	    		if (info.visa!=''){
+	    			contentString += '<div class="tag2">'+info.visa+'</div>';
+	    		}
+	    		contentString += '</div>';
+	    		contentString += '</a></div>';
+	    	} 
+
+		    var infowindow = new google.maps.InfoWindow({
+	        	content: contentString
+	        });
+
+	        infowindow.open(that.map,that.markers[index-0]);
+		},
+		clearOverlays:function(){
+			if (markers) { 
+		    	for (i in markers) { 
+		        	markers[i].setMap(null); 
+		    	} 
+		    }
+		},
+		loadmore:function(){
+			that = this;
+			that.page++;   
+			that.goPage(that.page); // 执行增加页面数据操作
+		},
+		goPage (page) {
+    		var that = this;
+    		mui.showLoading('数据加载中');
+    		request.page = that.page;
+    		$.post(
+				config.articleList,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body.articles;
+						$.each(data,function(index){
+							if (this.html==''){
+								data[index]['url'] = 'app://articledetail?articleid='+this.articleid+'&type='+request.type
+							}else{
+								data[index]['url'] = 'app://html?url='+this.html+'&title='+this.title;
+							}
+						})
+						that.lists = that.lists.concat(data);	
+						that.num = data.length;							
+						that.next = res.body.next;
+						if (that.first==1){
+							that.info = data[0];
+							that.first = 0;										
+						};
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+    	},
+    	setMapCenter(marker, info) {
+    		var that = this;
+		    marker.addListener('click', function() {
+		    	that.map.setZoom(15);
+		    	that.map.setCenter(marker.getPosition());
+		    	if (info.thumb_s!=''){
+		    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'"><div class="img"><img src="'+info.thumb_s+'" /></div><div class="intr"><h1>'+info.title+'</h1><p><i class="icon icon-weizhi"></i> '+info.address+'</p><p class="mp">$'+info.price+'<span>'+formatDate(info.updateTime)+'</span></p></div></a></div>';
+		    	}else{
+		    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'">';
+		    		contentString += '<div class="hd">'+info.title+'</div>';
+		    		contentString += '<div class="price">$'+info.price+'</div>';
+		    		contentString += '<div class="tag">';
+		    		if (info.sortName!=''){
+		    			contentString += '<div class="tag1">'+info.sortName+'</div>';
+		    		}
+		    		if (info.work!=''){
+		    			contentString += '<div class="tag2">'+info.work+'</div>';
+		    		}
+		    		if (info.visa!=''){
+		    			contentString += '<div class="tag2">'+info.visa+'</div>';
+		    		}
+		    		contentString += '</div>';
+		    		contentString += '</a></div>';
+		    	}
+				var infowindow = new google.maps.InfoWindow({
+		        	content: contentString,
+		        	maxWidth:350
+		        });
+
+		        infowindow.open(that.map, marker);
+		    });
+		}
+	},
+	created : function(){
+		var that = this;
+		that.goPage(that.page);
+	},
+	updated : function(){
+		var that = this;
+		that.map = new google.maps.Map(document.getElementById('mapContainer'), {
+			disableDefaultUI: true,
+			center: {lat:1.3437419, lng:103.8559584},
+			zoom: 11
+		});
+		var image = '/www/static/image/mark.png';
+
+		for (var i = 0; i < that.lists.length; i++) {
+			var marker = new google.maps.Marker({				
+				position: {lat: parseFloat(that.lists[i]['latitude']), lng:parseFloat(that.lists[i]['longitude'])},map: that.map,icon: image
+			});
+			that.markers.push(marker);	
+			that.setMapCenter(marker,that.lists[i]);
+		}
+
+		/*for (var i = 0; i < that.lists.length; i++) {
+			var marker = new google.maps.Marker({				
+				position: {lat: parseFloat(that.lists[i]['latitude']), lng:parseFloat(that.lists[i]['longitude'])},map: map,icon: image
+			});
+			marker.addListener('click', showInfo(that.lists[i]));
+			markers.push(marker);
+        }*/
+		
+		/*var that = this;
+		map = new google.maps.Map(document.getElementById('mapContainer'), {
+			disableDefaultUI: true,
+			center: {lat:-34.8911, lng:138.6463},
+			zoom: 17
+		});
+		
+		point = {lat:parseFloat(that.info.latitude), lng:parseFloat(that.info.longitude)}
+		map.setCenter(point, 17);
+		var image = '/www/static/image/mark.png';
+		var marker = new google.maps.Marker({position: point, map: map , icon:image});
+
+		var contentString = '<div class="info"><div class="pinyou"><a href="'+that.info.url+'"><div class="hd">'+that.info.title+'</div><div class="bd"><div class="add">'+that.info.address+'</div></div></a></div></div>';
+
+		var infowindow = new google.maps.InfoWindow({
+        	content: contentString
+        });
+
+        infowindow.open(map, marker);
+
+		marker.addListener('click', function() {
+        	infowindow.open(map, marker);
+        });
+		markers.push(marker);*/
+	}
+});
+
+Vue.filter('juli', function (v) {
+    if (v<1000){
+		return v+'m';
+	}else{
+		return Math.round(v/1000).toFixed(1) + "km";
+	}
+})
+
+function formatDate(value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+    	month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+    	day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+}
+
+
+$(function(){
+	$("#btn").click(function(){
+		var o = $(this).find(".ico");
+		if (o.hasClass("down")){
+			o.removeClass("down");
+		}else{
+			o.addClass("down");
+		}
+		$("#infoBox").slideToggle()
+	});
+	$("#btn").click();
+})
+</script>
+</body>
+</html>

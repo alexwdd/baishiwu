@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>王国生：全面提升基层基础工作水平</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script src="/www/static/js/jquery.min.js"></script>
+<script src="/www/static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/www/static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+
+<link rel="stylesheet" type="text/css" href="/www/static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="/www/static/mui/css/loading.min.css" />
+<link rel="stylesheet" href="/tpl/static/css/app.css?v=1.05" type="text/css" />
+
+</head>
+<body>
+<div class="page" style="padding: 0">
+	<div class="title" style="padding:0 10px; padding-top: 10px">王国生：全面提升基层基础工作水平</div>
+	<div class="date" style="padding:0 10px">更新日期：2019-03-09 18:07:39</div>
+	<div class="content" style="padding:0 10px"><p>文章正文</p><p>测试用</p></div>
+
+	<div id="app" v-cloak>
+		<div class="adList"></div>
+		<div class="feedback">
+			<div class="hd">
+				<p>精选留言</p>
+				<span @click="doWrite" v-show="writeBtn">写留言</span>
+			</div>
+			<div class="empty" v-show="empty" @click="doWrite"><p>抢占沙发~</p></div>
+			<div class="bd" @click="closeWrite">				
+				<li v-for="vo in lists">
+					<div class="face"><img :src="vo.headimg"></div>
+					<div class="desc">
+						<div class="name">{{vo.nickname}}</div>
+						<div class="say">{{vo.content}}</div>
+					</div>
+					<div class="like" @click="digg(vo)"><span>{{vo.digg}}</span><img src="/tpl/static/image/like.svg"/></div>
+				</li>
+				<div id="loadding" class="loadding" v-show="loadding">
+					<span class="mui-spinner"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="writeBox" v-show="write">
+			<input type="text" placeholder="说点什么..." v-model="content">
+			<button type="button" class="mui-btn mui-btn-primary" @click="submit">发表</button>
+		</div>
+	</div>
+	<script src="/www/static/vue/vue.min.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+		el:"#app",
+		data:{
+			user:'',
+			weixin:false,
+			empty:false,
+			write:false,
+			writeBtn:false,
+			loadding:false,
+			lists:[],
+			token:'',
+			type:'article',
+			articleid:614,
+			page:1,
+			canScroll : 1,
+			next:0,
+			content:''
+		},
+		created : function(){
+			var that = this;
+			that.weixin = that.isWeiXin();
+			if (that.weixin==1){
+				that.user = [{id:0}];
+				that.writeBtn = true;
+			}else{
+				var request = GetRequest();
+				if(request.token){
+					that.token = request.token;
+					data = {'token':that.token};
+					mui.post('/V1/News/getUserInfo',data,function(res){
+						if (res.code==1){
+							that.user = res.user;
+							that.writeBtn = true;
+						}				
+					},'json');
+				}
+			}
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+		methods: {
+			doWrite(){
+				if (this.user==''){return false}
+				this.write = true;
+			},
+			closeWrite(){
+				this.write = false;
+			},
+			goPage : function(page){			
+				var that = this;
+	    		that.loadding = true;
+	    		that.canScroll = 0;
+	    		$.post(
+					'/V1/Article/get_comment',
+					{articleid:that.articleid,type:that.type,page:page},
+				   	function(res){
+			        	that.loadding = false;
+			        	that.canScroll = 1;
+						if(res.code==0){
+							data = res.body.comments;
+							that.lists = that.lists.concat(data);	
+							if (that.lists==0){
+								that.empty = true;
+							}
+							that.next = res.body.next;
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			digg(info){
+				var that = this;			
+				if (that.user==''){return false};
+	    		$.post(
+					'/V1/article/digg',
+					{commentID:info.commentid},
+				   	function(res){
+						if(res.code==0){
+							for(var i in that.lists){
+								if (info.commentid==that.lists[i]['commentid']){
+									that.lists[i]['digg']++;
+								}
+							}
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			submit(){
+				var that = this;			
+				if (that.user==''){return false};
+				if (that.content == '') {return false};
+				mui.showLoading('提交中');
+	    		$.post(
+					'/V1/Article/html_send_comment',
+					{articleid:that.articleid,weixin:that.weixin,cityID:9,type:that.type,comments:that.content,token:that.token},
+				   	function(res){
+				   		mui.hideLoading();
+						if(res.code==0){
+							mui.alert(res.desc);
+							that.content = '';
+							that.write = false;
+						}else{
+							mui.alert(res.desc)
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			isWeiXin(){
+				var ua = window.navigator.userAgent.toLowerCase();
+				if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+					return 1;
+				}else{
+					return 0;
+				}
+			}
+		},
+		updated : function(){
+			mui('.mui-slider').slider();
+		}
+	})
+
+	function GetRequest() {   
+	   var url = location.search; //获取url中"?"符后的字串   
+	   var theRequest = new Object();   
+	   if (url.indexOf("?") != -1) {   
+	      var str = url.substr(1);   
+	      strs = str.split("&");   
+	      for(var i = 0; i < strs.length; i ++) {
+	         if (strs[i]!='remark=%E4%B8%8D%E9%99%90' && strs[i]!='singleType=%E4%B8%8D%E9%99%90'){
+	            //theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+	            theRequest[strs[i].split("=")[0]]=strs[i].split("=")[1];
+	         }            
+	      }   
+	   }   
+	   return theRequest;   
+	}
+	</script></div>
+<script>
+$(function(){
+	url = '/V1/News/hit/id/614';
+	$.get(url,function(){})
+})
+</script>
+</body>
+</html>

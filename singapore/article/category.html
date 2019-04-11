@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<ul class="mui-table-view">
+        <li class="mui-table-view-cell" v-for="item in lists">
+            <a :href="item.url" class="mui-navigate-right" style="text-align: center; padding:20px 0">
+                {{item.title}}
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<script>
+mui.ready(function(){
+	mui.showLoading('数据加载中');
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			var request = GetRequest();
+			cityID = request.cityID;
+			type = request.type;
+			var houseType = 0;
+			var jobtype = 0;
+			if (request.houseType){
+				var houseType = request.houseType;
+			}
+
+			if (request.jobtype){
+				jobtype = request.jobtype;
+			}
+			
+			$.post(
+				config.category,
+				{
+			        cityID:cityID,
+			        type:type
+			   	},
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body.sort;
+						for(i=0;i<data.length;i++){
+						data[i]['url'] = 'publish_'+request.type+'.html?userid='+request.userid+'&type='+request.type+'&cityID='+request.cityID+'&houseType='+houseType+'&jobtype='+jobtype+'&sort='+data[i]['id']+'&sortName='+escape(data[i]['title']);
+						}
+						that.lists = data;					
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );    
+		}		
+	});
+	
+})
+</script>
+</body>
+</html>

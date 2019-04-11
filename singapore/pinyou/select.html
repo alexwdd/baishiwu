@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发起拼邮-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<ul class="mui-table-view">
+        <li class="mui-table-view-cell" v-for="item in lists">
+            <a :href="item.url" class="mui-navigate-right" style="text-align: center; padding:20px 0">
+                {{item.name}}
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+mui.ready(function(){
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			cityID : 0,
+			type : '',
+			userid : 0,
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			var request = GetRequest();
+			that.cityID = request.cityID;
+			if (request.userid) {
+				that.userid = request.userid;
+			}
+			that.lists = [
+				{name : '普通货','url':'publish.html?cityID='+that.cityID+'&goodstype=1&userid='+that.userid},
+				{name : '敏感货','url':'publish.html?cityID='+that.cityID+'&goodstype=2&userid='+that.userid}
+			]
+   
+		}		
+	});
+	
+})
+</script>
+</body>
+</html>

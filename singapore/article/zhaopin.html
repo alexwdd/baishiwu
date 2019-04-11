@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>招聘-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="tabMenu">
+		<li v-for="item in menu" :class="{active:item.checked}" @click="selectHandle(item)">{{item.name}}</li>
+	</div>
+	<ul class="textList" id="ajax_return">
+		<li v-for="item in lists">
+			<a :href="item.url">
+			<h1>{{item.title}}</h1>
+			<p style="margin-top: 5px">
+				<span class="mui-pull-left money" v-if="item.price != 0">
+				${{item.price}}
+				</span>
+				<span v-else>
+				 面议
+				</span>					
+				<span class="mui-pull-right">
+					<span class="my-badge my-badge-green">{{item.sortName}}</span>
+					<span class="my-badge my-badge-red">{{item.work}}</span>
+					<span class="my-badge my-badge-gray">{{item.visa}}</span>
+				</span>
+			</p>
+			</a>
+		</li>		
+	</ul>	
+</div>
+
+<script>
+mui.ready(function(){	
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			page : 1,
+			canScroll : 1,
+			next : 1,
+			menu:[
+				{name:'全职',jobtype:0,checked:true},
+				{name:'兼职',jobtype:1,checked:false}
+			],
+			jobtype : 0,
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+		methods: {
+			selectHandle(e){
+				var str = '';
+				for (var i = 0; i < this.menu.length; i++) {
+					if (this.menu[i].name == e.name){
+						this.menu[i].checked = true;
+						this.jobtype = e.jobtype;
+					}else{
+						this.menu[i].checked = false;
+					}
+				}
+				this.page = 1;
+				this.lists = [];
+				this.goPage(this.page);
+			},
+        	goPage (page) {      
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		var request = GetRequest();
+        		request.page = that.page;
+        		request.type = 'zp';  
+        		request.jobtype = that.jobtype;    
+        		request.status = 1;  
+        		$.post(
+					config.articleList,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.articles;		
+							$.each(data,function(index){
+								if (this.html==''){
+									data[index]['url'] = 'app://articledetail?articleid='+this.articleid+'&type=zp';
+								}else{
+									data[index]['url'] = 'app://html?url='+this.html+'&title='+this.title;
+								}
+							})				
+							that.lists = that.lists.concat(data);	
+							that.canScroll = 1;				
+							that.next = res.body.next;				
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+	
+})
+</script>
+</body>
+</html>

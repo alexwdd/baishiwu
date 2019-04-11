@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>编辑包裹-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">    
+		
+		<h5 class="sortName">填写包裹信息</h5>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="order" id="order" class="mui-input-clear" checkType="required" checkMsg="请输入包裹运单号" placeholder="包裹运单号(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="company" id="company" class="mui-input-clear" checkType="required" checkMsg="请输入快递公司" placeholder="快递公司(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="weight" id="weight" class="mui-input-clear" placeholder="包裹预估重量kg(必填)" checkType="required" checkMsg="请选择包裹预估重量">
+		    </div>
+		</div>
+	  
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" style="width: 70%">
+
+		        <button id="statusBtn" type="button" id="unitBtn" class="mui-btn" style="padding: 8px 0; margin-right: 10px; margin-top: 3px"></button>
+		    </div>
+	    </div>	
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div> 	   
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" id="detail" placeholder="包裹简单描述，如果带电池或磁性，请说明" rows="2"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">编辑</button>
+	    </div>
+	    <input type="hidden" name="goodsid" id="goodsid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+	</form>
+</div>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var weightPicker = new $.PopPicker();
+		weightPicker.setData([{value:500,text:'小于500g'},{value:1000,text:'500g至1000g'},{value:0,text:'自定义'}]);
+		var tag = doc.getElementById('weight');
+		tag.addEventListener('tap', function(event) {
+			weightPicker.show(function(items) {
+				v = items[0].value;
+				if (v==0){
+					mui.prompt('','','输入包裹预估重量(单位:g)',['取消','确定'],function(e){
+							if(e.index==1){
+								tag.value = e.value;
+							}
+						}
+					);
+					document.querySelector('.mui-popup-input input').type='number';
+				}else{
+					tag.value = items[0].value;
+				}
+			});
+		}, false);		
+		//-----------------------------------------			
+	});
+})(mui, document);
+
+mui.ready(function(){
+	if (!request.goodsid) {
+		mui.alert('缺少参数', '系统消息', function() {
+			window.history.go(-1);
+		});
+	};
+	mui.showLoading('数据加载中');
+	var goodsid = request.goodsid;
+	$("#goodsid").val(goodsid);
+	if (!localStorage.getItem('userid')) {
+		mui.alert('缺少参数', '系统消息', function() {
+			window.history.go(-1);
+		});
+	}
+	var userid = localStorage.getItem('userid');
+	$.post(
+      config.userinfo,
+      {userid:userid},
+      function(res){         
+         if(res.code=='0'){
+            data = res.body;   
+            $("#userid").val(data.userid);
+			$("#password").val(data.password);		
+			$("#openid").val(data.openid);	
+			//用户认证
+			if (data.phone==''){
+				mui.alert('请先完成手机认证，才能在发布拼团信息！', '系统消息', function(){
+					window.location.href = '../account/auth.html?userid='+data.userid;
+				}) 
+				$("#statusBtn").html('未认证');
+			}else{
+				$("#statusBtn").html('已认证').addClass("mui-btn-success");
+			}		
+			$.post(
+		    	config.goodsInfo,
+		    	{goodsid:goodsid},
+		    	function(res){
+					mui.hideLoading();
+					if(res.code=='0'){	
+						data = res.body;
+						if (userid != data.userid){
+							mui.alert('不存在信息', '系统消息', function() {
+								window.history.go(-1);
+							});
+							return;
+						};
+						$("#order").val(data.order);
+						$("#company").val(data.company);		
+						$("#weight").val(data.weight*1000);
+						$("#contact").val(data.order);
+						$("#phone").val(data.phone);
+						$("#wechat").val(data.wechat);
+						$("#detail").val(data.detail);
+					}else{
+						mui.alert('不存在信息', '系统消息', function() {
+							window.history.go(-1);
+						});
+					}
+		      	},
+		      "json"
+		   	);
+         }else{
+         	mui.hideLoading();
+            mui.alert('不存在用户', '系统消息', function() {
+				window.history.go(-1);
+			});
+			return;
+         }
+      },
+      "json"
+   	);
+	
+	$('#submitBtn').click(function(){
+	    var res = muiFormCheck('#myForm');
+	    //提交
+	    if(res){
+	    	//预处理
+	    	//$("#detail").val($("#detail").val()+"\n联系时请说明是在阿德莱德眼上看到的^-^");
+	    	$("#weight").val($("#weight").val()/1000);
+	    	var data = mui.getFormData('#myForm');	
+
+	    	$('#submitBtn').attr("disabled","disabled");
+	    	mui.post(config.goodsEdit,data,function(r){
+				if (r.code=='0'){
+					mui.alert('包裹编辑成功！', '系统消息', function(){
+						window.location.href = 'app://goback';
+					})          
+				}else{
+					$('#submitBtn').removeAttr('disabled');
+					mui.toast(r.desc);
+				}
+			},'json');
+	    }
+	});
+})
+
+function setAddress(address,lng,lat){
+	$("#address").val(address);
+	$("#address_str").html('<span>'+address+'</span>');
+	$("#longitude").val(lng);
+	$("#latitude").val(lat);
+}
+</script>
+</script>
+</body>
+</html>

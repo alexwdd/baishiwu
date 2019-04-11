@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>发布-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.poppicker.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/mui.poppicker.js"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<h5 class="sortName">添加照片</h5>
+		<div class="insert-img" id="insert-img">
+	        <a href="javascript:;" onclick="uploadMultiFile('insert-btn');" class="insert-btn" id="insert-btn"><i class="icon icon-zhaoxiangji"></i></a>
+	    </div>   
+	    
+	    <input type="file" id="uploadfile" accept="image/*" capture="camera"/>   
+	    
+		<h5 class="sortName">二手车分类</h5>
+		<ul class="mui-table-view mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="javascript:void(0)" id="sortName"></a>
+	        </li>
+	    </ul>
+		
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">地址</a>
+	        </li>
+	    </ul>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述"></textarea>
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+	    	<div class="mui-input-row">
+		        <input type="text" name="brand" id="brand" class="mui-input-clear" placeholder="汽车品牌(选填)" checkMsg="请输入汽车品牌">
+		    </div>		    
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="trans" id="trans" class="mui-input-clear" placeholder="变速箱类型(选填)" checkMsg="请选择变速箱" readonly="readonly">
+		    </div>
+		</div>
+
+		<div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="number" step="0.1" name="mileage" class="mui-input-clear" placeholder="里程数(选填，万公里)" checkMsg="请输入里程数">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="year" class="mui-input-clear" placeholder="出厂年份(选填)" checkMsg="请输入出厂年份">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="number" name="price" class="mui-input-clear" placeholder="价格（0为面议，必填）" checkType="required" checkMsg="请输入价格，0面议">
+		    </div>
+	    </div>
+		
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" class="mui-input-clear" placeholder="联系电话 格式：0410123456（选填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div> 	    
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn">发布</button>
+	    </div>
+	    <input type="hidden" name="cityID" id="cityID" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="sort" id="sort" checkType="required" checkMsg="信息不完整"/>        
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="address" id="address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" id="imgpath" />
+	    <input type="hidden" name="thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" id="thumb_b" />
+	</form>
+</div>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		//普通示例
+		var transPicker = new $.PopPicker();
+		transPicker.setData(['手动','自动','自动/手动']);
+		var transBtn = doc.getElementById('trans');
+		transBtn.addEventListener('tap', function(event) {
+			transPicker.show(function(items) {
+				transBtn.value = items[0];
+			});
+		}, false);		
+
+		mui.showLoading();
+		$.post(
+			config.carBrand,
+			{cateid:3},
+		   	function(res){
+	        	mui.hideLoading();
+				if(res.code=='0'){
+					data = res.body;
+					brandArr = [];
+					$.each(data,function(){
+						brandArr.push(this.name);
+					})	
+
+					var brandPicker = new $.PopPicker();
+					brandPicker.setData(brandArr);
+					var brandBtn = doc.getElementById('brand');
+					brandBtn.addEventListener('tap', function(event) {
+						brandPicker.show(function(items) {
+							brandBtn.value = items[0];
+						});
+					}, false);
+				}else{
+					mui.toast(res.desc);
+				}
+	    	},
+	    	"json"
+	    );
+		//-----------------------------------------			
+	});
+})(mui, document);
+</script>
+<script type="text/javascript" src="../static/js/publish.js"></script>
+</body>
+</html>

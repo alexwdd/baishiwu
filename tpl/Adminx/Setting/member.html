@@ -1,0 +1,42 @@
+<layout name='layout' />
+
+<div class="admin-main">
+	<form id="ajaxForm" class="layui-form" method="post" action="<{:U('Setting/insert')}>">
+		<div class="layui-tab">
+			<ul class="layui-tab-title">
+				<foreach name="group_list" item="vo" key="k">
+             		<a href="<{:U('Setting/index',array('inc_type'=>$k))}>"><li <if condition="$k eq 'member'">class="layui-this"</if>><{$vo}></li></a>
+             	</foreach> 
+			</ul>
+		</div>
+
+  		<div class="layui-form-item">
+			<label class="layui-form-label">免费会员</label>
+			<div class="layui-input-inline">
+				<input type="number" name="txBeishu" value="<{$config.txBeishu}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">的倍数</div>
+
+    		<label class="layui-form-label">提现手续费</label>
+			<div class="layui-input-inline">
+				<input type="number" name="txPercent" value="<{$config.txPercent}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">%</div>
+  		</div>
+
+  		<div class="layui-form-item">
+			<label class="layui-form-label">众筹手续费</label>
+			<div class="layui-input-inline">
+				<input type="number" name="zcPercent" value="<{$config.zcPercent}>" lay-verify="required" class="layui-input">
+			</div>
+			<div class="layui-form-mid layui-word-aux">%</div>
+  		</div>
+  		
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+			</div>
+		</div>
+		<input type="hidden" name="inc_type" value="<{$inc_type}>">
+	</form>
+</div>

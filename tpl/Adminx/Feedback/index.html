@@ -1,0 +1,88 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<?php if ($_SESSION['administrator']) {?>	
+			<div class="layui-input-inline">			
+				<select name="cityID" class="fsSelect fsDict" dict="city" addNull="1">
+		      	</select>
+			</div>
+			<?php } ?>
+			<div class="layui-input-inline">			
+				<select name="type">
+					<option value="">请选择</option>
+					<option value="tc">同城活动</option>
+					<option value="zf">租房/卖房</option>
+					<option value="sp">二手商品</option>
+					<option value="zp">招聘/求职</option>
+					<option value="esc">二手车</option>
+					<option value="ms">美食/外卖</option>
+					<option value="sh">生活服务</option>
+					<option value="xp">新品上架</option>
+					<option value="article">文章</option>
+		      	</select>
+			</div>
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="关键词" class="layui-input"/>
+				</div>
+				<div class="layui-input-inline">
+					<input type="text" name="articleid" autocomplete="off" placeholder="帖子ID" class="layui-input"/>
+				</div>
+			</div>
+		</form>
+		
+	    <div class="layui-col-md12">
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Feedback/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Feedback/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>	
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>
+				<p field="cityID" title="城市" width="150" dict="city"/>
+				<p field="nickname" title="昵称" width="150"/>				
+				<p field="headimg" title="头像" width="60" templet="#faceTpl"/>
+				<p field="comments" title="留言" width="400" />		
+				<p field="createTime" title="提交日期" width="180" sort="true"/>
+				<p fixed="right" align="left" toolbar="#barDemo" title="操作" width="80"/>
+			</div>
+
+			<script type="text/html" id="faceTpl">
+				{{# if(d.headimg == ''){ }}
+				<img src="<{:RES}>/image/face.jpg" style="width:30px;height:30px" />
+				{{# }else{ }}
+				<img src="{{d.headimg}}" style="width:30px;height30px"/>
+				{{# } }}				
+			</script>
+
+			<script type="text/html" id="barDemo">
+				<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="已审|待审" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>				
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+layui.use('table', function(){
+	form = layui.form; 
+	//监听性别操作
+	form.on('switch(status)', function(obj){
+		url = '<{:U('Feedback/status')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"status",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

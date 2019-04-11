@@ -1,0 +1,137 @@
+<layout name='layout' />
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+	<legend>团号【<{$list.articleid}>】<{$list.title}>，单号<{$list.order_no}></legend>
+</fieldset>
+
+<div class="layui-col-md12">
+	<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Tuan/delGoods")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="goodsid:">
+	  <i class="layui-icon">&#xe640;</i>批量删除
+	</button>
+
+	<button class="layui-btn layui-btn-sm" function="move" url="<{:U("Tuan/move")}>" topWidth="80%" isMaximize="0" topHeight="80%" isMutiDml="1" topTitle="包裹批量移动" inputs="goodsid">
+	<i class="layui-icon">&#xe857;</i>批量移动
+	</button>
+
+	<input type="number" step="0.01" id="danjia" autocomplete="off" placeholder="单价/kg" class="layui-input" style="display:inline-block;width:100px;height:30px; line-height:30px" />
+	<input type="number" step="0.01" id="huilv" autocomplete="off" placeholder="汇率" class="layui-input" style="display:inline-block;width:100px;height:30px; line-height:30px" />
+	<button id="expBtn" type="button" class="layui-btn layui-btn-sm" data-id="<{$list.artcileid}>">导出excel
+	</button>
+
+	<button id="makeBtn" type="button" class="layui-btn layui-btn-sm" data-id="<{$list.artcileid}>">生成账单
+	</button>
+
+	<span id="weight" style="display: none;">已选中<span style="padding: 0 5px; color: #f00"></span>公斤</span>
+</div>
+<script>
+$(function(){
+	$("#expBtn").click(function(){
+		var danjia = $("#danjia").val();
+		var huilv = $("#huilv").val();
+		if (danjia<0 || danjia==''){
+			fsCommon.warnMsg("请输入单价");
+			return false;
+		}
+
+		if (huilv<0 || huilv==''){
+			fsCommon.warnMsg("请输入汇率");
+			return false;
+		}
+		window.location.href = '<{:U('Tuan/export',array('articleid'=>$list['articleid']))}>&danjia='+danjia+'&huilv='+huilv;
+	});
+
+	$("#makeBtn").click(function(){
+		var danjia = $("#danjia").val();
+		var huilv = $("#huilv").val();
+		if (danjia<0 || danjia==''){
+			fsCommon.warnMsg("请输入单价");
+			return false;
+		}
+
+		if (huilv<0 || huilv==''){
+			fsCommon.warnMsg("请输入汇率");
+			return false;
+		}
+		var load = layer.load(1, {shade: [0.1,'#fff']});
+		$.post(
+			"<{:U('Tuan/make')}>", 
+			{articleid:<{$list['articleid']}>,huilv:huilv,danjia:danjia}, 
+			function (res){
+				layer.close(load);
+				if (res.status==1){
+					layer.open({
+						type:0, 
+						icon:1,
+						content:res.info,
+					});
+				}else{
+					layer.open({
+						type:0, 
+						icon:2,
+						content:res.info
+					});
+				}
+			}, "json"
+		);
+	});
+
+
+	$(document).on("click",".layui-form-checkbox",function(){
+		layui.use('table', function(){
+			table = layui.table;
+			var weight = 0;
+			var checkStatus = table.checkStatus('fsDatagrid'),data = checkStatus.data;
+	      	for (var i = 0; i < data.length; i++) {
+	      		weight += parseFloat(data[i]['weight_a']);
+	      	}
+	      	if (weight >0){
+	      		$("#weight").show();
+	      		$("#weight span").html(weight);
+	      	}else{
+	      		$("#weight").hide();
+	      	}	      	
+		})
+		
+	});
+})
+</script>
+
+<div class="layui-col-md12">
+    <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Tuan/view',array('articleid'=>$list['articleid']))}>" sortType="1" defaultForm="query_form" height="full-108"></table>	
+    <div class="fsDatagridCols">
+		<p checkbox="true" data-id="2"/>	
+		<p field="goodsid" title="包裹编号" width="100"/>			
+		<p field="title" title="标题" width="200"/>				
+		<p field="weight" title="预估重量" width="100"/>				
+		<p field="weight_a" title="实际重量" width="100"/>				
+		<p field="contact" title="团员" width="100"/>				
+		<p field="phone" title="电话" width="150"/>
+		<p field="wechat" title="微信" width="130"/>
+		<p field="company" title="国内物流公司" width="150"/>
+		<p field="order" title="物流单号" width="150" />
+		<p field="detail" title="留言" width="200"/>		
+		<p field="createTime" title="发布日期" width="180" sort="true"/>
+		<p field="updateTime" title="更新日期" width="180" sort="true"/>
+		<p fixed="right" field="status" title="状态" width="100" sort="true" templet="#statusTpl"/>
+	</div>
+
+	<script type="text/html" id="statusTpl">
+	<input type="checkbox" name="status" value="{{d.goodsid}}" lay-skin="switch" lay-text="到货|未到" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+	</script>
+</div>
+
+<script>
+layui.use('table', function(){
+	form = layui.form; 
+	//监听性别操作
+	form.on('switch(status)', function(obj){
+		url = '<{:U('Tuan/goodsStatus')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"status",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

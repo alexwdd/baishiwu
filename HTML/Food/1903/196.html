@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>美味海鲜</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script src="/www/static/js/jquery.min.js"></script>
+<script src="/www/static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/www/static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+
+<link rel="stylesheet" type="text/css" href="/www/static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="/www/static/mui/css/loading.min.css" />
+<link rel="stylesheet" href="/tpl/static/css/app.css?v=1.05" type="text/css" />
+
+</head>
+<body>
+<div class="page">
+	<div class="title">美味海鲜</div>
+	<div class="date">更新日期：2019-03-07 00:15:09</div>
+	<div class="content"><p style="text-align: center;">中国农历新年就要到了</p><p style="text-align: center;">年货要办 红包要给</p><p style="text-align: center;">眼看钱包越来越瘪</p><p style="text-align: center;">想要买到实惠的年货</p><p style="text-align: center;">该去哪里呢？</p><p style="text-align: center;">小文就来盘点一下</p><p style="text-align: center;">隐藏在新加坡全岛的</p><p style="text-align: center;">扫货好去处</p><p style="text-align: center;">Fassler Gourmet</p><p style="text-align: center;">生鱼片、对虾和蟹肉条是这里的特色</p><p style="text-align: center;">400g生鱼片24.66新</p><p style="text-align: center;">便宜又新鲜</p><p style="text-align: center;">过年吃正好</p><p><img src="http://www.shicheng.news/images/image/141/14180547.jpg?t=1548759725" alt="" style="max-width: 100%; display: block; margin: 20px auto;"/></p><p style="text-align: center;"><iframe frameborder="0" marginwidth="0" marginheight="0" vspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" id="aswift_1" name="aswift_1"></iframe></p><p style="text-align: center;">三文鱼、鲭鱼和扇贝</p><p style="text-align: center;">鱼子酱、龙虾、金枪鱼和黑虎虾</p><p style="text-align: center;">除了上述海鲜</p><p><img src="http://www.shicheng.news/images/image/141/14180548.jpg?t=1548759726" alt="" style="max-width: 100%; display: block; margin: 20px auto;"/></p><p style="text-align: center;">还有海鲜馅饼等现成佳肴</p><p style="text-align: center;">回去直接食用</p><p style="text-align: center;">节省准备时间</p><p style="text-align: center;">在临近节日时</p><p style="text-align: center;">海鲜非常便宜</p><p style="text-align: center;">(每公斤黑虎虾大约30新)</p><p style="text-align: center;">店里偶尔会搞一些促销</p><p style="text-align: center;">也有送货服务</p><p style="text-align: center;">有空去看一看吧</p><p style="text-align: center;">地址：46 Woodlands Terrace, Singapore 738459</p><p style="text-align: center;">电话：62575257</p><p style="text-align: center;">营业时间：8:30 am - 5:30 pm (周一至周五), 8 am - 1 pm (周六)</p><p style="text-align: center;"><iframe frameborder="0" marginwidth="0" marginheight="0" vspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" id="aswift_2" name="aswift_2"></iframe></p><p style="text-align: center;">周日及公共假日休息</p><p style="text-align: center;"><img src="http://www.worldmedia.top/uploads/images/2019-01-30/5c511fdf3661e.jpg" title="" alt="3.jpg"/></p><p style="text-align: center;">联系时请说明是在《新加坡生活圈APP》上看到的，谢谢！</p><p style="text-align: center;">《新加坡生活圈》 最新加坡式的综合信息生活服务平台！</p><p><br/></p></div>
+	
+	<div id="app" v-cloak>
+		<div class="adList"></div>
+		<div class="feedback">
+			<div class="hd">
+				<p>精选留言</p>
+				<span @click="doWrite" v-show="writeBtn">写留言</span>
+			</div>
+			<div class="empty" v-show="empty" @click="doWrite"><p>抢占沙发~</p></div>
+			<div class="bd" @click="closeWrite">				
+				<li v-for="vo in lists">
+					<div class="face"><img :src="vo.headimg"></div>
+					<div class="desc">
+						<div class="name">{{vo.nickname}}</div>
+						<div class="say">{{vo.content}}</div>
+					</div>
+					<div class="like" @click="digg(vo)"><span>{{vo.digg}}</span><img src="/tpl/static/image/like.svg"/></div>
+				</li>
+				<div id="loadding" class="loadding" v-show="loadding">
+					<span class="mui-spinner"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="writeBox" v-show="write">
+			<input type="text" placeholder="说点什么..." v-model="content">
+			<button type="button" class="mui-btn mui-btn-primary" @click="submit">发表</button>
+		</div>
+	</div>
+	<script src="/www/static/vue/vue.min.js"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+		el:"#app",
+		data:{
+			user:'',
+			weixin:false,
+			empty:false,
+			write:false,
+			writeBtn:false,
+			loadding:false,
+			lists:[],
+			token:'',
+			type:'ms',
+			articleid:196,
+			page:1,
+			canScroll : 1,
+			next:0,
+			content:''
+		},
+		created : function(){
+			var that = this;
+			that.weixin = that.isWeiXin();
+			if (that.weixin==1){
+				that.user = [{id:0}];
+				that.writeBtn = true;
+			}else{
+				var request = GetRequest();
+				if(request.token){
+					that.token = request.token;
+					data = {'token':that.token};
+					mui.post('/V1/News/getUserInfo',data,function(res){
+						if (res.code==1){
+							that.user = res.user;
+							that.writeBtn = true;
+						}				
+					},'json');
+				}
+			}			
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+		methods: {
+			doWrite(){
+				if (this.user==''){return false}
+				this.write = true;
+			},
+			closeWrite(){
+				this.write = false;
+			},
+			goPage : function(page){			
+				var that = this;
+	    		that.loadding = true;
+	    		that.canScroll = 0;
+	    		$.post(
+					'/V1/Article/get_comment',
+					{articleid:that.articleid,type:that.type,page:page},
+				   	function(res){
+			        	that.loadding = false;
+			        	that.canScroll = 1;
+						if(res.code==0){
+							data = res.body.comments;
+							that.lists = that.lists.concat(data);	
+							if (that.lists==0){
+								that.empty = true;
+							}
+							that.next = res.body.next;
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			digg(info){
+				var that = this;			
+				if (that.user==''){return false};
+	    		$.post(
+					'/V1/article/digg',
+					{commentID:info.commentid},
+				   	function(res){
+						if(res.code==0){
+							for(var i in that.lists){
+								if (info.commentid==that.lists[i]['commentid']){
+									that.lists[i]['digg']++;
+								}
+							}
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			submit(){
+				var that = this;			
+				if (that.user==''){return false};
+				if (that.content == '') {return false};
+				mui.showLoading('提交中');
+	    		$.post(
+					'/V1/Article/html_send_comment',
+					{articleid:that.articleid,weixin:that.weixin,cityID:39,type:that.type,comments:that.content,token:that.token},
+				   	function(res){
+				   		mui.hideLoading();
+						if(res.code==0){
+							mui.alert(res.desc);
+							that.content = '';
+							that.write = false;
+						}else{
+							mui.alert(res.desc)
+						}
+			    	},
+			    	"json"
+			    );
+			},
+			isWeiXin(){
+				var ua = window.navigator.userAgent.toLowerCase();
+				if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+					return 1;
+				}else{
+					return 0;
+				}
+			}
+		},
+		updated : function(){
+			mui('.mui-slider').slider();
+		}
+	})
+
+	function GetRequest() {   
+	   var url = location.search; //获取url中"?"符后的字串   
+	   var theRequest = new Object();   
+	   if (url.indexOf("?") != -1) {   
+	      var str = url.substr(1);   
+	      strs = str.split("&");   
+	      for(var i = 0; i < strs.length; i ++) {
+	         if (strs[i]!='remark=%E4%B8%8D%E9%99%90' && strs[i]!='singleType=%E4%B8%8D%E9%99%90'){
+	            //theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+	            theRequest[strs[i].split("=")[0]]=strs[i].split("=")[1];
+	         }            
+	      }   
+	   }   
+	   return theRequest;   
+	}
+	</script></div>
+<script>
+$(function(){
+	url = '/V1/Article/hit/type/ms/articleid/196';
+	$.get(url,function(){})
+})
+</script>
+</body>
+</html>

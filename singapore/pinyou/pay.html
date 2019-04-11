@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style type="text/css">
+.price{text-align: center; padding: 20px 0; display: flex; background: #f7f7f7;}
+.price li{flex:1;}
+.price h2{font-weight: normal;text-align: center; font-size: 20px}
+.price span{font-size: 12px;}
+.payType{clear: both; background: #fff; overflow: hidden;}
+.payType li{clear: both; height:40px; border-bottom: 1px #dbdbdb solid; line-height: 40px; padding: 0 10px; cursor: pointer; }
+.payType li p{float: left; border: 0}
+.payType li span{float: right; width: 16px; height: 16px; border:1px #dbdbdb solid; border-radius: 50%; margin-top: 11px}
+.payType li span.active{ background: #7507c2; border-color: #7507c2 }
+</style>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<div class="price">
+	        <li>
+	            <h2>￥{{info.money}}</h2>
+	            <span>应付金额</span>
+	        </li>
+	    </div>
+
+		<div class="pyInfo">
+			<div class="bd">
+				<li>
+					<div class="mui-pull-left">支付状态</div>
+					<div class="mui-pull-right" v-if="info.status==0"><span style="color:#f00">未支付</span></div>
+					<div class="mui-pull-right" v-if="info.status==1"><span>待审核</span></div>
+					<div class="mui-pull-right" v-if="info.status==2"><span style="color:#05c1af">已支付</span></div>
+				</li>
+				<li>
+					<div class="mui-pull-left">团号</div>
+					<div class="mui-pull-right">{{info.articleid}}</div>
+				</li>
+				<li>
+					<div class="mui-pull-left">会员名</div>
+					<div class="mui-pull-right">{{info.nickname}}</div>
+				</li>
+			</div>
+		</div>
+		
+		<template v-if="info.status!=2">
+		<p style="margin: 10px;">选择支付方式</p>
+
+		<div class="payType">
+	        <li @click="selectPayType(1)">
+	            <p>支付宝</p>
+	            <span v-if="payType==1" class="active"></span>
+	            <span v-else=""></span>
+	        </li>
+	        <li @click="selectPayType(2)">
+	            <p>微信支付</p>
+	            <span v-if="payType==2" class="active"></span>
+	            <span v-else=""></span>
+	        </li>
+	    </div>
+	    
+	    <div class="main">
+	    	<button type="button" @click="doPay" class="mui-btn mui-btn-blue mui-btn-block my-btn">马上支付</button>
+	    </div>
+
+        <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" /> 
+        </template>
+	</form>
+</div>
+<script>
+mui.ready(function(){	
+	//alert(window.location.href);
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			src:'../static/image/pay.png',
+			payType:'',
+			info : []
+		},
+		created : function(){
+			var that = this;
+    		mui.showLoading('数据加载中');
+    		var request = GetRequest();    		
+    		$.post(
+				config.pinyouMyBill,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body;
+						if (data.jietu!=''){
+							that.src = data.jietu;
+						}
+						that.info = data;						
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		},
+		methods: {
+			selectPayType(value){
+				this.payType = value;
+			},
+			doPay : function(){
+				if (this.payType==''){
+					mui.toast("请选择支付方式");
+					return false;
+				}
+		        url = 'app://TuanPay?payType='+this.payType+'&order_no='+this.info.order_no;
+		        window.location.href=url; 
+			}
+		},
+    	updated : function(){
+
+		}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })	
+})
+</script>
+<script type="text/javascript" src="../static/js/pay.js"></script>
+</body>
+</html>

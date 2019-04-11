@@ -1,0 +1,194 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">活动名称</label>
+		<div class="layui-input-block">
+			<input type="text" name="name" value="<{$list.name}>" lay-verify="required" placeholder="请输入活动名称" class="layui-input">
+		</div>
+	</div>
+
+	<?php if ($_SESSION['administrator']) {?>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" lay-verify="required" default="<{$list.cityID}>" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+	</div>
+	<?php } ?>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">类型</label>
+		<div class="layui-input-inline">			
+			<select name="type" default="<{$list.type}>" lay-verify="required">
+			<option value="1">按次</option>
+			<option value="2">按天</option>
+	      	</select>			
+		</div>
+
+		<label class="layui-form-label">数量</label>
+		<div class="layui-input-inline">
+			<input type="text" name="totalNumber" value="<{$list.totalNumber}>" lay-verify="required" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">开始时间</label>
+		<div class="layui-input-inline">
+			<input type="text" name="startTime" value="<{$list.startTime|date="Y-m-d",###}>" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
+		</div>
+
+		<label class="layui-form-label">结束时间</label>
+		<div class="layui-input-inline">
+			<input type="text" name="endTime" value="<{$list.endTime|date="Y-m-d",###}>" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">背景图片</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="background" id="background" value="<{$list.background}>"  placeholder="图片地址" class="layui-input">
+		</div>
+		<div class="layui-inline">
+			<input type="button" value="上传" class="layui-btn" onclick="uploadfile('<{:U('Upload/image')}>','background');"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">底部广告</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="bottom" id="bottom" value="<{$list.bottom}>" placeholder="图片地址" class="layui-input">
+		</div>
+		<div class="layui-inline">
+			<input type="button" value="上传" class="layui-btn" onclick="uploadfile('<{:U('Upload/image')}>','bottom');"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">链接地址</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="link" id="link" value="<{$list.link}>" class="layui-input">
+		</div>
+	</div>
+
+	<?php for($i=0;$i<8;$i++){ ?>
+	<div class="layui-form-item">
+		<label class="layui-form-label">奖品</label>
+		<div class="layui-input-inline" style="width:100px">
+			<input type="text" name="prize[]" value="<{$list['prize'][$i]}>" lay-verify="required" class="layui-input">
+		</div>
+		
+		<label class="layui-form-label">图片</label>
+		<div class="layui-input-inline">			
+			<input type="text" id="image<{$i}>" name="image[]" value="<{$list['image'][$i]}>" lay-verify="required" class="layui-input">
+		</div>
+
+		<div style="float:left">
+			<input type="button" value="上传" class="layui-btn" onclick="uploadfile('<{:U('Upload/image')}>','image<{$i}>');"/>
+		</div>
+
+		<label class="layui-form-label">数量</label>
+		<div class="layui-input-inline" style="width:100px">
+			<input type="number" name="number[]" value="<{$list['number'][$i]}>" lay-verify="required" class="layui-input">
+		</div>
+		
+		<label class="layui-form-label">概率</label>
+		<div class="layui-input-inline" style="width:100px">
+			<input type="number" name="probability[]" value="<{$list['probability'][$i]}>" lay-verify="required" class="layui-input" placeholder="百分比">
+		</div>
+	</div>
+	<?php } ?>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">是否开启</label>
+		<div class="layui-input-block">
+				<input type="checkbox" <?php if($list['status']==1){echo 'checked';}?> name="status" value="1" lay-skin="switch" lay-filter="switchTest" title="开关">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">活动说明</label>
+		<div class="layui-input-block">
+			<textarea name="content" class="layui-textarea"><{$list.content}></textarea>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Activity/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+
+    <input type="hidden" name="id" value="<{$list.id}>">
+</form>
+<!--上传文件-->
+<form style="display:none;" id='myupload' action="" method='post' enctype='multipart/form-data'>
+<input id="fileupload" type="file" name="file">
+</form>
+<div id="uploading" style="display:none;">
+	<div class="wrapper">
+		<div class="load-bar">   
+			<div class="load-bar-inner" data-loading="0"> <span id="counter">0%</span> </div> 
+		</div>  
+		<p>请等待... </p>
+	</div>
+</div>
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+function uploadfile(url,o){
+	layui.use(['layer', 'form'], function(){
+		var layer = layui.layer;
+		$("#fileupload").click();
+		//文件上传js
+		var btn = $(".uploadbtn");
+		var upload="";
+		$("#myupload").attr("action",url);
+		$("#fileupload").bind("change",function(){
+			if($(this).val()!=""){
+				$("#myupload").ajaxSubmit({
+					dataType:  'json',
+					beforeSend: function() {
+						btn.val("上传中...");
+						upload=layer.open({
+						  type: 1,
+						  title: false,
+						  closeBtn: 1,
+						  shadeClose: false,
+						  area: ['420px', '100px'],
+						  content: $('#uploading')
+						});
+		    		},
+		    		uploadProgress: function(event, position, total, percentComplete) {
+		        		var percentVal = percentComplete + '%';
+		        		var left=$(".load-bar").width()*percentComplete/100;
+		        		$("#counter").html(percentVal).css("left",(left-35)+"px");
+		        		$(".load-bar-inner").css("width",left+"px");
+		        		$("#filesize").val(percentVal);
+
+		    		},
+					success: function(res) {	
+						res = JSON.parse(res);		
+						$("#fileupload").unbind("change");
+						layer.close(upload);
+						$('#uploading').css("display","none");
+						btn.val("本地上传");
+						$("#myupload")[0].reset();
+						console.log(res);
+						if(res.status == '1'){	
+							$("#"+o).val(res.results.data.url);
+						}else{
+							layer.msg('上传失败', {time:2000, icon:2});
+						}
+					},
+					error:function(xhr){
+						btn.val("上传失败");
+					}
+				})
+			}
+		})
+	})
+}
+</script>

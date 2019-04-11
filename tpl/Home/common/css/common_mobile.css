@@ -1,0 +1,49 @@
+@charset "utf-8";a,body,button,canvas,dd,div,dl,dt,form,h1,h2,h3,h4,h5,h6,input,li,ol,p,pre,select,span,table,td,textarea,th,ul{margin:0;padding:0;background:no-repeat center/contain;cursor:default}
+body{position:relative;display:block;margin:auto;max-width:10rem;min-width:4.26666667rem;font-size:.16rem;font-family:"Microsoft Yahei",Arial,sans-serif}
+ol,ul{list-style:none}
+img{border:0}
+a{outline:0;color:inherit;text-decoration:none}
+a:hover{text-decoration:none}
+input{outline:0}
+.block{display:block}
+.none{display:none}
+.r{position:relative}
+.a{position:absolute}
+.fl{float:left}
+.fr{float:right}
+.clearfix:after{clear:both;display:block;visibility:hidden;height:0;content:""}
+#wrap{position:relative;overflow:hidden;width:100%;height:19.51333333rem;}
+#mask,#mask-rule{position:fixed;top:0;left:0;z-index:10;display:none;width:100%;height:100%;background-color:rgba(0,0,0,.85)}
+#mask-rule .box-rule{position:relative;margin:20% auto;padding-top:.53333333rem;width:90%;height:70%;border-radius:.26666667rem}
+#mask-rule .box-rule .star{position:absolute;top:-1.33333333rem;left:50%;margin-left:-1.73333333rem;width:3.45333333rem;height:1.16rem}
+#mask-rule .box-rule h2{width:100%;color:#fff;text-align:center;font-weight:400;font-size:.45333333rem;line-height:.45333333rem}
+#mask-rule .box-rule h2::after,#mask-rule .box-rule h2::before{display:inline-block;width:.24rem;height:.24rem;border-radius:50%;background-color:#fff;content:""}
+#mask-rule .box-rule h2::before{margin-right:.32rem}
+#mask-rule .box-rule h2::after{margin-left:.32rem}
+#mask-rule #close-rule{position:absolute;top:.50666667rem;right:.45333333rem;width:.53333333rem;height:.53333333rem;background-image:url(../image/close.png)}
+#mask-rule .con{position:relative;overflow:auto;margin:.53333333rem auto;padding-right:.2rem;width:7.73333333rem;height:82%;color:#fff;font-size:.34666667rem;line-height:.64rem}
+#mask-rule .con .text{position:absolute;top:0;left:0;width:inherit;height:auto}
+#mask{position:fixed;top:0;left:0;z-index:10;display:none;width:100%;height:100%;background-color:rgba(0,0,0,.85)}
+#mask .blin{width:100%;height:100%;background-image:url(../image/redPack/gold.png);-o-animation:circle 10s linear infinite;-ms-animation:circle 10s linear infinite;-moz-animation:circle 10s linear infinite;-webkit-animation:circle 10s linear infinite;animation:circle 10s linear infinite}
+@keyframes circle{0%{-webkit-transform:rotate(0);-moz-transform:rotate(0);-o-transform:rotate(0);transform:rotate(0);-ms-transform:rotate(0)}
+100%{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg);-ms-transform:rotate(360deg)}
+}
+#mask .caidai{position:absolute;top:0;left:0;z-index:1;width:100%;height:100%;background-image:url(../image/redPack/dianzhui.png);-webkit-transform:scale(1.2);-moz-transform:scale(1.2);-o-transform:scale(1.2);transform:scale(1.2);-ms-transform:scale(1.2)}
+#mask .winning{position:absolute;top:50%;left:50%;z-index:1;margin:-3.46666667rem 0 0 -4rem;width:8rem;height:6.8rem;-webkit-transform:scale(.1);-moz-transform:scale(.1);-o-transform:scale(.1);transform:scale(.1);-ms-transform:scale(.1)}
+#mask .reback{-o-animation:reback .5s linear forwards;-ms-animation:reback .5s linear forwards;-moz-animation:reback .5s linear forwards;-webkit-animation:reback .5s linear forwards;animation:reback .5s linear forwards}
+@keyframes reback{100%{-webkit-transform:scale(1);-moz-transform:scale(1);-o-transform:scale(1);transform:scale(1);-ms-transform:scale(1)}
+}
+.winning .red-head{position:relative;top:-.33333333rem;width:100%;height:4.46666667rem;background-image:url(../image/redPack/top.png)}
+.winning .red-body{position:relative;top:-2.13333333rem;z-index:2;width:100%;height:4.8rem;background-image:url(../image/redPack/bottom.png)}
+.winning #card{position:absolute;top:50%;left:50%;z-index:1;margin-top:-1.06666667rem;margin-left:-3.2rem;width:80%;height:4.26666667rem;background-image:url(../image/redPack/middle.png);-webkit-transition:top .5s;-moz-transition:top .5s;-o-transition:top .5s;transition:top .5s;-ms-transition:top .5s}
+#card .win{display:block;margin:.13333333rem auto;width:92%;height:3.86666667rem;background-image:url(../image/redPack/prize2.png)}
+.winning .pull{-o-animation:card .5s linear forwards;-ms-animation:card .5s linear forwards;-moz-animation:card .5s linear forwards;-webkit-animation:card .5s linear forwards;animation:card .5s linear forwards}
+@keyframes card{100%{margin-top:-3.2rem}
+}
+.winning .btn{position:absolute;bottom:10%;left:50%;z-index:2;margin-left:-2.42666667rem;width:4.85333333rem;height:.94666667rem;background-image:url(../image/redPack/button.png);-o-animation:shake .5s 2 linear alternate;-ms-animation:shake .5s 2 linear alternate;-moz-animation:shake .5s 2 linear alternate;-webkit-animation:shake .5s 2 linear alternate;animation:shake .5s 2 linear alternate}
+@keyframes shake{50%{-webkit-transform:rotate(-5deg);-moz-transform:rotate(-5deg);-o-transform:rotate(-5deg);transform:rotate(-5deg);-ms-transform:rotate(-5deg)}
+100%{-webkit-transform:rotate(5deg);-moz-transform:rotate(5deg);-o-transform:rotate(5deg);transform:rotate(5deg);-ms-transform:rotate(5deg)}
+}
+#close{position:absolute;top:-1.06666667rem;right:0;z-index:10;width:.85333333rem;height:.85333333rem;background-image:url(../image/redPack/close.png);opacity:0;-o-animation:fadein .5s .5s linear forwards;-ms-animation:fadein .5s .5s linear forwards;-moz-animation:fadein .5s .5s linear forwards;-webkit-animation:fadein .5s .5s linear forwards;animation:fadein .5s .5s linear forwards}
+@keyframes fadein{100%{opacity:1;-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg);-ms-transform:rotate(360deg)}
+}

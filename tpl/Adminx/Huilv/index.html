@@ -1,0 +1,17 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">当前汇率</label>
+		<div class="layui-input-inline">
+			<input type="text" name="rate" value="<{$config.rate}>" lay-verify="required" placeholder="1新币=RMB" class="layui-input">
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Huilv/index')}>"><i class="layui-icon">&#xe642;</i>保存</button>
+    </div>
+</form>

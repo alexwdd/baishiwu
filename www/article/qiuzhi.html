@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>求职-澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="tabMenu">
+		<li><a href="zhaopin.html" id="zpUrl">招聘</a></li>
+		<li class="active"><a href="qiuzhi.html" id="qzUrl">求职</a></li>
+	</div>
+	<ul class="textList" id="ajax_return">
+		<li v-for="item in lists">
+			<a :href="item.url">
+			<h1>{{item.title}}</h1>
+			<p><i class="icon icon-loufang"></i> {{item.company|empty}}</p>
+			<p><i class="icon icon-weizhi"></i> {{item.address|empty}}</p>
+			<p style="margin-top: 5px">
+				<span class="mui-pull-left money" v-if="item.price != 0">
+				${{item.price}}
+				</span>
+				<span v-else>
+				 详情请咨询
+				</span>					
+				<span class="mui-pull-right">
+					<span class="my-badge my-badge-green">{{item.sortName}}</span>
+					<span class="my-badge my-badge-red" v-if="item.work!=''">{{item.work}}</span>
+					<span class="my-badge my-badge-gray" v-if="item.visa!=''">{{item.visa}}</span>
+				</span>
+			</p>
+			</a>
+		</li>		
+	</ul>	
+</div>
+
+<script>
+mui.ready(function(){	
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			page : 1,
+			canScroll : 1,
+			next : 1,
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+
+		methods: {
+        	goPage (page) {
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		var request = GetRequest();
+        		request.page = that.page;
+        		request.type = 'zp';    
+        		request.jobtype = 1;   
+        		request.status = 1;   
+        		$("#zpUrl").attr("href","zhaopin.html?cityID="+request.cityID+"&userid="+request.userid);
+        		$("#qzUrl").attr("href","qiuzhi.html?cityID="+request.cityID+"&userid="+request.userid);
+        		$.post(
+					config.articleList,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.articles;
+							$.each(data,function(index){
+								if (this.html==''){
+									data[index]['url'] = 'app://articledetail?articleid='+this.articleid+'&type=zp';
+								}else{
+									data[index]['url'] = 'app://html?url='+this.html+'&title='+this.title;
+								}
+							})								
+							that.lists = that.lists.concat(data);	
+							that.canScroll = 1;				
+							that.next = res.body.next;				
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+	
+	Vue.filter('empty', function (value) {
+	    if (value=='' || value==null || value==undefined) {
+	    	return '详情请咨询'
+	    }else{
+	    	return value
+	    }
+	})
+})
+</script>
+</body>
+</html>

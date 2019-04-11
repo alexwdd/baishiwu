@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>编辑-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.picker.min.css" />
+
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/form.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm">
+	<form id="myForm">
+		<h5 class="sortName">添加照片</h5>
+		<div class="insert-img" id="insert-img">
+	        <a href="javascript:;" onclick="uploadMultiFile('insert-btn');" class="insert-btn" id="insert-btn"><i class="icon icon-zhaoxiangji"></i></a>
+	    </div> 
+	    
+	    <input type="file" id="uploadfile" accept="image/*" capture="camera"/>   
+	    	
+		<h5 class="sortName">更多详情</h5>
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="title" class="mui-input-clear" checkType="required" checkMsg="请输入标题" :value="info.title" placeholder="标题(必填)">
+		    </div>
+	    </div>
+	    
+	    <ul class="mui-table-view address mb10">
+        	<li class="mui-table-view-cell">
+	            <a href="app://address" class="mui-navigate-right" id="address_str">{{info.address}}</a>
+	        </li>
+	    </ul>
+	    
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row" style="height: auto;">
+		        <textarea name="detail" placeholder="描述(必填)" rows="3" checkType="required" checkMsg="请输入描述" :value="info.detail"></textarea>
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10">
+	    	<div class="mui-input-row">
+		        <input type="text" name="begin" id="begin" :value="info.begin" class="mui-input-clear dateBtn" checkMsg="请输入活动开始时间" placeholder="活动开始时间(选填)" readonly="readonly">
+		    </div>
+	    </div> 
+
+	    <div class="mui-input-group noborder mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="end" id="end" :value="info.end" class="mui-input-clear dateBtn" placeholder="活动结束时间(必填)" checkType="required" checkMsg="请输入活动结束时间" readonly="readonly">
+		    </div>		    
+	    </div>
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="links" id="links" :value="info.links" class="mui-input-clear" placeholder="相关链接(选填)">
+		    </div>
+	    </div>	
+
+	    <div class="mui-input-group noborder mb10">    
+		    <div class="mui-input-row">
+		        <input type="text" name="price" :value="info.price" class="mui-input-clear" placeholder="人均消费（0为免费，0.1为自助 选填）" checkMsg="请输入人均费用">
+		    </div>
+	    </div> 
+
+		<div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="contact" id="contact" :value="info.contact" class="mui-input-clear" checkType="required" checkMsg="请输入联系人" placeholder="联系人(必填)">
+		    </div>
+	    </div>
+		
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="phone" id="phone" :value="info.phone" class="mui-input-clear" checkType="phone" checkMsg="请输入正确的电话格式" placeholder="联系电话 格式：0410123456（必填）" >
+		    </div>
+	    </div>	    
+
+	    <div class="mui-input-group mb10">
+		    <div class="mui-input-row">
+		        <input type="text" name="wechat" id="wechat" :value="info.wechat" class="mui-input-clear" placeholder="微信号(选填)">
+		    </div>
+	    </div> 	    
+
+	    <div class="main">
+	    	<button type="button" id="submitBtn" class="mui-btn mui-btn-blue mui-btn-block my-btn" style="width: 67%; float: left;">编辑</button>
+	    	<button type="button" id="delBtn" class="mui-btn mui-btn-block" style="width: 30%;float: right;">删除</button>
+	    </div>
+		<input type="hidden" name="articleid" id="articleid" checkType="required" checkMsg="信息不完整"/>  
+	    <input type="hidden" name="type" id="type" checkType="required" checkMsg="信息不完整"/>
+
+	    <input type="hidden" name="userid" id="userid" checkType="required" checkMsg="信息不完整"/>
+        <input type="hidden" name="password" id="password" />
+        <input type="hidden" name="openid" id="openid" />    
+        <input type="hidden" name="address" id="address" :value="info.address" checkMsg="请选择地址"/>
+        <input type="hidden" name="longitude" id="longitude" :value="info.longitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="latitude" id="latitude" :value="info.latitude" checkType="required" checkMsg="无法读取位置信息"/>
+	    <input type="hidden" name="imgpath" :value="info.image" id="imgpath" />
+	    <input type="hidden" name="thumb_s" :value="info.thumb_s" id="thumb_s" />
+	    <input type="hidden" name="thumb_b" :value="info.thumb_b" id="thumb_b" />
+	    <input type="hidden" name="status" value="0" />
+	</form>
+</div>
+<script src="../static/vue/vue.min.js"></script>
+<script>
+(function($, doc) {
+	$.init();
+	$.ready(function() {
+		var btns = $('.dateBtn');
+		btns.each(function(i, btn) {
+			btn.addEventListener('tap', function() {
+				var optionsJson = this.getAttribute('data-options') || '{}';
+				var options = JSON.parse(optionsJson);
+				var id = this.getAttribute('id');
+				var thatBtn = this;
+				var picker = new $.DtPicker(options);
+				picker.show(function(rs) {
+					thatBtn.value = rs.text;
+					picker.dispose();
+				});
+			}, false);
+		});	
+	});
+})(mui, document);
+</script>
+<script type="text/javascript" src="../static/js/edit.js"></script>
+</body>
+</html>

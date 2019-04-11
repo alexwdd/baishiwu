@@ -1,0 +1,149 @@
+<layout name='layout' />
+
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+	<legend>分类信息设置</legend>
+</fieldset>
+
+<form class="layui-form" method="post">
+	<?php if ($_SESSION['administrator']) {?>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" default="<{$cityID}>" lay-verify="required" lay-filter="city">
+			<volist name="city" id="vo">
+			<option value="<{$vo.id}>"><{$vo.name}></option>
+			</volist>
+	      	</select>
+		</div>
+	</div>
+	<?php }else{ ?>
+	<input type="hidden" name="cityID" value="<{$cityID}>">
+	<?php } ?>
+	<table class="layui-table">
+		<colgroup>
+	    	<col width="200">	      	
+	      	<col>
+	      	<col>
+	      	<col width="200">
+	    </colgroup>
+	    <thead>
+	    	<tr>
+	        <th>大类</th>
+	        <th>小类</th>
+	        <th>图标</th>
+	        <th>排序</th>
+	    	</tr> 
+	    </thead>
+    	<tbody>
+    		<volist name="list" id="vo">
+      		<tr>
+        	<td><input data-id="b-<{$vo.id}>" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="<{$vo.id}>" <?php if(in_array($vo['id'],$myArr)) echo 'checked';?>/> <{$vo.name}><input type="hidden" name="name<{$vo.id}>" value="<{$vo.name}>" /></td>
+        	<td></td>
+        	<td><input type="text" name="icon<{$vo.id}>" class="layui-input" style="width:400px; float: left; margin-right: 5px" value="<?php
+        		if($myIcon[$vo['id']]){
+					echo $myIcon[$vo['id']];
+        		}				
+        		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
+        	<td><input type="number" name="sort<{$vo.id}>" class="layui-input" value="<?php
+        		if($mySort[$vo['id']]){
+					echo $mySort[$vo['id']];
+        		}else{
+					echo '0';
+        		}				
+        		?>"/></td>
+      		</tr>
+	      		<volist name="vo.child" id="f">
+	      		<tr class="b-<{$vo.id}>">
+	        	<td></td>
+	        	<td><input type="checkbox" name="small[]" lay-skin="primary" value="<{$vo.id}>-<{$f.id}>" <?php if(in_array($f['id'],$myArr)) echo 'checked';?>/> <{$f.name}><input type="hidden" name="name<{$f.id}>" value="<{$f.name}>" /></td>
+	        	<td><input type="text" name="icon<{$f.id}>" class="layui-input" style="width:400px; float: left; margin-right: 5px" value="<?php
+				if($myIcon[$f['id']]){
+					echo $myIcon[$f['id']];
+        		}
+        		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
+	        	<td><input type="number" name="sort<{$f.id}>" class="layui-input" value="<?php
+				if($mySort[$f['id']]){
+					echo $mySort[$f['id']];
+        		}else{
+					echo '0';
+        		}
+        		?>" /></td>
+	      		</tr>
+	      		</volist>
+      		</volist>
+      		<tr>
+        	<td><input data-id="b-94" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="94" <?php if(in_array(94,$myArr)) echo 'checked';?>/> 时事热点<input type="hidden" name="name94" value="时事热点" /></td>
+        	<td></td>
+        	<td><input type="text" name="icon94" class="layui-input" value="" style="width:400px; float: left; margin-right: 5px" value="<?php
+				if($myIcon[94]){
+					echo $myIcon[94];
+        		}
+        		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
+        	<td><input type="number" name="sort94" class="layui-input" value="<?php
+				if($mySort[94]){
+					echo $mySort[94];
+        		}else{
+					echo '0';
+        		}
+        		?>" /></td>
+        	</tr>
+        	<td><input data-id="b-113" type="checkbox" name="big[]" lay-filter="access" lay-skin="primary" value="113" <?php if(in_array(113,$myArr)) echo 'checked';?>/> 征婚<input type="hidden" name="name113" value="征婚" /></td>
+        	<td></td>
+        	<td><input type="text" name="icon113" class="layui-input" style="width:400px; float: left; margin-right: 5px" value="<?php
+				if($myIcon[113]){
+					echo $myIcon[113];
+        		}
+        		?>"> <button type="button" class="layui-btn demoMore">上传</button></td>
+        	<td><input type="number" name="sort113" class="layui-input" value="<?php
+				if($mySort[113]){
+					echo $mySort[113];
+        		}else{
+					echo '0';
+        		}
+        		?>" /></td>
+        	</tr>
+    	</tbody>
+  	</table>
+
+	<hr>
+
+	<div class="layui-form-item">
+	 	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Citycate/index')}>"><i class="layui-icon">&#xe642;</i>保存</button>
+	 	<button type="button" class="layui-btn layui-btn-primary" onclick="window.history.go(-1)">返回</button>
+	</div>
+</form>
+
+<script type="text/javascript">
+layui.use(["jquery","form","upload"],function() {
+	var $=layui.jquery,form=layui.form,upload = layui.upload;;
+	form.on('checkbox(access)', function(data){
+		var oID=$(data.elem).attr("data-id");
+		$("."+oID).find("input").each(function(index, item){  
+          	item.checked = data.elem.checked;  
+        });
+        form.render('checkbox'); 
+	});
+
+	form.on('select(city)', function(data){
+		var cityID = data.elem.value;
+		window.location.href='<{:U('Citycate/index')}>&cityID='+cityID;
+	});  
+
+	upload.render({
+		elem: '.demoMore',
+		url: '<{:U('Upload/image')}>&water=0&thumb=0',
+		accept :'images',
+	    exts :'jpg|png|gif|jpeg',
+	    size :1024,
+		before: function(){
+		},
+		done: function(res){
+			if (res.status==1) {
+				var item = this.item;
+				item.prev().val(res.results.data.url);
+			}
+		}
+	}) 
+});
+</script>

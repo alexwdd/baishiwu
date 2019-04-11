@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>评论-新加坡圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div class="mui-content" id="vm" v-cloak>
+	<div class="infoDetail">
+		<div class="comment">
+			<div class="hd">
+				<h4>最新评论</h4>
+				<span><a href="#writeBox"><i class="icon icon-pinglun"></i> 写评论</a></span>
+			</div>
+			<div class="bd">
+				<li v-for="item in lists">
+					<div class="userInfo">
+						<div class="face"><img :src="item.headimg"></div>
+						<div class="name">{{item.nickname}}</div>
+						<div class="date">{{item.time|time}}</div>
+					</div>
+					<div class="con">{{item.content}}</div>
+				</li>				
+			</div>
+		</div>	
+	</div>
+	<div id="writeBox" class="mui-popover mui-popover-action mui-popover-bottom"  style="background: #F2F2F2;">
+		<div class="mui-content-padded">
+			<textarea type="text" class="mui-pull-left" id="pinlunTXT" style="width:100%;height: 100px;font-size: 14px;border-radius: 10px;" placeholder="点评..."></textarea>
+			<a class="mui-btn mui-btn-blue my-btn mui-pull-right" style="margin-bottom: 15px;" id="pinlunUP">发送</a>
+		</div>
+	</div>
+</div>
+
+<script>
+mui.ready(function(){	
+	vm = new Vue({
+		el : "#vm",
+		data : {
+			page : 1,
+			canScroll : 1,
+			next : 1,
+			lists : []
+		},
+		created : function(){
+			var that = this;
+			that.goPage(that.page);
+			$(window).scroll(function(){
+				if(that.canScroll==0 || that.next==0){//不要重复加载
+					return;
+				}
+				if ($(document).scrollTop() + $(window).height()+500 >= $(document).height()) {
+					that.page++;   
+					that.goPage(that.page); // 执行增加页面数据操作
+				} 
+			});
+		},
+
+		methods: {
+        	goPage (page) {
+        		var that = this;
+        		that.canScroll = 0;
+        		mui.showLoading('数据加载中');
+        		var request = GetRequest();
+        		request.page = that.page;  
+        		that.type = request.type;      		
+        		$.post(
+					config.comments,
+					request,
+				   	function(res){
+			        	mui.hideLoading();
+						if(res.code=='0'){
+							data = res.body.comments;										
+							that.lists = that.lists.concat(data);	
+							that.canScroll = 1;				
+							that.next = res.body.next;				
+						}else{
+							mui.toast(res.desc);
+						}
+			    	},
+			    	"json"
+			    );
+        	}
+    	}
+	});
+
+	Vue.filter('time', function (value) {
+        date = new Date(parseInt(value) * 1000);
+        year = date.getFullYear();
+        month = date.getMonth() + 1;
+        if (month<10){
+        	month = '0'+month;
+        }
+        day =date.getDate();
+        if (day<10){
+        	day = '0'+day;
+        }
+        return year+'/'+month+'/'+day;
+    })
+
+    mui("#writeBox").on("tap","#pinlunUP",addpinlun); 
+
+    //添加评论
+	function addpinlun () { 
+		var type = request.type;
+		var articleid = request.articleid;
+		var comments=document.getElementById("pinlunTXT").value;
+		var commentid = request.commentid;
+		mui("#writeBox").popover("toggle");
+		if(commentid==null || commentid==undefined){
+			window.location.href = 'app://login';
+			return false; 
+		}else{
+			if(comments==""){mui.toast("评论内容不可为空");return;}
+			mui.showLoading('数据加载中');
+			$.post(
+				config.userinfo,
+				{
+			        userid:commentid
+			   	},
+			   	function(res){		        	
+					if(res.code=='0'){
+						data = res.body;	
+						$("#userid").val(data.userid);
+						$("#password").val(data.password);		
+						$("#openid").val(data.openid);
+						$.post(
+							config.sendComment,
+							{
+								articleid : articleid,
+								comments : comments,
+								type : type,
+						        userid:commentid,
+						        password:data.password,
+						        openid:data.openid,
+						   	},
+						   	function(res){	
+						   		mui.hideLoading();	        	
+								if(res.code=='0'){
+									mui.toast("评论已发送");
+									window.location.reload();
+								}else{
+									mui.hideLoading();
+									mui.toast(res.desc);
+								}
+					    	},
+					    	"json"
+					    );
+					}else{
+						mui.hideLoading();
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+		}
+	} 
+	
+})
+</script>
+</body>
+</html>

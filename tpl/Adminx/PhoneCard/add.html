@@ -1,0 +1,151 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="name" class="layui-input" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">运营商</label>
+		<div class="layui-input-inline">
+			<select name="type" lay-verify="required" class="fsSelect fsDict" dict="phone" addNull="1">
+	      	</select>
+		</div>
+
+		<label class="layui-form-label">类型</label>
+		<div class="layui-input-inline">
+			<select name="cate" lay-verify="required" class="fsSelect fsDict" dict="phoneCate" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">图片</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="picname" id="picname" placeholder="图片地址" class="layui-input">
+		</div>
+		<div class="layui-inline">
+			<input type="button" value="上传" class="layui-btn" onclick="uploadfile('<{:U('Upload/image')}>','picname');"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">面值</label>
+		<div class="layui-input-inline">
+			<input type="number" name="money" lay-verify="required" placeholder="请输入面值" class="layui-input">		
+		</div>
+
+		<label class="layui-form-label">价格</label>
+		<div class="layui-input-inline">
+			<input type="number" step="0.01" name="price" lay-verify="required" placeholder="请输入价格" class="layui-input">		
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">productID</label>
+		<div class="layui-input-inline">
+			<input type="text" name="productID" lay-verify="required" placeholder="充值产品ID" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-inline">
+			<input type="number" name="sort" value="50" class="layui-input">
+		</div>
+	</div>	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">介绍</label>
+		<div class="layui-input-block">
+			<textarea name="content" class="layui-textarea"></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="show" value="1" title="开启" checked="checked">
+			<input type="radio" name="show" value="0" title="关闭">
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button class="layui-btn" lay-submit="" lay-filter="save" url="<{:U('PhoneCard/add')}>">新增</button>
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+</form>
+<!--上传文件-->
+<form style="display:none;" id='myupload' action="" method='post' enctype='multipart/form-data'>
+<input id="fileupload" type="file" name="file">
+</form>
+<div id="uploading" style="display:none;">
+	<div class="wrapper">
+		<div class="load-bar">   
+			<div class="load-bar-inner" data-loading="0"> <span id="counter">0%</span> </div> 
+		</div>  
+		<p>请等待... </p>
+	</div>
+</div>
+<script type="text/javascript" src="<{:STATICS}>/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+function uploadfile(url,o){
+	layui.use(['layer', 'form'], function(){
+		var layer = layui.layer;
+		$("#fileupload").click();
+		//文件上传js
+		var btn = $(".uploadbtn");
+		var upload="";
+		$("#myupload").attr("action",url);
+		$("#fileupload").bind("change",function(){
+			if($(this).val()!=""){
+				$("#myupload").ajaxSubmit({
+					dataType:  'json',
+					beforeSend: function() {
+						btn.val("上传中...");
+						upload=layer.open({
+						  type: 1,
+						  title: false,
+						  closeBtn: 1,
+						  shadeClose: false,
+						  area: ['420px', '100px'],
+						  content: $('#uploading')
+						});
+		    		},
+		    		uploadProgress: function(event, position, total, percentComplete) {
+		        		var percentVal = percentComplete + '%';
+		        		var left=$(".load-bar").width()*percentComplete/100;
+		        		$("#counter").html(percentVal).css("left",(left-35)+"px");
+		        		$(".load-bar-inner").css("width",left+"px");
+		        		$("#filesize").val(percentVal);
+
+		    		},
+					success: function(res) {	
+						res = JSON.parse(res);		
+						$("#fileupload").unbind("change");
+						layer.close(upload);
+						$('#uploading').css("display","none");
+						btn.val("本地上传");
+						$("#myupload")[0].reset();
+						console.log(res);
+						if(res.status == '1'){	
+							$("#"+o).val(res.results.data.url);
+						}else{
+							layer.msg('上传失败', {time:2000, icon:2});
+						}
+					},
+					error:function(xhr){
+						btn.val("上传失败");
+					}
+				})
+			}
+		})
+	})
+}
+</script>

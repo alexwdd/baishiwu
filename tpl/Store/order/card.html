@@ -1,0 +1,88 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+    
+    <div class="title">{$pay.name}</div>
+
+    <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>
+</div>
+
+<div style="height:44px;clear:both"></div>
+
+<div class="mui-content">
+    <div class="payOk">        
+        <div class="fd">
+            <!-- <p>应付人民币 <span style="color: #000">￥{$list.rmb}</span></p> -->
+            <p>应付澳币 <span style="color: #f00">$ {$list.money}</span></p>
+            <!-- <p>参考汇率 <span style="color: #000">{:C('site.huilv')}</span></p> -->
+        </div>
+    </div>
+
+	<form id="myForm" style="background:none">
+
+    <notempty name="pay.logo">
+    <div class="qrcode"><img src="{$pay.logo}"></div>
+    <div class="cardIntr" style="overflow: hidden;">
+        支付完成后务必上传支付截图
+        <div style="background: #f7f7f7; margin: 10px; text-align: left; padding: 10px; border-radius: 5px;">
+            <p style="margin: 0">方式1：请点击分享到微信朋友，长按二维码扫一扫进行支付。</p>
+            <p style="margin: 0">方式2：长按二维码，保存图片，由支付宝或微信扫码支付</p>
+        </div>
+    </div>
+    </notempty>
+    
+	<div class="payOk">        
+		<div class="fd">
+            <notempty name="pay.bank">
+            <p>银行 <strong style="color:#000">{$pay.bank}</strong><span class="copyBtn" data-clipboard-text="{$pay.bank}">复制</span></p>
+            </notempty>
+            <notempty name="pay.account">
+            <p>账户 <strong style="color:#000">{$pay.account}</strong><span class="copyBtn" data-clipboard-text="{$pay.account}">复制</span></p>
+            </notempty>
+            <notempty name="pay.bsb">
+            <p>BSB <strong style="color:#000">{$pay.bsb}</strong><span class="copyBtn" data-clipboard-text="{$pay.bsb}">复制</span></p>
+            </notempty>
+            <notempty name="pay.cardno">
+            <p>账号 <strong style="color:#000">{$pay.cardno}</strong><span class="copyBtn" data-clipboard-text="{$pay.cardno}">复制</span></p>
+            </notempty>
+			<p>支付时请备注单号 <strong style="color:#000">{$list.order_no}</strong><span class="copyBtn" data-clipboard-text="{$list.order_no}">复制</span></p>
+			<p>下单时间<span>{$list.createTime|date="Y-m-d H:i:s",###}</span></p>
+		</div>
+	</div>
+
+    <div class="jietu" onclick="uploadImage('jietu','{:U('upload/image',['water'=>2])}');"><img id="jietu_src" src="<empty name="list.jietu">{:RES}/image/pay.png<else/>{$list.jietu}</empty>" /></div>
+
+    <input type="file" id="uploadfile"/> 
+    <input type="hidden" name="jietu" id="jietu" value="{$list.jietu}" checkType="required" checkMsg="请上传付款截图">
+    
+    <div style="height:50px; clear:both; border:0px"></div>
+
+    <div class="selectFooter">
+        <div class="cartInfo" style="font-size: 12px">
+            <!-- 金额 <span style="color:#f00">{$list.money}</span> -->
+        </div>            
+        
+        <div class="btn cartBtn" onclick="myOrder();">订单中心</div>
+        <div id="submitBtn" action="{:U('order/dopay')}" class="btn">转账完成</div>
+    </div>
+    <input type="hidden" name="id" value="{$list.id}">
+    <input type="hidden" name="payStatus" value="{$list.payStatus}">
+    <input type="hidden" name="agentid" value="{$agent.id}">
+    <input type="hidden" name="token" value="{$token}">  
+    </form>
+</div>
+<script src="{:RES}/js/clipboard.min.js"></script>
+<script>
+function myOrder(){
+    window.location.href="{:U('Order/index',array('agentid'=>$agent['id'],'token'=>$token))}";
+}
+
+var clipboard = new ClipboardJS('.copyBtn');
+clipboard.on('success', function(e) {
+    mui.toast("已复制到粘贴板");
+});
+clipboard.on('error', function(e) {
+    mui.toast("系统不支持");
+});
+</script>

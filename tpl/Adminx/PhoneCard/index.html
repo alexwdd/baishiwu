@@ -1,0 +1,94 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="名称" class="layui-input"/>
+				</div>
+			</div>
+
+			<div class="layui-inline">
+				<label class="layui-form-mid">运营商</label>
+				<div class="layui-input-inline">
+					<select name="type" lay-verify="required" class="fsSelect fsDict" dict="phone" addNull="1">
+	      		</select>			
+				</div>
+			</div>
+	
+			<div class="layui-inline">
+				<label class="layui-form-mid">类型</label>
+				<div class="layui-input-inline">
+					<select name="cate" lay-verify="required" class="fsSelect fsDict" dict="phoneCate" addNull="1">
+	      			</select>
+				</div>
+			</div>
+		</form>
+
+	    <div class="layui-col-md12">
+	    	<button class="layui-btn layui-btn-sm" function="top" topUrl="<{:U('PhoneCard/add')}>" topWidth="80%" isMaximize="0" topHeight="80%" topTitle="新增">
+			  <i class="layui-icon">&#xe654;</i>新增
+			</button>
+
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("PhoneCard/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('PhoneCard/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>	
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>	
+				<p field="id" title="ID" width="80"/>	
+				<p field="type" title="运营商" width="150" dict="phone"/>	
+				<p field="cate" title="类型" width="150" dict="phoneCate"/>	
+				<p field="picname" title="图片" width="80" templet="#faceTpl"/>
+				<p field="name" title="名称" width="250"/>
+				<p field="money" title="面值" width="80"/>
+				<p field="price" title="金额" width="80"/>
+				<p field="rmb" title="RMB" width="80"/>
+				<p field="productID" title="ProductID" width="100"/>
+				<p field="sort" title="排序" width="80"/>
+                <p field="show" title="显示" width="100" templet="#showTpl"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="120"/>
+			</div>
+
+			<script type="text/html" id="faceTpl">
+				{{# if(d.picname == ''){ }}
+				-
+				{{# }else{ }}
+				<a href="{{d.picname}}" target="_blank"><img src="{{d.picname}}" style="height:30px"/></a>
+				{{# } }}				
+			</script>
+          
+          	<script type="text/html" id="showTpl">
+			<input type="checkbox" name="show" value="{{d.id}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="show" {{ d.show == 1 ? 'checked' : '' }}>
+			</script>
+
+			<script type="text/html" id="barDemo">
+ 			<a class="layui-btn layui-btn-xs" lay-event="top" topUrl="<{:U("PhoneCard/edit")}>&id={{d.id}}" topWidth="80%" topHeight="80%" topTitle="编辑">编辑</a>
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+layui.use('table', function(){
+	form = layui.form; 
+   	form.on('switch(show)', function(obj){
+		url = '<{:U('PhoneCard/status')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"show",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

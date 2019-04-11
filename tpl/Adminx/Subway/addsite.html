@@ -1,0 +1,28 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">站点名称</label>
+		<div class="layui-input-inline">
+			<input type="text" name="name" lay-verify="required" placeholder="请输入站点名称" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-inline">
+			<input type="text" name="sort" id="sort" value="1" class="layui-input">
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button id="subBtn" class="layui-btn" lay-submit="" lay-filter="save" url="<{:U('Subway/addsite')}>">新增</button>
+
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+	<input type="hidden" name="fid" value="<{$list.id}>">
+	<input type="hidden" name="cityID" value="<{$list.cityID}>">
+</form>

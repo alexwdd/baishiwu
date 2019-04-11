@@ -1,0 +1,37 @@
+html, body {position: relative;height: 100%; padding: 0; margin: 0; font-size: 14px}
+.swiper-container {width: 100%;height: 100%; z-index: 0}
+.swiper-slide {
+	text-align: center;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+}
+
+img{max-width: 100%}
+.img{ width: 100%; height: 100%; background-size: cover; background-repeat: center center}
+.b1{background-image: url(../image/banner1.jpg);}
+.b2{background-image: url(../image/banner2.jpg);}
+.b3{background-image: url(../image/banner3.jpg);}
+.t1{width: 500px; margin-top: 10%}
+.logo{position: absolute; left:200px; top: 20px; width:20%; z-index: 99;-moz-opacity:0;opacity:0;filter:alpha(opacity=0);-webkit-opacity:0;}
+.text{position: absolute; left: 50%; margin-left: -100px; width: 200px; top: 200px; z-index: 99;-moz-opacity:0;opacity:0;filter:alpha(opacity=0);-webkit-opacity:0;}
+.login{background: rgba(0,0,0,0.5); width: 20%; min-width: 300px; height: 280px; position: absolute;right: 5%; top: 50%; z-index: 999; border-radius: 10px; box-sizing: border-box;-moz-opacity:0;opacity:0;filter:alpha(opacity=0);-webkit-opacity:0;
+	box-shadow: 5px 5px 3px #000
+}
+.login .hd{height: 50px; font-size: 20px; line-height: 50px; text-align: center; color: #fdd100; background-color: rgba(255,255,255,0.1); border-top-left-radius: 10px; border-top-right-radius: 10px;}
+.loginItem{border-bottom: 1px #555 solid; clear: both; margin:15px; overflow: hidden; height: 40px}
+.loginItem i{float: left; width: 30px; display: block; margin-right: 10px;}
+.loginItem input{background: no-repeat; border: 0; outline: none; color: #999; line-height: 30px; display: block; float: left; font-size: 16px}
+.checkImg{float: right; height: 30px; cursor: pointer;}
+.btnBox{ clear: both; margin: 10px; overflow: hidden;}
+.btnBox .loginBtn{ color: #fff; background-color: #f6ab00; text-align: center; border-radius: 5px; height: 40px; line-height: 40px; font-size: 16px; border: 0; width: 100%; cursor: pointer;transition:all 0.5s;}
+.btnBox .loginBtn:hover{background-color: #f60}

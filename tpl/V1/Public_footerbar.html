@@ -1,0 +1,21 @@
+<gt name="msg" value="0">
+<div class="msgAlert" onclick="window.location.href='<{:U('Member/message')}>'">您有<em><{$msg}></em>条消息未读</div>	
+</gt>
+<footer>
+<div class="footer-menu menu4">
+	<li data="home" onclick="window.location.href='<{:U('Index/index')}>'"><i class="icon icon-home"></i><span>首页</span></li>
+	<li data="goods" onclick="window.location.href='<{:U('Goods/index')}>'"><i class="icon icon-cart"></i><span>商城</span></li>
+	<li data="caiwu" onclick="window.location.href='<{:U('Finance/index')}>'"><i class="icon icon-rmb"></i><span>财务</span></li>	
+	<li data="member" onclick="window.location.href='<{:U('Member/index')}>'"><i class="icon icon-user"></i><span>我的</span></li>
+</div>	
+</footer>
+<script>
+$(function(){
+	var val = $("#activeIndex").val();
+	$(".footer-menu li").each(function(){
+		if ($(this).attr("data")==val){
+			$(this).addClass("active");
+		};
+	});
+})
+</script>

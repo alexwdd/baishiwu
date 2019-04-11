@@ -1,0 +1,127 @@
+<layout name='layout' />
+
+<div class="layui-col-md12">
+	<div class="layui-row grid-demo">
+		<form class="layui-form" style="margin-bottom:10px">
+			<div class="layui-inline">
+				<label class="layui-form-mid">城市</label>
+				<div class="layui-input-inline">
+					<select name="cityID" class="fsSelect" dict="city" addNull="1"></select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" name="keyword" autocomplete="off" placeholder="团号/联系人/手机" class="layui-input"/>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">货物类型</label>
+				<div class="layui-input-inline">
+					<select name="goodstype" class="fsSelect" dict="goodstype" addNull="1"></select>					
+				</div>
+			</div>
+
+			<div class="layui-inline">
+				<label class="layui-form-mid">团类型</label>
+				<div class="layui-input-inline">
+					<select name="type" class="fsSelect" dict="tuanType" addNull="1"></select>	
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">状态</label>
+				<div class="layui-input-inline">
+					<select name="status" class="fsSelect" dict="baoguo" addNull="1"></select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-mid">认证</label>
+				<div class="layui-input-inline">
+					<select name="auth" class="fsSelect" dict="authentication" addNull="1"></select>
+				</div>
+			</div>
+		</form>
+		
+	    <div class="layui-col-md12">
+	    	<button class="layui-btn layui-btn-sm" function="top" topUrl="<{:U('Tuan/add')}>" topWidth="80%" isMaximize="0" topHeight="80%" topTitle="新增">
+			  <i class="layui-icon">&#xe654;</i>新增
+			</button>
+
+			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="<{:U("Tuan/del")}>" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="articleid:">
+			  <i class="layui-icon">&#xe640;</i>批量删除
+			</button>
+
+			<button class="layui-btn layui-btn-sm" function="refresh">
+			  <i class="layui-icon">&#x1002;</i>刷新
+			</button>
+
+			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
+	    </div>
+
+		<div class="layui-col-md12">
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="<{:U('Tuan/index')}>" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-108"></table>	
+	        <div class="fsDatagridCols">
+				<p checkbox="true"/>	
+				<p field="cityID" title="城市" width="80" dict="city" sort="true"/>		
+				<p field="articleid" title="团号" width="80"/>
+				<p field="type" title="团类型" width="100" dict="tuanType"/>				
+				<p field="goodstype" title="货物类型" width="100" dict="goodstype"/>
+				<p field="maxWeight" title="最大重量(kg)" width="130"/>
+				<p field="localWeight" title="包裹重量" width="130"/>
+				<p field="currentWeight" title="实际重量" width="130"/>
+				<p field="address" title="取货地址" width="180" />
+				<p field="contact" title="联系人" width="100"/>
+				<p field="phone" title="电话" width="120"/>
+				<p field="wechat" title="微信" width="150"/>
+				<p field="status" title="状态" width="100" dict="baoguo" sort="true"/>
+				<p field="auth" title="认证" width="100" sort="true" templet="#authTpl"/>
+				<p field="bill" title="账单" width="100" sort="true" templet="#billTpl"/>
+				<p field="isStop" title="揽件" width="100" dict="lanjian" sort="true"/>
+				<p field="company" title="国际物流公司" width="200" />
+				<p field="order" title="国际单号" width="200" />
+				<p field="detail" title="备注" width="100"/>
+				<p field="createTime" title="发布日期" width="180" sort="true"/>
+				<p field="updateTime" title="更新日期" width="180" sort="true"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="200"/>
+			</div>
+
+			<script type="text/html" id="authTpl">
+			<input type="checkbox" name="auth" value="{{d.articleid}}" lay-skin="switch" lay-text="是|否" lay-filter="auth" {{ d.auth == 1 ? 'checked' : '' }}>
+			</script>
+
+			<script type="text/html" id="billTpl">
+			<input type="checkbox" name="bill" value="{{d.articleid}}" lay-skin="switch" lay-text="显示|隐藏" lay-filter="bill" {{ d.bill == 1 ? 'checked' : '' }}>
+			</script>
+
+			<script type="text/html" id="barDemo">
+				<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="top" topUrl="<{:U("Tuan/view")}>&id={{d.articleid}}" topWidth="80%" topHeight="80%" topTitle="查看包裹">查看包裹({{d.num}})</a>
+				<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="top" topUrl="<{:U("Tuan/bill")}>&id={{d.articleid}}" topWidth="80%" topHeight="80%" topTitle="账单">账单</a>
+ 				<a class="layui-btn layui-btn-xs" lay-event="top" topUrl="<{:U("Tuan/edit")}>&id={{d.articleid}}" topWidth="80%" topHeight="80%" topTitle="编辑">编辑</a> 				
+			</script>
+	    </div>
+	</div>
+</div>
+<script>
+layui.use('table', function(){
+	form = layui.form; 
+	//监听性别操作
+	form.on('switch(auth)', function(obj){
+		url = '<{:U('Tuan/status')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"auth",val:v}, function (data) {console.log(data);}, "json");
+	});
+
+	form.on('switch(bill)', function(obj){
+		url = '<{:U('Tuan/setBill')}>';
+		var id = this.value;
+		var v = 0
+		if (obj.elem.checked){
+			v = 1;
+		} 
+		$.post(url, {id: this.value,field:"bill",val:v}, function (data) {console.log(data);}, "json");
+	});
+});
+</script>

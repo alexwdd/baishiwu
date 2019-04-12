@@ -84,7 +84,7 @@ class WeixinController extends CommonController {
                     unset($map);
                     $map['status'] = 1;
                     $map['del'] = 0;
-                    $map['cid'] = $list[$key]['cid'];
+                    $map['path'] = array('like','0-'.$list[$key]['cid'].'-%');
                     $map['cityID'] = $cityID;
                     $child = M('Article')->field('id,picname as thumb,title,createTime as time,hit,from,url')->where($map)->limit(5)->order('top desc,id desc')->select();
                     foreach ($child as $k => $val) {
@@ -176,7 +176,7 @@ class WeixinController extends CommonController {
             }else{
                 $next = 0;
             }
-            $list = $obj->field('id,title,picname,createTime')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
+            $list = $obj->field('id,title,picname,createTime,hit')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
             foreach ($list as $key => $value) {
                 $list[$key]['picname'] = getRealUrl($value['picname']);               
                 $list[$key]['createTime'] = date("Y-m-d",$value['createTime']);               

@@ -400,6 +400,22 @@ class WeixinController extends CommonController {
             $where['fid'] = $arr['fid'];
             $where['cityID'] = $cityID;
             $cate = M("CityCate")->where($where)->field("cid as id,name as title,icon")->order('sort asc,id asc')->select();
+            $quick = [];
+            $q = [];
+            $i = 1;
+            foreach ($cate as $key => $value) {
+                $cate[$key]['icon'] = getRealUrl($value['icon']);
+                $cate[$key]['index'] = $key+1;
+                array_push($q,$cate[$key]);
+                if ($i%15==0) {
+                    array_push($quick,$q);
+                    $q = [];
+                }
+                $i++;               
+            }
+            if (count($q)>0) {
+                array_push($quick,$q);
+            }
 
             if ($jobtype!='' && is_numeric($jobtype)) {
                 $map['jobtype'] = $jobtype;
@@ -460,7 +476,7 @@ class WeixinController extends CommonController {
                 $list[$key]['createTime'] = date("Y/m/d",$value['createTime']);
             }
             
-            returnJson(0,'success',['next'=>$next,'data'=>$list,'cateName'=>$arr['name'],'cate'=>$cate]);
+            returnJson(0,'success',['next'=>$next,'data'=>$list,'cateName'=>$arr['name'],'cate'=>$cate,'quick'=>$quick]);
         }
     }
 

@@ -54,7 +54,7 @@ class AdminController extends BaseController {
 		$list = M('Category')->where($map)->getField('id',true);
 		$this->cateArray = M('Category')->where($map)->getField('id',true);	
 		if(!$this->cateArray) {
-			$this->cateArray = '';
+			$this->cateArray = [];
 		}		
     }
 

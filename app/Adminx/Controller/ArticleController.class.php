@@ -9,6 +9,9 @@ class ArticleController extends AdminController {
 	public function index() {
 		if (IS_POST) {
 			$map['model']=$this->modelID;
+			if (!$_SESSION['administrator']) {
+				$map['id'] = array('in',$this->cateArray);
+			}
 			$cateArr = M('Category')->where($map)->getField('id,name');
 			$path = I('path');
 			$keyword  = I('keyword');
@@ -62,6 +65,9 @@ class ArticleController extends AdminController {
 		}else{
 			unset($map);
 			$map['model']=$this->modelID;
+			if (!$_SESSION['administrator']) {
+				$map['id'] = array('in',$this->cateArray);
+			}
 			$cate = M('Category')->field("id,name,fid,path")->where($map)->order('path')->select();
 			foreach ($cate as $key => $value) {
 				$count = count(explode('-', $value['path'])) - 3;
@@ -75,6 +81,9 @@ class ArticleController extends AdminController {
 	public function trash() {		
 		if (IS_POST) {
 			$map['model']=$this->modelID;
+			if (!$_SESSION['administrator']) {
+				$map['id'] = array('in',$this->cateArray);
+			}
 			$cateArr = M('Category')->where($map)->getField('id,name');
 
 			unset($map);			
@@ -136,6 +145,9 @@ class ArticleController extends AdminController {
 		}else{
 			$path = $_GET['path'];
 			$map['model']=$this->modelID;
+			if (!$_SESSION['administrator']) {
+				$map['id'] = array('in',$this->cateArray);
+			}
 			$cate = M('Category')->field("id,name,fid,path")->where($map)->order('path')->select();		
 
 			foreach ($cate as $key => $value) {
@@ -185,6 +197,9 @@ class ArticleController extends AdminController {
 			} else {	
 				unset($map);
 				$map['model']=$this->modelID;
+				if (!$_SESSION['administrator']) {
+					$map['id'] = array('in',$this->cateArray);
+				}
 				$cate = M('Category')->field("id,name,fid,path")->where($map)->order('path')->select();
 				foreach ($cate as $key => $value) {
 					$count = count(explode('-', $value['path'])) - 3;

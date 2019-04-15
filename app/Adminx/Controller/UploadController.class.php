@@ -52,11 +52,11 @@ class UploadController extends AdminController{
 			}	
 
 			//缩放处理
-			// if (C('IMAGE_MAX_WIDTH')) {
-			// 	$image = new \Think\Image();
-			// 	$image->open('.'.$url);
-			// 	$image->thumb(C('IMAGE_MAX_WIDTH'), C('IMAGE_MAX_WIDTH'))->save('.'.$filepath.$file['savename']);
-			// }
+			if (C('IMAGE_MAX_WIDTH')) {
+				$image = new \Think\Image();
+				$image->open('.'.$url);
+				$image->thumb(C('IMAGE_MAX_WIDTH'), C('IMAGE_MAX_WIDTH'))->save('.'.$filepath.$file['savename']);
+			}
 
 			//缩略图
 			if (C('THUMB_IMAGE') && $thumb==1) {

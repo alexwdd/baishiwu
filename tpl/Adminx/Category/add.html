@@ -63,20 +63,20 @@
 		</div>
 	</div>
 	
-	<div class="layui-form-item layui-form-text">
-		<label class="layui-form-label">图片地址</label>
-		<div class="layui-input-inline" style="width:400px">
-			<input type="text" id="picname" name="picname" class="layui-input">
+	<div class="layui-form-item">
+		<label class="layui-form-label">图片</label>
+		<div class="layui-inline" style="width:400px">
+			<input type="text" name="picname" id="picname" lay-verify="required" placeholder="图片地址" class="layui-input">
 		</div>
 		<div class="layui-inline">
-			<button type="button" class="layui-btn"
+		<button type="button" class="layui-btn"
 			 id="uploud"
 			 url="<{:U('Upload/image')}>"
 			 size="5120"
 			 exts="jpg|png|gif|jpeg"
 			 accept="images"
 			 tag="picname"
-			 >上传图片</button>
+			 >上传</button>
 		</div>
 	</div>
 

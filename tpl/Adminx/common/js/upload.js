@@ -50,12 +50,14 @@ layui.use(['upload','layer','fsConfig','fsCommon'], function(){
 
 	//单图
 	if($("#uploud").length>0){
+		alert(1);
 		var btn = $("#uploud");
 		var url = btn.attr("url");
 		var tag = btn.attr("tag");
 		var fileExts = btn.attr("exts");
 		var fileSize = btn.attr("size");
 		var fileAccept = btn.attr("accept");
+
 		upload.render({
 		    elem: '#uploud',
 		    url: url,

@@ -28,7 +28,10 @@ class CategoryController extends CommonController {
 		}
     	$map['fid'] = $arr['fid'];
     	$map['cityID'] = $cityID;
-		$list = M("CityCate")->where($map)->field("cid as id  ,name as title")->order('sort asc,id asc')->select();
+		$list = M("CityCate")->where($map)->field("cid as id ,name as title,icon")->order('sort asc,id asc')->select();
+		foreach ($list as $key => $value) {
+			$list[$key]['icon'] = getRealUrl($value['icon']);
+		}
 		return returnJson('0',C('SUCCESS_RETURN'),array('sort'=>$list));
     } 
 

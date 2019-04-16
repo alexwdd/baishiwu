@@ -605,12 +605,20 @@ class WeixinController extends CommonController {
             foreach ($list as $key => $value) {
                 if ($value['type']=='article') {
                     $db = ['db'=>'Article'];
-                    $where['id'] = $value['articleid']; 
+                    $where['id'] = $value['articleid'];
+                    $res = M($db['db'])->field('url,hit')->where($where)->find(); 
+                    $list[$key]['hit'] = $res['hit'];
+                    $list[$key]['url'] = $res['url'];
+                    $list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['time']).'/'.$value['articleid'].'.html';
                 }else{
                     $db = $this->getModel($value['type']);
                     $where['articleid'] = $value['articleid']; 
+                    $res = M($db['db'])->field('html,hit')->where($where)->find(); 
+                    $list[$key]['hit'] = $res['hit'];
+                    $list[$key]['url'] = '';
+                    $list[$key]['html'] = $res['html'];
                 }                
-                $list[$key]['hit'] = M($db['db'])->where($where)->getField('hit');
+                
                 $list[$key]['image'] = getRealUrl($value['image']);
                 if ($value['userid']==0) {
                     $list[$key]['user'] = array('nickname'=>'','headimg'=>'');

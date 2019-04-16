@@ -232,8 +232,8 @@ function checkRequest(){
 
 //过滤数据
 function checkFormDate(){
-    foreach ($_REQUEST as $key => $value){        
-        if (inject_check($value)) {
+    foreach ($_REQUEST as $key => $value){
+        if (inject_check($value) && $key!='images') {   
             return false;
             break;
         } 

@@ -176,10 +176,11 @@ class WeixinController extends CommonController {
             }else{
                 $next = 0;
             }
-            $list = $obj->field('id,title,picname,createTime,hit')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
+            $list = $obj->field('id,title,picname,url,createTime,hit')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
             foreach ($list as $key => $value) {
                 $list[$key]['picname'] = getRealUrl($value['picname']);               
-                $list[$key]['createTime'] = date("Y-m-d",$value['createTime']);               
+                $list[$key]['createTime'] = date("Y-m-d",$value['createTime']);
+                $list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['createTime']).'/'.$value['id'].'.html';
             }
             returnJson(0,'success',['next'=>$next,'data'=>$list,'cateName'=>$cateName]);
         }
@@ -606,10 +607,10 @@ class WeixinController extends CommonController {
                 if ($value['type']=='article') {
                     $db = ['db'=>'Article'];
                     $where['id'] = $value['articleid'];
-                    $res = M($db['db'])->field('url,hit')->where($where)->find(); 
+                    $res = M($db['db'])->field('url,hit,createTime')->where($where)->find(); 
                     $list[$key]['hit'] = $res['hit'];
                     $list[$key]['url'] = $res['url'];
-                    $list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['time']).'/'.$value['articleid'].'.html';
+                    $list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$res['createTime']).'/'.$value['articleid'].'.html';
                 }else{
                     $db = $this->getModel($value['type']);
                     $where['articleid'] = $value['articleid']; 

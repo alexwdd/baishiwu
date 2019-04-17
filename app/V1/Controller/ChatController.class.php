@@ -18,7 +18,73 @@ class ChatController extends CommonController {
 	}
 
 	public function getinfo(){
-		
+		if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $cid = I('post.cid');
+            $cityID = I('post.cityID');
+            $page = I('post.page',1);
+
+            if ($cityID=='' || !is_numeric($cityID)) {
+                returnJson('-1','缺少cityID');
+            }
+            
+            $where['fid'] = 152;
+            $where['cityID'] = $cityID;
+            $cate = M("CityCate")->where($where)->field("cid as id,name as title,icon")->order('sort asc,id asc')->select();
+            $quick = [];
+            $q = [];
+            $i = 1;
+            foreach ($cate as $key => $value) {
+                $cate[$key]['icon'] = getRealUrl($value['icon']);
+                $cate[$key]['index'] = $key+1;
+                array_push($q,$cate[$key]);
+                if ($i%15==0) {
+                    array_push($quick,$q);
+                    $q = [];
+                }
+                $i++;               
+            }
+            if (count($q)>0) {
+                array_push($quick,$q);
+            }
+
+            $map['cityID'] = $cityID;
+            if ($cid!=0 && is_numeric($cid)) {
+            	$map['cid'] = $cid;
+            }
+            $page = I('post.page/d',1); 
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('Chat');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
+            foreach ($list as $key => $value) {
+                $list[$key]['createTime'] = getLastTime($value['createTime']);
+                if($value['images']!=''){
+                	$img = explode("|", $value['images']);
+                	$thumb = explode("|", $value['thumb']);
+                	foreach ($img as $k => $val) {
+                		$img[$k] = getRealUrl($val);
+                	}
+                	foreach ($thumb as $k => $val) {
+                		$thumb[$k] = getRealUrl($val);
+                	}
+                	$list[$key]['images'] = $img;
+                	$list[$key]['thumb'] = $thumb;
+                	$list[$key]['num'] = count($img);
+                }
+            }
+            
+            returnJson(0,'success',['next'=>$next,'data'=>$list,'cate'=>$cate,'quick'=>$quick]);
+        }
 	}
 
 	public function cate(){
@@ -29,7 +95,7 @@ class ChatController extends CommonController {
                 returnJson('-1','缺少cityID');
             }
             $map['cityID'] = $cityID;
-            $map['fid'] = 138;
+            $map['fid'] = 152;
             $cate = M('CityCate')->field('name,cid,icon')->where($map)->select();
             foreach ($cate as $key => $value) {
             	$cate[$key]['icon'] = getRealUrl($value['icon']);
@@ -69,12 +135,20 @@ class ChatController extends CommonController {
 			if ($images!='') {
 				$imgArr = explode("###",$images);
 				$images = '';
+				$thumb = '';
 				foreach ($imgArr as $key => $value) {
 					$result = $this->base64_upload($value);
+
+					$image = new \Think\Image();
+					$image->open('.'.$result['url']);
+					$thumbUrl = $result['path']."s_".$result['name'];
+					$image->thumb(100,100,3)->save('.'.$thumbUrl);			
 					if ($key==0) {
-						$images = $result;
+						$images = $result['url'];
+						$thumb = $thumbUrl;
 					}else{
-						$images .= '|'.$result;
+						$images .= '|'.$result['url'];
+						$thumb .= '|'.$thumbUrl;
 					}
 				}
 			}
@@ -89,6 +163,7 @@ class ChatController extends CommonController {
 				'title'=>$title,
 				'tag'=>$tag,
 				'images'=>$images,
+				'thumb'=>$thumb,
 				'like'=>0,
 				'status'=>1,
 				'createTime'=>time()
@@ -132,7 +207,8 @@ class ChatController extends CommonController {
             $image_file = $path."/{$image_name}";
             //服务器文件存储路径
             if (file_put_contents($image_file, base64_decode(str_replace($result[1], '', $base64_image)))){
-                return 'http://'.$_SERVER['HTTP_HOST'].C('UPLOAD_PATH').date("Ymd",time())."/".$image_name;
+            	$path = C('UPLOAD_PATH').date("Ymd",time())."/"; 
+                return ['path'=>$path,'name'=>$image_name,'url'=>$path.$image_name];
             }else{
                 return false;
             }

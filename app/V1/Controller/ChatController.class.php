@@ -17,11 +17,12 @@ class ChatController extends CommonController {
         }
 	}
 
-	public function getinfo(){
+	public function getmain(){
 		if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $cid = I('post.cid');
             $cityID = I('post.cityID');
+            $token = I('post.token');
             $page = I('post.page',1);
 
             if ($cityID=='' || !is_numeric($cityID)) {
@@ -65,7 +66,10 @@ class ChatController extends CommonController {
                 $next = 0;
             }
 
-            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();            
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
+            if ($token!='') {
+                $user = $this->checkToken($token);
+            } 
             foreach ($list as $key => $value) {
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
                 if($value['images']!=''){
@@ -80,6 +84,20 @@ class ChatController extends CommonController {
                 	$list[$key]['images'] = $img;
                 	$list[$key]['thumb'] = $thumb;
                 	$list[$key]['num'] = count($img);
+                }
+
+                $list[$key]['like'] = M('ChatLike')->where(array('chatID'=>$value['id']))->count();
+                $list[$key]['comment'] = M('ChatComment')->where(array('chatID'=>$value['id']))->count();
+
+                if ($user) {
+                    $count = M('ChatFocus')->where(array('userID'=>$value['memberID'],'memberID'=>$user['id']))->count();
+                    if ($count>0) {
+                        $list[$key]['focus'] = true; 
+                    }else{
+                        $list[$key]['focus'] = false; 
+                    }
+                }else{
+                    $list[$key]['focus'] = false; 
                 }
             }
             
@@ -214,6 +232,216 @@ class ChatController extends CommonController {
             }
         }else{
             return false;
+        }
+    }
+
+    //点赞
+    public function like(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $token = I('post.token');
+            $chatID = I('post.chatID');
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+            if ($chatID=='' && !is_numeric($chatID)) {
+                returnJson('-1','参数错误');
+            }
+            $map['chatID'] = $chatID;
+            $map['memberID'] = $user['id'];
+            $res = M('ChatLike')->where($map)->find();
+            if ($res) {
+                $result = M('ChatLike')->where($map)->delete();
+                if ($result) {
+                    returnJson('0','取消点赞');
+                }else{
+                    returnJson('-1','操作失败');
+                }
+            }else{
+                $data = ['chatID'=>$chatID,'memberID'=>$user['id']];
+                $result = M('ChatLike')->add($data);
+                if ($result) {
+                    returnJson('0','已点赞');
+                }else{
+                    returnJson('-1','操作失败');
+                }                
+            }
+        }
+    }
+
+    //关注
+    public function focus(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $token = I('post.token');
+            $userID = I('post.userID');
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+            if ($userID=='' && !is_numeric($userID)) {
+                returnJson('-1','参数错误');
+            }
+
+            if ($userID==$user['id']) {
+                returnJson('-1','不能关注自己~~');
+            }
+            $map['userID'] = $userID;
+            $map['memberID'] = $user['id'];
+            $res = M('ChatFocus')->where($map)->find();
+            if ($res) {
+                $result = M('ChatFocus')->where($map)->delete();
+                if ($result) {
+                    returnJson('0','取消关注');
+                }else{
+                    returnJson('-1','操作失败');
+                }
+            }else{
+                $data = ['userID'=>$userID,'memberID'=>$user['id']];
+                $result = M('ChatFocus')->add($data);
+                if ($result) {
+                    returnJson('0','已关注');
+                }else{
+                    returnJson('-1','操作失败');
+                }                
+            }
+        }
+    }
+
+    //详情
+    public function getinfo(){  
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $id = I('post.id');
+            $token = I('post.token');
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+
+            $map['id']=$id;
+            $map['status'] = 1;
+            $list = M('Chat')->where($map)->find();
+            M('Chat')->where($map)->setInc('hit');
+            if (!$list) {
+                returnJson('-1','信息不存在');
+            } else {
+                $list['createTime'] = getLastTime($list['createTime']);
+                if($list['images']!=''){
+                    $img = explode("|", $list['images']);
+                    $thumb = explode("|", $list['thumb']);
+                    foreach ($img as $k => $val) {
+                        $img[$k] = getRealUrl($val);
+                    }
+                    foreach ($thumb as $k => $val) {
+                        $thumb[$k] = getRealUrl($val);
+                    }
+                    $list['images'] = $img;
+                    $list['thumb'] = $thumb;
+                    $list['num'] = count($img);
+                }
+
+                if ($token!='') {
+                    $user = $this->checkToken($token);
+                }
+
+                if ($user) {
+                    $count = M('ChatFocus')->where(array('userID'=>$list['memberID'],'memberID'=>$user['id']))->count();
+                    if ($count>0) {
+                        $list['focus'] = true; 
+                    }else{
+                        $list['focus'] = false; 
+                    }
+                }else{
+                    $list['focus'] = false; 
+                }
+                returnJson('0',C('SUCCESS_RETURN'),['data'=>$list]);
+            }
+        }
+    }
+
+    //获取留言
+    public function getComment(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $id = I('post.id');
+            $page = I('post.page',1);
+
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }            
+
+            $map['chatID'] = $id;
+
+            $page = I('post.page/d',1); 
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('ChatComment');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
+
+            foreach ($list as $key => $value) {
+                $list[$key]['createTime'] = getLastTime($value['createTime']);
+            }
+            
+            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+        }
+    }
+
+    //保存留言
+    public function comment(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $id = I('post.id');
+            $token = I('post.token');
+            $cityID = I('post.cityID');
+            $open = I('post.open');
+            $content = I('post.content');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+  
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+            if ($cityID=='' || !is_numeric($cityID)) {
+                returnJson('-1','参数错误');
+            }
+            if ($content=='') {
+                returnJson('-1','请输入评论内容');
+            }
+
+            $map['id'] = $id;
+            $obj = M('Chat');
+            $list = $obj->where($map)->find();
+            if (!$list) {
+                returnJson('-1','话题不存在');
+            }
+            
+            $data = [
+                'chatID'=>$list['id'],
+                'memberID'=>$user['id'],
+                'nickname'=>$user['nickname'],
+                'headimg'=>$user['headimg'],
+                'content'=>$content,
+                'open'=>$open,
+                'status'=>1,
+                'createTime'=>time(),
+            ];
+
+            $res = M("ChatComment")->add($data);
+            if ($res) {
+                returnJson(0,'success');
+            }else{
+                returnJson('-1','操作失败');
+            }
         }
     }
 }

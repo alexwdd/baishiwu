@@ -68,19 +68,7 @@ class WeixinController extends CommonController {
                     }
                 }
 
-                if ($list[$key]['type']!='article') {
-                    $db = $this->getModel($list[$key]['type']);
-                    unset($map);
-                    $map['status'] = 1;
-                    $map['cityID'] = $cityID;   
-                    $child = M($db['db'])->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
-                    foreach ($child as $k => $val) {
-                        unset($child[$k]['detail']);
-                        unset($child[$k]['content']);
-                        $child[$k]['thumb_b'] = getRealUrl($val['thumb_b']);
-                        $child[$k]['sortName'] = $this->getSortName($val['sort']);
-                    }                    
-                }else{
+                if ($list[$key]['type']=='article') {
                     unset($map);
                     $map['status'] = 1;
                     $map['del'] = 0;
@@ -93,7 +81,21 @@ class WeixinController extends CommonController {
                         }
                         $child[$k]['time'] = date("Y-m-d",$val['time']);
                         $child[$k]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$val['time']).'/'.$val['id'].'.html';
-                    }  
+                    }
+                }elseif($list[$key]['type']=='chat'){
+                    
+                }else{
+                    $db = $this->getModel($list[$key]['type']);
+                    unset($map);
+                    $map['status'] = 1;
+                    $map['cityID'] = $cityID;   
+                    $child = M($db['db'])->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
+                    foreach ($child as $k => $val) {
+                        unset($child[$k]['detail']);
+                        unset($child[$k]['content']);
+                        $child[$k]['thumb_b'] = getRealUrl($val['thumb_b']);
+                        $child[$k]['sortName'] = $this->getSortName($val['sort']);
+                    }                    
                 }
                 foreach ($child as $k => $val) {
                     $child[$k] = $this->setTagPrice($val,$list[$key]['type']);

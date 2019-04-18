@@ -11,6 +11,7 @@ return array(
 		array('py'=>'ms','name'=>'美食/外卖','db'=>'Food','fid'=>6),
 		array('py'=>'sh','name'=>'生活服务','db'=>'Life','fid'=>7),
 		array('py'=>'xp','name'=>'新品上架','db'=>'Xinpin','fid'=>8),
+		array('py'=>'chat','name'=>'话题','db'=>'Chat','fid'=>152),
 	),
   
   	'phoneType'=>array(

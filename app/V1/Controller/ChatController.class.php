@@ -340,7 +340,8 @@ class ChatController extends CommonController {
 			$cityID = I('post.cityID');
 			$content = I('post.content');
 			$cid = I('post.cid');
-			$tag = I('post.tag');
+            $tag = I('post.tag');
+			$open = I('post.open');
 			$images = I('post.images');
 			if (!$user = $this->checkToken($token)) {
 				returnJson('999'); 
@@ -390,7 +391,8 @@ class ChatController extends CommonController {
 				'images'=>$images,
 				'thumb'=>$thumb,
 				'like'=>0,
-				'status'=>1,
+                'status'=>1,
+				'open'=>$open,
 				'createTime'=>time()
 			];
 			$res = M('Chat')->add($data);
@@ -619,7 +621,6 @@ class ChatController extends CommonController {
             $id = I('post.id');
             $token = I('post.token');
             $cityID = I('post.cityID');
-            $open = I('post.open');
             $content = I('post.content');
 
             if (!$user = $this->checkToken($token)) {
@@ -650,7 +651,7 @@ class ChatController extends CommonController {
                 'nickname'=>$user['nickname'],
                 'headimg'=>$user['headimg'],
                 'content'=>$content,
-                'open'=>$open,
+                'open'=>$list['open'],
                 'status'=>1,
                 'createTime'=>time(),
             ];

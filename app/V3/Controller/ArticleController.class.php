@@ -135,20 +135,26 @@ class ArticleController extends CommonController {
                         //$list[$key]['sortName'] = $this->getSortName($val['sort']);
                     }          
                     array_push($result,array('marriage'=>$list));
+                }elseif($value['cid']==142 || $value['cid']==148){
+                    
                 }else{
-                    $r = $this->getPy($value['cid']);       
+                    $r = $this->getPy($value['cid']);                    
                     $obj = M($r['db']);
-                  	unset($map);
+                    unset($map);
                     if ($cityID!='' && is_numeric($cityID)) {
                         $map['cityID']=$cityID;
                     }
-                    $map['status'] = 1;
-                    $list = $obj->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
+                    $map['status'] = 1;                    
+                    if ($r['py']=='chat') {                        
+                        $list = $obj->where($map)->order('isTop desc,id desc')->limit(6)->select();
+                    }else{
+                        $list = $obj->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
+                    }                    
                     foreach ($list as $k => $val) {
                         unset($list[$k]['detail']);
                         unset($list[$k]['content']);
                         $list[$k]['sortName'] = $this->getSortName($val['sort']);
-                      	$list[$k]['thumb_b'] = getRealUrl($val['thumb_b']);
+                        $list[$k]['thumb_b'] = getRealUrl($val['thumb_b']);
                     }
                     array_push($result,array($r['py']=>$list));
                 }

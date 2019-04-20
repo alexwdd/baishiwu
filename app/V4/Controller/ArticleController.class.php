@@ -49,7 +49,7 @@ class ArticleController extends CommonController {
                         $list[$key]['type'] = 'marriage';
                     }
                 }
-                unset($list[$key]['cid']);
+                //unset($list[$key]['cid']);
             }
             unset($map);
             $map['cityID'] = $cityID;
@@ -96,7 +96,6 @@ class ArticleController extends CommonController {
             $map['fid'] = 0;
             //$map['cid'] = array('neq',94);
             $list = M('CityCate')->where($map)->order('sort asc')->select(); 
-
             $result = array();
             foreach ($list as $key => $value) {                
                 if ($value['cid']==94) {
@@ -138,15 +137,38 @@ class ArticleController extends CommonController {
                         //$list[$key]['sortName'] = $this->getSortName($val['sort']);
                     }          
                     array_push($result,array('marriage'=>$list));
+                }elseif($value['cid']==142 || $value['cid']==148){
+                    $obj = M('Article');
+                    unset($map);
+                    unset($map);
+                    if ($cityID!='' && is_numeric($cityID)) {
+                        $map['cityID']=$cityID;
+                    }
+                    $map['del'] = 0;
+                    $map['status'] = 1;
+                    $map['cid'] = 113;
+                    $list = $obj->field('id,picname as thumb,title,createTime as time,hit,from,url')->where($map)->limit(5)->order('top desc,id desc')->select();
+                    foreach ($list as $k => $val) {
+                        if ($val['thumb']!='') {
+                            $list[$k]['thumb'] = C('site.domain').$val['thumb'];
+                        }
+                        $list[$k]['time'] = date("Y-m-d",$val['time']);
+                        $list[$k]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$val['time']).'/'.$val['id'].'.html';
+                    }          
+                    array_push($result,array('gl'=>$list));
                 }else{
-                    $r = $this->getPy($value['cid']);       
+                    $r = $this->getPy($value['cid']);                    
                     $obj = M($r['db']);
                     unset($map);
                     if ($cityID!='' && is_numeric($cityID)) {
                         $map['cityID']=$cityID;
                     }
-                    $map['status'] = 1;
-                    $list = $obj->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
+                    $map['status'] = 1;                    
+                    if ($r['py']=='chat') {                        
+                        $list = $obj->where($map)->order('isTop desc,id desc')->limit(6)->select();
+                    }else{
+                        $list = $obj->where($map)->order('isTop desc,articleid desc')->limit(6)->select();
+                    }                    
                     foreach ($list as $k => $val) {
                         unset($list[$k]['detail']);
                         unset($list[$k]['content']);

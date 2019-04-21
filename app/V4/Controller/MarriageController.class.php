@@ -11,7 +11,8 @@ class MarriageController extends CommonController {
             }
 
             $cityID = I('post.cityID');
-            $cateID = I('post.cateID');         
+            $cateID = I('post.cateID');
+            $keyword = I('post.keyword');
             $page = I('post.page',1);
 
             if ($cityID!='' && is_numeric($cityID)) {
@@ -19,6 +20,9 @@ class MarriageController extends CommonController {
             }
             if ($cateID!='' && is_numeric($cateID)) {
                 $map['cid']=$cateID;
+            }
+            if ($keyword!='') {
+                $map['title']=array('like','%'.$keyword.'%');
             }
 
             $pagesize = 10;
@@ -39,6 +43,9 @@ class MarriageController extends CommonController {
             foreach ($list as $key => $value) {
                 if ($value['thumb']!='') {
                     $list[$key]['thumb'] = C('site.domain').$value['thumb'];
+                    $imgInfo = getimagesize('.'.$value['thumb']);
+                    $list[$key]['width'] = $imgInfo[0];
+                    $list[$key]['height'] = $imgInfo[1];
                 }
                 $list[$key]['time'] = date("Y-m-d",$value['time']);
                 $list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['time']).'/'.$value['id'].'.html';

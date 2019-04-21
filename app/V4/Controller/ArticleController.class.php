@@ -218,10 +218,10 @@ class ArticleController extends CommonController {
                 if ($value['type']=='article') {
                     $db = ['db'=>'Article'];
                     $where['id'] = $value['articleid'];
-                    $res = M($db['db'])->field('url,hit')->where($where)->find(); 
+                    $res = M($db['db'])->field('url,hit,createTime')->where($where)->find(); 
                     $commend[$key]['hit'] = $res['hit'];
                     $commend[$key]['url'] = $res['url'];
-                    $commend[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['time']).'/'.$value['articleid'].'.html';
+                    $commend[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$res['createTime']).'/'.$value['articleid'].'.html';
                 }else{
                     $db = $this->getModel($value['type']);
                     $where['articleid'] = $value['articleid']; 
@@ -229,7 +229,11 @@ class ArticleController extends CommonController {
                     $commend[$key]['hit'] = $res['hit'];
                     $commend[$key]['url'] = '';
                     $commend[$key]['html'] = $res['html'];
-                }                
+                }
+
+                $imgInfo = getimagesize('.'.$value['image']);
+                $commend[$key]['width'] = $imgInfo[0];
+                $commend[$key]['height'] = $imgInfo[1];
                 
                 $commend[$key]['image'] = getRealUrl($value['image']);
                 if ($value['userid']==0) {

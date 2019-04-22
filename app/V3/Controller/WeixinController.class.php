@@ -469,14 +469,14 @@ class WeixinController extends CommonController {
 
             $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('isTop desc , updateTime desc , articleid desc')->select();            
             foreach ($list as $key => $value) {
-                $list[$key] = $this->setTagPrice($value,$type);
-
+                $list[$key]['sortName'] = $this->getSortName($value['sort']);                
                 unset($list[$key]['content']);
-                unset($list[$key]['detail']);
-                $list[$key]['sortName'] = $this->getSortName($value['sort']);
+                unset($list[$key]['detail']); 
                 $list[$key]['thumb_b'] = getRealUrl($value['thumb_b']);
                 $list[$key]['thumb_s'] = getRealUrl($value['thumb_s']);
                 $list[$key]['createTime'] = date("Y/m/d",$value['createTime']);
+
+                $list[$key] = $this->setTagPrice($list[$key],$type);
             }
             
             returnJson(0,'success',['next'=>$next,'data'=>$list,'cateName'=>$arr['name'],'cate'=>$cate,'quick'=>$quick]);

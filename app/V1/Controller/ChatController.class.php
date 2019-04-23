@@ -17,6 +17,7 @@ class ChatController extends CommonController {
         }
 	}
 
+    //话题
 	public function getmain(){
 		if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
@@ -105,6 +106,7 @@ class ChatController extends CommonController {
         }
 	}
 
+    //我的关注
     public function getFocus(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
@@ -173,6 +175,7 @@ class ChatController extends CommonController {
         }
     }
 
+    //我的话题
     public function myChat(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
@@ -222,6 +225,7 @@ class ChatController extends CommonController {
         }
     }
 
+    //搜索话题
     public function search(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
@@ -286,6 +290,7 @@ class ChatController extends CommonController {
         }
     }
 
+    //删除话题
     public function del(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
@@ -312,6 +317,7 @@ class ChatController extends CommonController {
         }
     }
 
+    //话题分类
 	public function cate(){
 		if (IS_POST) {
 			if(!checkFormDate()){returnJson('-1','ERROR');}
@@ -332,7 +338,7 @@ class ChatController extends CommonController {
 		}
 	}
 
-	//获取帖子留言
+	//发布话题
 	public function submit(){
 		if (IS_POST) {
 			if(!checkFormDate()){returnJson('-1','ERROR');}
@@ -479,7 +485,7 @@ class ChatController extends CommonController {
         }
     }
 
-    //关注
+    //do关注
     public function focus(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}
@@ -517,7 +523,7 @@ class ChatController extends CommonController {
         }
     }
 
-    //详情
+    //话题详情
     public function getinfo(){  
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}
@@ -569,7 +575,7 @@ class ChatController extends CommonController {
         }
     }
 
-    //获取留言
+    //获取话题留言
     public function getComment(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}
@@ -614,7 +620,7 @@ class ChatController extends CommonController {
         }
     }
 
-    //保存留言
+    //发布留言
     public function comment(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}

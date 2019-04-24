@@ -398,8 +398,10 @@ class ChatController extends CommonController {
 				'thumb'=>$thumb,
 				'like'=>0,
                 'status'=>1,
+                'flag'=>0,
 				'open'=>$open,
-				'createTime'=>time()
+                'createTime'=>time(),
+				'updateTime'=>time(),
 			];
 			$res = M('Chat')->add($data);
 			if ($res) {
@@ -592,7 +594,7 @@ class ChatController extends CommonController {
             }            
 
             $map['chatID'] = $id;
-
+            $map['toID'] = 0;
             $page = I('post.page/d',1); 
             $pagesize =10;
             $firstRow = $pagesize*($page-1); 
@@ -614,17 +616,26 @@ class ChatController extends CommonController {
                     }
                 }
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
-            }
-            
+
+                $reply = $obj->where(array('toID'=>$value['id']))->order('id asc')->select();
+                foreach ($reply as $k => $val) {
+                    $reply[$k]['createTime'] = getLastTime($val['createTime']);
+                }
+                $list[$key]['reply'] = $reply;
+            }            
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
         }
     }
+
 
     //发布留言
     public function comment(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}
-            $id = I('post.id');
+            $chatID = I('post.chatID');
+            $toID = I('post.toID');
+            $toUserId = I('post.toUserId');
+            $toNickname = I('post.toNickname');
             $token = I('post.token');
             $cityID = I('post.cityID');
             $content = I('post.content');
@@ -633,7 +644,7 @@ class ChatController extends CommonController {
                 returnJson('999'); 
             }
   
-            if ($id=='' || !is_numeric($id)) {
+            if ($chatID=='' || !is_numeric($chatID)) {
                 returnJson('-1','参数错误');
             }
             if ($cityID=='' || !is_numeric($cityID)) {
@@ -643,13 +654,12 @@ class ChatController extends CommonController {
                 returnJson('-1','请输入评论内容');
             }
 
-            $map['id'] = $id;
+            $map['id'] = $chatID;
             $obj = M('Chat');
             $list = $obj->where($map)->find();
             if (!$list) {
                 returnJson('-1','话题不存在');
-            }
-            
+            }            
             $data = [
                 'chatID'=>$list['id'],
                 'userID'=>$list['memberID'],
@@ -657,13 +667,24 @@ class ChatController extends CommonController {
                 'nickname'=>$user['nickname'],
                 'headimg'=>$user['headimg'],
                 'content'=>$content,
+                'toID'=>$toID,
+                'toUserId'=>$toUserId,
+                'toNickname'=>$toNickname,
                 'open'=>$list['open'],
                 'status'=>1,
+                'read'=>0,
                 'createTime'=>time(),
             ];
 
             $res = M("ChatComment")->add($data);
             if ($res) {
+                //更新话题时间
+                if ($toID==0) {
+                    $update['updateTime'] = time();
+                    $update['flag'] = 1;
+                    M("Chat")->where(array('id'=>$chatID))->save($update);
+                }
+                
                 $list = M("ChatComment")->where(array('id'=>$res))->order('id desc')->limit(1)->select();
                 foreach ($list as $key => $value) {
                     $list[$key]['createTime'] = getLastTime($value['createTime']);

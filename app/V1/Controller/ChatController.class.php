@@ -67,7 +67,7 @@ class ChatController extends CommonController {
                 $next = 0;
             }
 
-            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('updateTime desc')->select();
             if ($token!='') {
                 $user = $this->checkToken($token);
             } 
@@ -102,7 +102,23 @@ class ChatController extends CommonController {
                 }
             }
             
-            returnJson(0,'success',['next'=>$next,'data'=>$list,'cate'=>$cate,'quick'=>$quick]);
+            if ($user) {
+                //未读取留言
+                unset($map);
+                $map['memberID'] = $user['id'];
+                $map['flag'] = 1;
+                $commentNumber = M("Chat")->where($map)->count();
+
+                //未读取回复
+                unset($map);
+                $map['toUserId'] = $user['id'];
+                $map['read'] = 0;
+                $replyNumber = M("ChatComment")->where($map)->count();
+            }else{
+                $replyNumber=0;
+                $commentNumber=0;
+            }
+            returnJson(0,'success',['next'=>$next,'data'=>$list,'cate'=>$cate,'quick'=>$quick,'commentNumber'=>$commentNumber,'replyNumber'=>$replyNumber]);
         }
 	}
 

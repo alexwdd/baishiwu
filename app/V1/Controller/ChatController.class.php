@@ -216,8 +216,74 @@ class ChatController extends CommonController {
                 $next = 0;
             }
 
-            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('flag desc,updateTime desc')->select();
             foreach ($list as $key => $value) {
+                unset($map);
+                $map['read'] = 0;
+                $map['toID'] = 0;
+                $map['userID'] = $user['id'];
+                $map['chatID'] = $value['id'];
+                $list[$key]['noread'] = M('ChatComment')->where($map)->count();
+                $list[$key]['createTime'] = getLastTime($value['createTime']);
+                if($value['images']!=''){
+                    $img = explode("|", $value['images']);
+                    $thumb = explode("|", $value['thumb']);
+                    foreach ($img as $k => $val) {
+                        $img[$k] = getRealUrl($val);
+                    }
+                    foreach ($thumb as $k => $val) {
+                        $thumb[$k] = getRealUrl($val);
+                    }
+                    $list[$key]['images'] = $img;
+                    $list[$key]['thumb'] = $thumb;
+                    $list[$key]['num'] = count($img);
+                }
+
+                $list[$key]['like'] = M('ChatLike')->where(array('chatID'=>$value['id']))->count();
+                $list[$key]['comment'] = M('ChatComment')->where(array('chatID'=>$value['id']))->count();
+            }
+            
+            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+        }
+    }
+
+    //我的评论和回复
+    public function reply(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $token = I('post.token');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $page = I('post.page',1);
+
+            $map['memberID'] = $user['id'];
+            $ids = M('ChatComment')->where($map)->order('id desc')->limit(500)->getField('chatID',true);
+
+            unset($map);
+            $map['id'] = array('in',$ids);
+            $page = I('post.page/d',1); 
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('Chat');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('flag desc,updateTime desc')->select();
+            foreach ($list as $key => $value) {
+                unset($map);
+                $map['read'] = 0;
+                $map['toUserId'] = $user['id'];
+                $map['chatID'] = $value['id'];
+                $list[$key]['noread'] = M('ChatComment')->where($map)->count();
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
                 if($value['images']!=''){
                     $img = explode("|", $value['images']);
@@ -573,7 +639,7 @@ class ChatController extends CommonController {
                     $list['num'] = count($img);
                 }
 
-                if ($token!='') {
+                if ($token!='') {                    
                     $user = $this->checkToken($token);
                 }
 
@@ -584,6 +650,23 @@ class ChatController extends CommonController {
                     }else{
                         $list['focus'] = false; 
                     }
+
+                    //留言标识更改
+                    if ($user['id'] == $list['memberID']) {
+                        M('Chat')->where(array('id'=>$list['id']))->save(['flag'=>0]);
+                        unset($map);
+                        $map['toID'] = 0;
+                        $map['chatID'] = $list['id'];
+                        M('ChatComment')->where($map)->save(['flag'=>0,'read'=>1]);
+                    }
+
+                    //回复标识更改
+                    unset($map);
+                    $map['toUserId'] = $user['id'];
+                    $map['chatID'] = $list['id'];
+                    $map['read'] = 0;
+                    M('ChatComment')->where($map)->setField('read',1);
+
                 }else{
                     $list['focus'] = false; 
                 }

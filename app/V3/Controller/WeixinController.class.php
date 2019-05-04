@@ -689,15 +689,15 @@ class WeixinController extends CommonController {
     }
 
     public function getToken(){
-        if (S('AccessToken')) {
+        /*if (S('AccessToken')) {
             return S('AccessToken');
-        }else{
+        }else{*/
             $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$this->weixin['appID'].'&secret='.$this->weixin['appsecret'];
             $result = $this->https_post($url);
             $result = json_decode($result,true);
             S('AccessToken',$result['access_token'],1200);
             return S('AccessToken');
-        }
+        //}
     }
 
     //获得jsTicket

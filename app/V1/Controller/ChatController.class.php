@@ -191,6 +191,83 @@ class ChatController extends CommonController {
         }
     }
 
+    //获取推荐用户列表
+    public function getCommendUser(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $token = I('post.token');
+            $cityID = I('post.cityID');
+
+            if ($cityID=='' || !is_numeric($cityID)) {
+                returnJson('-1','缺少cityID');
+            }            
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $map['headimg'] = array('neq','');
+            $map['cityID'] = $cityID;
+            $map['commend'] = 1;
+            $obj = M('Member');
+            $list = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->limit(4)->order('follow desc')->select();
+            $ids = M('ChatFocus')->where(array('memberID'=>$user['id']))->getField('userID',true);
+            foreach ($list as $key => $value) {
+                if (in_array($value['memberID'],$ids)) {
+                    $list[$key]['focus'] = true;
+                }else{
+                    $list[$key]['focus'] = false;
+                }                
+            }
+
+            returnJson(0,'success',$list);
+        }
+    }
+
+    //获取所有用户列表
+    public function getUserList(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $token = I('post.token');
+            $cityID = I('post.cityID');
+
+            if ($cityID=='' || !is_numeric($cityID)) {
+                returnJson('-1','缺少cityID');
+            }            
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $map['headimg'] = array('neq','');
+            $map['cityID'] = $cityID;
+            $page = I('post.page',1);            
+            $page = I('post.page/d',1); 
+            $pagesize =32;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('Member');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+            $list = $obj->field('id,nickname,headimg,follow')->where($map)->limit($firstRow.','.$pagesize)->order('commend desc,follow desc')->select();
+            $ids = M('ChatFocus')->where(array('memberID'=>$user['id']))->getField('userID',true);
+            foreach ($list as $key => $value) {
+                if (in_array($value['id'],$ids)) {
+                    $list[$key]['focus'] = true;
+                }else{
+                    $list[$key]['focus'] = false;
+                }                
+            }
+
+            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+        }
+    }
+
     //我的话题
     public function myChat(){
         if (IS_POST) {
@@ -591,6 +668,7 @@ class ChatController extends CommonController {
             if ($res) {
                 $result = M('ChatFocus')->where($map)->delete();
                 if ($result) {
+                    M('Member')->where(array('id'=>$userID))->setDec('follow');
                     returnJson('0','取消关注');
                 }else{
                     returnJson('-1','操作失败');
@@ -599,6 +677,7 @@ class ChatController extends CommonController {
                 $data = ['userID'=>$userID,'memberID'=>$user['id']];
                 $result = M('ChatFocus')->add($data);
                 if ($result) {
+                    M('Member')->where(array('id'=>$userID))->setInc('follow');
                     returnJson('0','已关注');
                 }else{
                     returnJson('-1','操作失败');

@@ -3,7 +3,7 @@ namespace V3\Controller;
 
 class WeixinController extends CommonController {
 
-    public $weixin = ['appID'=>'wx858ef6b7d842c007','appsecret'=>'a767560a950671d28c640ccc27f3d6f7'];
+    public $weixin = ['appID'=>'wxd4334941c3c1c498','appsecret'=>'cbbec6f8b6900e35c595064e1b5f5362'];
 
     public function getPy($cid){
         foreach (C('infoArr') as $key => $value) {
@@ -689,15 +689,15 @@ class WeixinController extends CommonController {
     }
 
     public function getToken(){
-        /*if (S('AccessToken')) {
+        if (S('AccessToken')) {
             return S('AccessToken');
-        }else{*/
+        }else{
             $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$this->weixin['appID'].'&secret='.$this->weixin['appsecret'];
             $result = $this->https_post($url);
             $result = json_decode($result,true);
             S('AccessToken',$result['access_token'],1200);
             return S('AccessToken');
-        //}
+        }
     }
 
     //获得jsTicket

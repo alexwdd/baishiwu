@@ -15,7 +15,8 @@ class ArticleController extends CommonController {
                 returnJson('-1','缺少cityID');
             }
             $map['cityID'] = $cityID;   
-            $map['fid'] = 0;        
+            $map['fid'] = 0;
+            $map['cid'] = array('neq',152);
             $list = M('CityCate')->field('cid,name')->where($map)->order('sort asc')->select();
             foreach ($list as $key => $value) {
                 unset($r);

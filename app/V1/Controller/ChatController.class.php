@@ -72,6 +72,7 @@ class ChatController extends CommonController {
                 $user = $this->checkToken($token);
             } 
             foreach ($list as $key => $value) {
+                $list[$key]['createTimeDate'] = $value['createTime'];
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
                 if($value['images']!=''){
                 	$img = explode("|", $value['images']);
@@ -97,8 +98,12 @@ class ChatController extends CommonController {
                     }else{
                         $list[$key]['focus'] = false; 
                     }
+
+                    //是否点过赞
+                    $list[$key]['liked'] = M('ChatLike')->where(array('memberID'=>$user['id'],'chatID'=>$value['id']))->count();
                 }else{
                     $list[$key]['focus'] = false; 
+                    $list[$key]['liked'] = 0;
                 }
             }
             

@@ -78,7 +78,12 @@ class ChatController extends CommonController {
                 	$img = explode("|", $value['images']);
                 	$thumb = explode("|", $value['thumb']);
                 	foreach ($img as $k => $val) {
-                		$img[$k] = getRealUrl($val);
+                        $imgInfo = getimagesize('.'.$val);
+                		$img[$k] = [
+                            'url'=>getRealUrl($val),
+                            'width'=>$imgInfo[0],
+                            'height'=>$imgInfo[1]
+                        ];
                 	}
                 	foreach ($thumb as $k => $val) {
                 		$thumb[$k] = getRealUrl($val);
@@ -170,6 +175,16 @@ class ChatController extends CommonController {
                 $user = $this->checkToken($token);
             } 
             foreach ($list as $key => $value) {
+
+                //处理标签
+                $tag = explode(",",$value['tag']);
+                $tagArr = [];
+                foreach ($tag as $k => $val) {
+                    $temp = explode("|",$val);
+                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                }
+                $list[$key]['tag'] = $tagArr;
+
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
                 if($value['images']!=''){
                     $img = explode("|", $value['images']);
@@ -195,8 +210,12 @@ class ChatController extends CommonController {
                     }else{
                         $list[$key]['focus'] = false; 
                     }
+
+                    //是否点过赞
+                    $list[$key]['liked'] = M('ChatLike')->where(array('memberID'=>$user['id'],'chatID'=>$value['id']))->count();
                 }else{
                     $list[$key]['focus'] = false; 
+                    $list[$key]['liked'] = 0;
                 }
             }
             
@@ -308,6 +327,16 @@ class ChatController extends CommonController {
 
             $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('flag desc,updateTime desc')->select();
             foreach ($list as $key => $value) {
+
+                //处理标签
+                $tag = explode(",",$value['tag']);
+                $tagArr = [];
+                foreach ($tag as $k => $val) {
+                    $temp = explode("|",$val);
+                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                }
+                $list[$key]['tag'] = $tagArr;
+
                 unset($map);
                 $map['read'] = 0;
                 $map['toID'] = 0;
@@ -391,6 +420,17 @@ class ChatController extends CommonController {
 
                 $list[$key]['like'] = M('ChatLike')->where(array('chatID'=>$value['id']))->count();
                 $list[$key]['comment'] = M('ChatComment')->where(array('chatID'=>$value['id']))->count();
+   
+                $count = M('ChatFocus')->where(array('userID'=>$value['memberID'],'memberID'=>$user['id']))->count();
+                if ($count>0) {
+                    $list[$key]['focus'] = true; 
+                }else{
+                    $list[$key]['focus'] = false; 
+                }
+
+                //是否点过赞
+                $list[$key]['liked'] = M('ChatLike')->where(array('memberID'=>$user['id'],'chatID'=>$value['id']))->count();
+
             }
             
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
@@ -453,8 +493,12 @@ class ChatController extends CommonController {
                     }else{
                         $list[$key]['focus'] = false; 
                     }
+
+                    //是否点过赞
+                    $list[$key]['liked'] = M('ChatLike')->where(array('memberID'=>$user['id'],'chatID'=>$value['id']))->count();
                 }else{
                     $list[$key]['focus'] = false; 
+                    $list[$key]['liked'] = 0;
                 }
             }
             
@@ -716,13 +760,28 @@ class ChatController extends CommonController {
             if (!$list) {
                 returnJson('-1','信息不存在');
             } else {
+
+                //处理标签
+                $tag = explode(",",$list['tag']);
+                $tagArr = [];
+                foreach ($tag as $k => $val) {
+                    $temp = explode("|",$val);
+                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                }
+                $list['tag'] = $tagArr;
+
                 $list['createTime'] = getLastTime($list['createTime']);
                 if($list['images']!=''){
                     $img = explode("|", $list['images']);
                     $thumb = explode("|", $list['thumb']);
                     foreach ($img as $k => $val) {
-                        $img[$k] = getRealUrl($val);
-                    }
+                        $imgInfo = getimagesize('.'.$val);
+                        $img[$k] = [
+                            'url'=>getRealUrl($val),
+                            'width'=>$imgInfo[0],
+                            'height'=>$imgInfo[1]
+                        ];
+                    }        
                     foreach ($thumb as $k => $val) {
                         $thumb[$k] = getRealUrl($val);
                     }
@@ -763,6 +822,7 @@ class ChatController extends CommonController {
                     $list['focus'] = false; 
                 }
                 $list['like'] = M('ChatLike')->where(array('chatID'=>$list['id']))->count();
+                $list['comment'] = M('ChatComment')->where(array('chatID'=>$list['id']))->count();
                 returnJson('0',C('SUCCESS_RETURN'),['data'=>$list]);
             }
         }

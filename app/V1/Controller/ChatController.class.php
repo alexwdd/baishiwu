@@ -88,6 +88,14 @@ class ChatController extends CommonController {
                 	$list[$key]['num'] = count($img);
                 }
 
+                //处理标签
+                $tag = explode(",",$value['tag']);
+                $tagArr = [];
+                foreach ($tag as $k => $val) {
+                    $temp = explode("|",$val);
+                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                }
+                $list[$key]['tag'] = $tagArr;
                 $list[$key]['like'] = M('ChatLike')->where(array('chatID'=>$value['id']))->count();
                 $list[$key]['comment'] = M('ChatComment')->where(array('chatID'=>$value['id']))->count();
 
@@ -496,7 +504,7 @@ class ChatController extends CommonController {
             	$cate[$key]['icon'] = getRealUrl($value['icon']);
             }
 
-            $tag = M('OptionItem')->field('name')->where(array('cate'=>8))->select();
+            $tag = M('OptionItem')->field('id,name,value')->where(array('cate'=>8))->select();
 
             returnJson('0',C("SUCCESS_RETURN"),array('cate'=>$cate,'tag'=>$tag)); 
 		}

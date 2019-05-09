@@ -59,6 +59,76 @@ class ChongzhiController extends CommonController {
     	}
     }
 
+    public function createOrder(){
+    	if (IS_POST) {
+			if (!checkFormDate()){returnJson('-1','未知错误');}
+			$mobile = I('post.mobile');
+			$payType = I('post.payType');
+			$goodsID = I('post.goodsID');
+
+			if ($mobile == '') {
+				returnJson('-1','请输入手机号码');
+			}
+
+			if (!in_array($payType, [1,2])) {
+				returnJson('-1','支付方式错误');
+			}
+
+			if ($goodsID == '' || !is_numeric($goodsID)) {
+				returnJson('-1','参数错误');
+			}
+
+			$map['id'] = $goodsID;
+			$map['show'] = 1;
+			$list = M('PhoneCard')->where($map)->find();
+			if (!$list) {
+				returnJson('-1','商品不存在');
+			}
+
+	    	foreach (C('phoneType') as $key => $value) {
+	    		if($value['id']==$list['type']){
+	    			$list['typeName'] = $value['name'];
+	    		}
+	    	}
+	    	$config = tpCache("xjp");
+	    	$rmb = sprintf("%.2f",$config['rate']*$list['price']);
+	    	$data = [
+	    		'memberID'=>0,
+	    		'order_no'=>getOrderNo("PH"),
+	    		'mobile'=>$mobile,
+	    		'type'=>$list['type'],
+	    		'typeName'=>$list['typeName'],
+	    		'goodsID'=>$list['id'],
+	    		'goodsName'=>$list['name'],
+	    		'money'=>$list['money'],
+	    		'price'=>$list['price'],
+	    		'rmb'=>$rmb,
+	    		'productID'=>$list['productID'],
+	    		'apiOrderNo'=>'',
+	    		'payType'=>$payType,
+	    		'status'=>0,
+	    		'createTime'=>time(),
+	    		'updateTime'=>time(),
+	    	];
+	    	$res = M('PhoneOrder')->add($data);
+	    	if ($res) {   		
+	    		returnJson(1,'success',['url'=>'http://www.angelbuy-au.com/mobile/chongzhi.html?order_no='.$data['order_no']]);
+	    	}else{
+	    		returnJson('0','操作失败');
+	    	}
+    	}
+    }
+
+    public function getOrderInfo(){
+    	$map['order_no'] = I('get.order_no');
+    	$list = M('PhoneOrder')->where($map)->find();
+    	if ($list) {
+    		echo json_encode(['code'=>1,'data'=>$list]);
+    	}else{
+    		echo json_encode(['code'=>0]);
+    	}
+    }
+
     public function submit(){
     	if (IS_POST) {
 			if (!checkFormDate()){returnJson('-1','未知错误');}

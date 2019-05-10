@@ -57,11 +57,20 @@
 				<p field="oauth" title="注册方式" width="100" dict="oauth"/>
 				<p field="name" title="姓名" width="120"/>
 				<p field="wachat" title="微信号" width="150"/>
+				<p field="commend" title="话题推荐" width="100" sort="true" templet="#commendTpl"/>
 				<p field="authentication" title="认证" width="100" dict="authentication" sort="true"/>
 				<p field="disable" title="状态" width="100" dict="disable" sort="true"/>
 				<p field="createTime" title="注册日期" width="180" sort="true"/>
 				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="80"/>
 			</div>
+
+			<script type="text/html" id="commendTpl">
+				{{# if(d.commend == 0){ }}
+				否
+				{{# }else{ }}
+				<span style="color: blue">是</span>
+				{{# } }}				
+			</script>
 
 			<script type="text/html" id="faceTpl">
 				{{# if(d.headimg == ''){ }}

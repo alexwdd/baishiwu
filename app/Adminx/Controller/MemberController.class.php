@@ -118,7 +118,8 @@ class MemberController extends AdminController {
 			$password = trim(I('post.password'));
 			$disable = trim(I('post.disable'));
 			$cityID = trim(I('post.cityID'));
-			$authentication = trim(I('post.authentication'));
+            $authentication = trim(I('post.authentication'));
+			$commend = trim(I('post.commend'));
 			$id = trim(I('post.id'));
     		if (empty($id)) {
         		$this->error('ID不能为空！');
@@ -130,7 +131,8 @@ class MemberController extends AdminController {
 			}
             $data['disable'] = $disable;
             $data['cityID'] = $cityID;
-            $data['authentication'] = $authentication;      	
+            $data['authentication'] = $authentication;
+            $data['commend'] = $commend;
 			$map['id'] = $id;
 	    	$rs = M('Member')->where($map)->save($data);
 	    	if ($rs) {

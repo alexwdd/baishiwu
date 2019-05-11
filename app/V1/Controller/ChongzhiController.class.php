@@ -206,8 +206,8 @@ class ChongzhiController extends CommonController {
         $unifiedOrder->setParameter("body",'手机充值');//商品描述
         //自定义订单号，此处仅作举例
         $unifiedOrder->setParameter("out_trade_no",$order['order_no']);//商户订单号 
-        //$unifiedOrder->setParameter("total_fee",$order['rmb']*100);//总金额
-        $unifiedOrder->setParameter("total_fee",1);//总金额
+        $unifiedOrder->setParameter("total_fee",$order['rmb']*100);//总金额
+        //$unifiedOrder->setParameter("total_fee",1);//总金额
         $unifiedOrder->setParameter("notify_url",C('site.domain').'/v1/chongzhi/wxnotify/');//通知地址 
         $unifiedOrder->setParameter("trade_type","APP");//交易类型
         $unifiedOrder->setParameter("spbill_create_ip",get_client_ip());//客户端IP

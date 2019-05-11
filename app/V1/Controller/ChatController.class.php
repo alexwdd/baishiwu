@@ -206,6 +206,26 @@ class ChatController extends CommonController {
             $map['commend'] = 1;
             $obj = M('Member');
             $list = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->limit(4)->order('follow desc')->select();
+            if (count($list)<4) {
+                $num = 4-count($list);
+                unset($map);
+                $map['cityID'] = $cityID;
+                $result = M('ChatAction')->where($map)->field('memberID,count(*) as num')->group('memberID')->order('num desc')->limit($num)->select();
+                if ($result) {
+                    $ids = [];
+                    foreach ($result as $key => $value) {
+                        array_push($ids,$value['memberID']);
+                    }
+                    unset($map);
+                    $map['headimg'] = array('neq','');
+                    $map['cityID'] = $cityID;
+                    $map['id'] = array('in',$ids);
+                    $obj = M('Member');
+                    $list1 = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->order('follow desc')->select();
+                    $list = array_merge($list,$list1);//合并数组
+                }
+            }
+
             $ids = M('ChatFocus')->where(array('memberID'=>$user['id']))->getField('userID',true);
             foreach ($list as $key => $value) {
                 if (in_array($value['memberID'],$ids)) {
@@ -498,6 +518,7 @@ class ChatController extends CommonController {
 			];
 			$res = M('Chat')->add($data);
 			if ($res) {
+                $this->saveAction(1,$cityID,$user['id']);
 				returnJson('0','发布成功');
 			}else{
 				returnJson('-1','操作失败');
@@ -812,6 +833,11 @@ class ChatController extends CommonController {
                     $update['flag'] = 1;
                     M("Chat")->where(array('id'=>$chatID))->save($update);
                 }
+
+                $this->saveAction(2,$cityID,$user['id']);
+                if ($toUserId>0) {
+                    $this->saveAction(3,$cityID,$user['id']);
+                }
                 
                 $list = M("ChatComment")->where(array('id'=>$res))->order('id desc')->limit(1)->select();
                 foreach ($list as $key => $value) {
@@ -859,5 +885,16 @@ class ChatController extends CommonController {
                 returnJson('-1','操作失败');
             }                           
         }
+    }
+
+    public function saveAction($type,$cityID,$ids){
+        //type 1发帖，2回复，2被回复
+        $data = [
+            'cityID'=>$cityID,
+            'memberID'=>$ids,
+            'type'=>$type,
+            'createTime'=>time()
+        ];
+        M('ChatAction')->add($data);
     }
 }

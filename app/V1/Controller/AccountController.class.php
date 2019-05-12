@@ -923,4 +923,131 @@ class AccountController extends CommonController {
         	}        	
 		}
     }
+
+    public function setOpen(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+            $open = $user['open']==1?0:1;
+            M('Member')->where(array('id'=>$user['id']))->setField('open',$open);
+            returnJson(0,C("SUCCESS_RETURN"),['status'=>$open]);                           
+        }
+    }
+
+    public function myFocusUser(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+            $page = I('post.page',1);
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $map['memberID'] = $user['id'];
+            $page = I('post.page/d',1); 
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('ChatFocus');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+            $list = $obj->field('userID')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
+            foreach ($list as $key => $value) {
+                $member = M('Member')->where(array('id'=>$value['userID']))->find();
+                $list[$key]['headimg'] = $member['headimg'];
+                $list[$key]['nickname'] = $member['nickname'];
+                $list[$key]['headimg'] = $member['headimg'];
+            }
+            returnJson(0,'success',['next'=>$next,'data'=>$list]);                         
+        }
+    }
+
+    public function photo(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $map['memberID'] = $user['id'];
+            $obj = M('Photo');
+            $list = $obj->field('id as imageID,image,sort')->where($map)->order('sort asc,id desc')->select();
+            foreach ($list as $key => $value) {
+                $list[$key]['image'] = getRealUrl($value['image']);
+            }
+            returnJson(0,'success',$list);                         
+        }
+    }
+
+    public function photoAdd(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+            $image = I('post.image');
+            $sort = I('post.sort');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            if ($image=='') {
+                returnJson("-1",'请上传图片');
+            }
+
+            if ($sort=='' || !is_numeric($sort)) {
+                $sort=0;
+            }
+
+            $data = [
+                'memberID'=>$user['id'],
+                'image'=>$image,
+                'sort'=>$sort
+            ];
+
+            $res = M('Photo')->add($data);
+            if ($res) {
+                returnJson(0,'success');
+            }else{
+                returnJson("-1",'操作失败');
+            }                       
+        }
+    }
+
+    public function photoDel(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+            $imageID = I('post.imageID');
+
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            if ($imageID=='' || !is_numeric($imageID)) {
+                returnJson("-1",'缺少参数imageID');
+            }
+
+            $map['memberID'] = $user['id'];
+            $map['id'] = $imageID;
+            $obj = M('Photo');
+            $res = $obj->where($map)->delete();
+            if ($res) {
+                returnJson(0,'success');
+            }else{
+                returnJson("-1",'操作失败');
+            }                                     
+        }
+    }
 }

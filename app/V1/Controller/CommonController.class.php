@@ -24,6 +24,20 @@ class CommonController extends BaseController {
         }   
 	}  
 
+    public function checkToken($token){
+        $map['token'] = $token;
+        $map['disable'] = 0;
+        $map['outTime'] = array('gt',time());
+        $user = M('Member')->where($map)->find();    
+        if (!$user) {
+            return false;
+        }else{
+            $data['outTime'] = time()+2592000; 
+            M('Member')->where($map)->save($data);   
+            return $user;
+        }
+    }
+
     public function userCheck($userid,$password,$openid){
         if ($userid=='') {
             returnJson('-1','缺少userid');

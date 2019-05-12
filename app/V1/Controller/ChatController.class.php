@@ -3,20 +3,6 @@ namespace V1\Controller;
 
 class ChatController extends CommonController {
 
-	public function checkToken($token){
-        $map['token'] = $token;
-        $map['disable'] = 0;
-        $map['outTime'] = array('gt',time());
-    	$user = M('Member')->where($map)->find();    
-        if (!$user) {
-            return false;
-        }else{
-            $data['outTime'] = time()+2592000; 
-            M('Member')->where($map)->save($data);   
-            return $user;
-        }
-	}
-
     //话题
 	public function getmain(){
 		if (IS_POST) {

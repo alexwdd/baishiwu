@@ -1,1 +1,25 @@
-增加chatAction
+member表增加gender、birthday、work、sign、open
+
+增加表pm_member_visitor
+增加表pm_photo
+
+//设置信息状态
+V1/account/setOpen 
+参数：token
+返回：status 当前信息状态1公开2隐藏
+
+//我关注的人
+V1/account/myFocusUser
+参数：token
+
+//我的照片墙
+V1/account/phone
+参数：token
+
+//添加照片
+V1/account/phoneAdd
+参数：token、image(图片URL)、sort(排序)
+
+//删除照片
+V1/account/phoneDel
+参数：token、imageID(图片ID)

@@ -796,6 +796,7 @@ class ChatController extends CommonController {
                 returnJson('-1','话题不存在');
             }            
             $data = [
+                'cityID'=>$cityID,
                 'chatID'=>$list['id'],
                 'userID'=>$list['memberID'],
                 'memberID'=>$user['id'],

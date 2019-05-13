@@ -75,6 +75,13 @@ return array (
             'parentMenuId'=>"1",
         ), 
         array(
+            'menuId' => "1013",
+            'menuName'=>'话题',
+            'menuIcon'=>'fa-television',
+            'menuHref'=>'',
+            'parentMenuId'=>"1",
+        ),
+        array(
             'menuId'=>'1004',
             'menuName'=>'拼邮',
             'menuIcon'=>'fa-paper-plane',

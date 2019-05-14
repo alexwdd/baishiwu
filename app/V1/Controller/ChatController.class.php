@@ -102,7 +102,7 @@ class ChatController extends CommonController {
                 $list[$key]['num'] = count($img);
             }
 
-            //处理标签
+            // 处理标签
             $tagArr = [];
             if ($value['tag']!='') {
                 $tag = explode(",",$value['tag']);

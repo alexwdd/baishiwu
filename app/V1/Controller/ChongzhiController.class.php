@@ -111,8 +111,13 @@ class ChongzhiController extends CommonController {
 	    		'updateTime'=>time(),
 	    	];
 	    	$res = M('PhoneOrder')->add($data);
-	    	if ($res) {   		
-	    		returnJson(1,'success',['url'=>'http://www.angelbuy-au.com/mobile/chongzhi.html?order_no='.$data['order_no']]);
+	    	if ($res) {
+	    		if ($payType==1) {
+	    			$url = 'http://www.angelbuy-au.com/mobile/chongzhi/alipay.html?order_no='.$data['order_no'];
+	    		}else{
+	    			$url = 'http://www.angelbuy-au.com/mobile/chongzhi.html?order_no='.$data['order_no'];
+	    		}
+	    		returnJson(1,'success',['url'=>$url]);
 	    	}else{
 	    		returnJson('0','操作失败');
 	    	}

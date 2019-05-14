@@ -103,12 +103,15 @@ class ChatController extends CommonController {
             }
 
             //处理标签
-            $tag = explode(",",$value['tag']);
             $tagArr = [];
-            foreach ($tag as $k => $val) {
-                $temp = explode("|",$val);
-                array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+            if ($value['tag']!='') {
+                $tag = explode(",",$value['tag']);
+                foreach ($tag as $k => $val) {
+                    $temp = explode("|",$val);
+                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                }
             }
+            
             $list[$key]['tag'] = $tagArr;
             $list[$key]['like'] = M('ChatLike')->where(array('chatID'=>$value['id']))->count();
             $list[$key]['comment'] = M('ChatComment')->where(array('chatID'=>$value['id']))->count();

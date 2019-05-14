@@ -455,10 +455,11 @@ class ChatController extends CommonController {
                 returnJson('-1','缺少cityID');
             }
 			if ($cid=='' && !is_numeric($cid)) {
-				returnJson('-1','请选择版块');
+				//returnJson('-1','请选择版块');
+                $cid = 0;
 			}
 			if ($tag=='') {
-				returnJson('-1','请选择标签');
+				//returnJson('-1','请选择标签');
 			}
 			if ($content=='') {
 				returnJson('-1','请输入内容');

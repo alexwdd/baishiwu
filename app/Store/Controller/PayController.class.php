@@ -28,10 +28,65 @@ class PayController extends BaseController
     		if ($payType==2) {
     			$result = $this->wxPub($list,$cityID,'store');
     		}else{
-                returnJson('-1','暂不支持支付宝支付');
+                $result = $this->aliPub($list,$cityID,'store');
             }    
     		returnJson(0,'success',$result);	    	
     	}
+    }
+
+    //支付宝下单
+    public function aliPub($order,$cityID,$type){ 
+        switch ($cityID) {
+            case '9':
+                $config = C("AOZHOU_PAY");
+                break;
+            case '39':
+                $config = C("XINJIAPO_PAY");
+                break;
+            default:
+                return '当前城市未开通在线支付';
+                break;
+        }
+
+        vendor('appalipay.AopSdk');// 加载类库
+
+        $aop = new \AopClient;
+        $aop->gatewayUrl = "https://openapi.alipay.com/gateway.do";
+        $aop->appId = $config['ALI_APP_ID'];
+        $aop->rsaPrivateKey = $config['ALI_PRI_KEY'];
+        $aop->format = "json";
+        $aop->charset = "UTF-8";
+        $aop->signType = "RSA2";
+        $aop->alipayrsaPublicKey = $config['ALI_PUB_KEY'];
+        //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
+        $request = new \AlipayTradeAppPayRequest();
+        //SDK已经封装掉了公共参数，这里只需要传入业务参数
+        $content = array();
+        $content['body'] = '在线支付';
+        if ($type=='store') {
+            $content['subject'] = '购买商品';//商品的标题/交易标题/订单标题/订单关键字等
+        }elseif($type=='tuan'){
+            $content['subject'] = '拼邮支付';//商品的标题/交易标题/订单标题/订单关键字等
+        }        
+        $content['out_trade_no'] = $order['order_no'];//商户网站唯一订单号
+        $content['timeout_express'] = '1d';//该笔订单允许的最晚付款时间
+
+        //$content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型)
+        $content['total_amount'] = 0.01;//订单总金额(必须定义成浮点型)
+        $content['product_code'] = 'QUICK_MSECURITY_PAY';//
+
+        $bizcontent = json_encode($content);
+        if ($type=='store') {
+            $request->setNotifyUrl(C('site.domain').'/store/pay/alinotify/');
+        }else{
+            $request->setNotifyUrl(C('site.domain').'/store/pay/aliTuanNotify/');
+        }
+        $request->setBizContent($bizcontent);
+        //这里和普通的接口调用不同，使用的是sdkExecute
+        $response = $aop->sdkExecute($request);
+        //htmlspecialchars是为了输出到页面时防止被浏览器将关键参数html转义，实际打印到日志以及http传输不会有这个问题
+        $str = $response;//就是orderString 可以直接给客户端请求，无需再做处理。
+        return array('url'=>$str,'order_no'=>$order['order_no']);  
     }
 
     //微信下单
@@ -97,6 +152,30 @@ class PayController extends BaseController
 		}
     }
 
+    //支付宝异步通知
+    public function alinotify(){
+        //商户订单号
+        $out_trade_no = $_POST['out_trade_no'];
+        //支付宝交易号
+        $trade_no = $_POST['trade_no'];
+        //交易状态
+        $trade_status = $_POST['trade_status'];
+        //订单的实际金额
+        $total_amount = $_POST['total_amount'];
+        //判断交易通知状态是否为TRADE_SUCCESS或TRADE_FINISH
+        if($trade_status!='TRADE_FINISH' && $trade_status !='TRADE_SUCCESS'){
+            exit('fail');
+        }
+        //验证订单的准确性
+        if(!empty($out_trade_no)){
+            $data['order_no'] = $out_trade_no;
+            $data['payType'] = 1;
+            $url = C('site.domain').'/store/pay/changeOrderStatus/';
+            $res = $this->https_post($url,$data);
+        }
+        echo 'success';
+    }
+
     //修改商城订单状态
     public function changeOrderStatus(){
     	$map['order_no'] = I('post.order_no');
@@ -158,10 +237,34 @@ class PayController extends BaseController
                 $list['rmb'] = $list['money'];
                 $result = $this->wxPub($list,$cityID,'tuan');
             }else{
-                returnJson('-1','暂不支持支付宝支付');
+                $result = $this->aliPub($list,$cityID,'tuan');
             } 
             returnJson(0,'success',$result);
         }
+    }
+
+    //拼团支付宝异步通知
+    public function aliTuanNotify(){
+        //商户订单号
+        $out_trade_no = $_POST['out_trade_no'];
+        //支付宝交易号
+        $trade_no = $_POST['trade_no'];
+        //交易状态
+        $trade_status = $_POST['trade_status'];
+        //订单的实际金额
+        $total_amount = $_POST['total_amount'];
+        //判断交易通知状态是否为TRADE_SUCCESS或TRADE_FINISH
+        if($trade_status!='TRADE_FINISH' && $trade_status !='TRADE_SUCCESS'){
+            exit('fail');
+        }
+        //验证订单的准确性
+        if(!empty($out_trade_no)){
+            $data['order_no'] = $out_trade_no;
+            $data['payType'] = 1;
+            $url = C('site.domain').'/store/pay/changeTuanStatus/';
+            $res = $this->https_post($url,$data);
+        }
+        echo 'success';        
     }
 
     //拼团微信异步通知

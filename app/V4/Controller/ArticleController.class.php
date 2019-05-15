@@ -36,7 +36,7 @@ class ArticleController extends CommonController {
                 }else{
                     $map['status'] = 1;
                     $map['del'] = 0;
-                    $map['cid'] = $list[$key]['cid'];
+                    $map['path'] = array('like','0-'.$list[$key]['cid'].'-');
                     $map['cityID'] = $cityID;
                     $number = M('Article')->where($map)->count();
                     $list[$key]['num'] = $number;

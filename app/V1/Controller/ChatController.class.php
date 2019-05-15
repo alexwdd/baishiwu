@@ -319,23 +319,17 @@ class ChatController extends CommonController {
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $token = I('post.token');
+            $page = I('post.page/d',1);
 
             if (!$user = $this->checkToken($token)) {
                 returnJson('999'); 
             }
 
-            $page = I('post.page',1);
-
-            $map['memberID'] = $user['id'];
-            $ids = M('ChatComment')->where($map)->order('id desc')->limit(500)->getField('chatID',true);
-
-            unset($map);
-            $map['id'] = array('in',$ids);
-            $page = I('post.page/d',1); 
             $pagesize =10;
             $firstRow = $pagesize*($page-1); 
 
-            $obj = M('Chat');
+            $map['toUserId|memberID'] = $user['id'];
+            $obj = M('ChatComment');
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
             if ($page < $totalPage) {
@@ -343,15 +337,32 @@ class ChatController extends CommonController {
             }else{
                 $next = 0;
             }
-
-            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('flag desc,updateTime desc')->select();
-            $list = $this->formatChat($list,$user);
+            
+            $list = $obj->field('id,chatID,toID,toUserId,toNickname,memberID,nickname,content,read,createTime')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
             foreach ($list as $key => $value) {
+                $list[$key]['createTime'] = getLastTime($value['createTime']);
+                $list[$key]['createTimeDate'] = $value['createTime'];
+
+                if ($value['toID']>0) {
+                    $list[$key]['toContent'] = M("ChatComment")->where(array('id'=>$value['toID']))->getField('content');
+                }else{
+                    $list[$key]['toContent'] = '';
+                }
+
                 unset($map);
-                $map['read'] = 0;
-                $map['toUserId'] = $user['id'];
-                $map['chatID'] = $value['id'];
-                $list[$key]['noread'] = M('ChatComment')->where($map)->count();
+                $map['id'] = $value['chatID'];
+                $chat = M("Chat")->field('tag,content')->where($map)->find();
+                // 处理标签
+                $tagArr = [];
+                if ($chat['tag']!='') {
+                    $tag = explode(",",$chat['tag']);
+                    foreach ($tag as $k => $val) {
+                        $temp = explode("|",$val);
+                        array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                    }
+                }                
+                $chat['tag'] = $tagArr;
+                $list[$key]['chat'] = $chat;
             }            
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
         }

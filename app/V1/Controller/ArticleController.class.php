@@ -597,7 +597,7 @@ class ArticleController extends CommonController {
 		unset($parm['type']);
 		$map['cityID'] = $parm['cityID'];
 		$map['fid'] = 0;
-		$map['cid'] = array('not in',[94,113]);
+		$map['cid'] = array('not in',[94,113,142,148]);
 		$list = M('CityCate')->where($map)->order('sort asc')->select();
 
 		unset($map);

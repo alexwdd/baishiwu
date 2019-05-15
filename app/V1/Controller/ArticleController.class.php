@@ -96,11 +96,13 @@ class ArticleController extends CommonController {
 				if (!M('Category')->where(array('fid'=>$fid,'id'=>$data['sort']))->find()) {
 					returnJson('-1','sort不正确');
 				}
-				if ($data['cityID']==39) {
-					$data['status'] = 0;
+
+				/*if ($data['cityID']==39) {
+					$data['status'] = 1;
 				}else{
 					$data['status'] = 1;
-				}
+				}*/
+				$data['status'] = 1;
 	        	
 	        	$data['userid'] = $userid;
 	        	$data['image'] = I('post.imgpath');
@@ -373,12 +375,13 @@ class ArticleController extends CommonController {
 		        		returnJson('-1','type类型错误');
 		        	}
         		} 
-	        	//$data['status'] = 1;
+	        	$data['status'] = 1;
 	        	$data['userid'] = $user['id'];
 	        	$data['headimg'] = $user['headimg'];
 	        	$data['nickname'] = $user['nickname'];
 	            if ($list = $obj->add($data)) {
-	            	returnJson('0','评论将由'.$cityName.'App管理员筛选后显示',array('commentid'=>$list));
+	            	//returnJson('0','评论将由'.$cityName.'App管理员筛选后显示',array('commentid'=>$list));
+	            	returnJson('0','发布成功',array('commentid'=>$list));
 	            } else {
 	            	returnJson('-1','操作失败');
 	            }

@@ -362,6 +362,7 @@ class ChatController extends CommonController {
                     }
                 }                
                 $chat['tag'] = $tagArr;
+                $chat['content'] = $this->cutstr_html($chat['content'],50);
                 $list[$key]['chat'] = $chat;
             }            
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
@@ -527,7 +528,7 @@ class ChatController extends CommonController {
 		}
 	}
 
-    protected function cutstr_html($string, $sublen){
+    public function cutstr_html($string, $sublen){
         $string = strip_tags($string);
         $string = preg_replace ('/\n/is', '', $string);
         $string = preg_replace ('/ |　/is', '', $string);

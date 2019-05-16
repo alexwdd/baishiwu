@@ -825,7 +825,11 @@ class AccountController extends CommonController {
 			$data['headimg'] = I('post.headimg');
 			$data['name'] = I('post.name');
 			$data['wechat'] = I('post.wechat');
-			$data['email'] = I('post.email');
+            $data['email'] = I('post.email');
+            $data['birthday'] = I('post.birthday');
+            $data['gender'] = I('post.gender');
+            $data['work'] = I('post.work');
+			$data['sign'] = I('post.sign');
 
 			$user = $this->userCheck($userid,$password,$openid);
 		
@@ -1048,6 +1052,103 @@ class AccountController extends CommonController {
             }else{
                 returnJson("-1",'操作失败');
             }                                     
+        }
+    }
+
+    public function userDetail(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+            $userid = I('post.userid');
+
+            $user = $this->checkToken($token);            
+            if ($userid=='' || !is_numeric($userid)) {
+                returnJson("-1",'缺少参数userid');
+            }
+
+            $map['id'] = $userid;
+            $obj = M('Member');
+            $list = $obj->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();
+            if ($list) {
+                unset($map);
+                $map['memberID'] = $userid;
+                $phone = M('Photo')->field('image')->where($map)->order('sort asc,id desc')->select();
+                foreach ($phone as $key => $value) {
+                    $photo[$key]['image'] = getRealUrl($value['image']);
+                }
+                $list['photo'] = $phone;
+
+                unset($map);
+                $map['memberID'] = $userid;
+                $ids = M('MemberVisitor')->where($map)->order("updateTime desc")->limit(10)->getField("visitorID",true);   
+                $visitor = [];
+                if ($ids) {
+                    foreach ($ids as $key => $value) {
+                        $vis = M('Member')->where(array('id'=>$value))->field('id as userid,nickname,headimg')->find();
+                        if ($vis) {
+                            array_push($visitor,$vis);
+                        }
+                    }
+                }
+                $list['visitor'] = $visitor;
+
+                //更新访客
+                if ($user) {
+                    if ($user['id']!=$userid) {
+                        unset($map);
+                        $map['memberID'] = $userid;
+                        $map['visitorID'] = $user['id'];
+                        $res = M("MemberVisitor")->where($map)->find();   
+                        if ($res) {
+                            M("MemberVisitor")->where($map)->setField('updateTime',time());
+                        }else{    
+                            $data['memberID'] = $userid;
+                            $data['visitorID'] = $user['id'];
+                            $data['createTime'] = time();
+                            $data['updateTime'] = time();
+                            M("MemberVisitor")->add($data);
+                        }
+                    }
+                }
+                returnJson(0,'success',$list);
+            }else{
+                returnJson("-1",'用户不存在');
+            }                                     
+        }
+    }
+
+    public function album(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}    
+            $token = I('post.token');
+            $userid = I('post.userid');
+
+            $user = $this->checkToken($token);            
+            if ($userid=='' || !is_numeric($userid)) {
+                returnJson("-1",'缺少参数userid');
+            }
+
+            $map['memberID'] = $userid;
+            $obj = M('Chat');
+            $list = $obj->field('id,thumb,images')->where($map)->order('id desc')->select();
+            foreach ($list as $key => $value) {
+                if ($value['thumb']!='') {
+                    $thumb = explode(",",$value['thumb']);
+                    foreach ($thumb as $k => $val) {
+                        $thumb[$k] = getRealUrl($val);
+                    }
+                    $list[$key]['thumb'] = $thumb;
+                }
+                
+                if ($value['images']!='') {
+                    $images = explode(",",$value['images']);
+                    foreach ($images as $k => $val) {
+                        $images[$k] = getRealUrl($val);
+                    }
+                    $list[$key]['images'] = $images;
+                }
+            }                
+            returnJson(0,'success',$list);                                              
         }
     }
 }

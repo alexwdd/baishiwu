@@ -1156,26 +1156,31 @@ class AccountController extends CommonController {
 
             $map['memberID'] = $userid;
             $obj = M('Chat');
-            $list = $obj->field('id,thumb,images')->where($map)->order('id desc')->select();
+            $list = $obj->field('id,content,images')->where($map)->order('id desc')->select();
             foreach ($list as $key => $value) {
-                if ($value['thumb']!='') {
-                    $thumb = explode(",",$value['thumb']);
+                $list[$key]['content'] = $this->cutstr_html($value['content'],50);
+                /*if ($value['thumb']!='') {
+                    $thumb = explode("|",$value['thumb']);
                     foreach ($thumb as $k => $val) {
                         $thumb[$k] = getRealUrl($val);
                     }
                     $list[$key]['thumb'] = $thumb;
-                }
+                }*/
                 
                 if ($value['images']!='') {
-                    $images = explode(",",$value['images']);
+                    $images = explode("|",$value['images']);
                     foreach ($images as $k => $val) {
-                        $images[$k] = getRealUrl($val);
+                        $imgInfo = getimagesize('.'.$val);
+                        $img['width'] = $imgInfo[0];
+                        $img['height'] = $imgInfo[1];
+                        $img['url'] = getRealUrl($val);
+                        $images[$k] = $img;
                     }
                     $list[$key]['images'] = $images;
                 }
             }
 
-            $list['focus'] = 0;
+            $focus = 0;
             //是否关注，更新访客
             if ($user) {
                 if ($user['id']!=$userid) {
@@ -1196,10 +1201,21 @@ class AccountController extends CommonController {
                     unset($map);
                     $map['userID'] = $userid;
                     $map['memberID'] = $user['id'];
-                    $list['focus'] = M('ChatFocus')->where($map)->count();
+                    $focus = M('ChatFocus')->where($map)->count();
                 }
             }
-            returnJson(0,'success',$list);                                              
+            returnJson(0,'success',['chat'=>$list,'focus'=>$focus]);                                              
         }
+    }
+
+    public function cutstr_html($string, $sublen){
+        $string = strip_tags($string);
+        $string = preg_replace ('/\n/is', '', $string);
+        $string = preg_replace ('/ |　/is', '', $string);
+        $string = preg_replace ('/&nbsp;/is', '', $string);   
+        preg_match_all("/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/", $string, $t_string);   
+        if(count($t_string[0]) - 0 > $sublen) $string = join('', array_slice($t_string[0], 0, $sublen))."…";   
+        else $string = join('', array_slice($t_string[0], 0, $sublen));   
+        return $string;
     }
 }

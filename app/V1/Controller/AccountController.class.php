@@ -137,6 +137,7 @@ class AccountController extends CommonController {
 	        	$data['headimg'] = $headimg;
 	        	$data['createTime'] = time();
     			$data['createIP'] = get_client_ip(0,1);
+                $data['open'] = 1;
 
     			$str = md5(uniqid(md5(microtime(true)),true)); 
                 $token = sha1($str);
@@ -431,6 +432,7 @@ class AccountController extends CommonController {
     	if ($res) {
     		$data['createTime'] = time();
     		$data['createIP'] = get_client_ip(0,1);
+            $data['open'] = 1;
 
     		$str = md5(uniqid(md5(microtime(true)),true)); 
             $token = sha1($str);
@@ -494,6 +496,7 @@ class AccountController extends CommonController {
     	if ($res) {
     		$data['createTime'] = time();
     		$data['createIP'] = get_client_ip(0,1);
+            $data['open'] = 1;
 
     		$str = md5(uniqid(md5(microtime(true)),true)); 
             $token = sha1($str);
@@ -829,7 +832,10 @@ class AccountController extends CommonController {
             $data['birthday'] = I('post.birthday');
             $data['gender'] = I('post.gender');
             $data['work'] = I('post.work');
-			$data['sign'] = I('post.sign');
+            $data['sign'] = I('post.sign');
+            if(I('post.open')!=''){
+                $data['open'] = I('post.open');
+            }			
 
 			$user = $this->userCheck($userid,$password,$openid);
 		
@@ -1022,7 +1028,13 @@ class AccountController extends CommonController {
 
             $res = M('Photo')->add($data);
             if ($res) {
-                returnJson(0,'success');
+                unset($map);
+                $map['memberID'] = $user['id'];
+                $photo = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                foreach ($photo as $key => $value) {
+                    $photo[$key]['image'] = getRealUrl($value['image']);
+                } 
+                returnJson(0,'success',$photo);
             }else{
                 returnJson("-1",'操作失败');
             }                       
@@ -1048,7 +1060,14 @@ class AccountController extends CommonController {
             $obj = M('Photo');
             $res = $obj->where($map)->delete();
             if ($res) {
-                returnJson(0,'success');
+
+                unset($map);
+                $map['memberID'] = $user['id'];
+                $photo = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                foreach ($photo as $key => $value) {
+                    $photo[$key]['image'] = getRealUrl($value['image']);
+                } 
+                returnJson(0,'success',$photo);
             }else{
                 returnJson("-1",'操作失败');
             }                                     
@@ -1072,7 +1091,7 @@ class AccountController extends CommonController {
             if ($list) {
                 unset($map);
                 $map['memberID'] = $userid;
-                $phone = M('Photo')->field('image')->where($map)->order('sort asc,id desc')->select();
+                $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
                 foreach ($phone as $key => $value) {
                     $photo[$key]['image'] = getRealUrl($value['image']);
                 }
@@ -1091,6 +1110,7 @@ class AccountController extends CommonController {
                     }
                 }
                 $list['visitor'] = $visitor;
+                $list['focus'] = 0;
 
                 //更新访客
                 if ($user) {
@@ -1108,6 +1128,11 @@ class AccountController extends CommonController {
                             $data['updateTime'] = time();
                             M("MemberVisitor")->add($data);
                         }
+
+                        unset($map);
+                        $map['userID'] = $userid;
+                        $map['memberID'] = $user['id'];
+                        $list['focus'] = M('ChatFocus')->where($map)->count();
                     }
                 }
                 returnJson(0,'success',$list);
@@ -1123,7 +1148,8 @@ class AccountController extends CommonController {
             $token = I('post.token');
             $userid = I('post.userid');
 
-            $user = $this->checkToken($token);            
+            $user = $this->checkToken($token);
+
             if ($userid=='' || !is_numeric($userid)) {
                 returnJson("-1",'缺少参数userid');
             }
@@ -1147,7 +1173,32 @@ class AccountController extends CommonController {
                     }
                     $list[$key]['images'] = $images;
                 }
-            }                
+            }
+
+            $list['focus'] = 0;
+            //是否关注，更新访客
+            if ($user) {
+                if ($user['id']!=$userid) {
+                    unset($map);
+                    $map['memberID'] = $userid;
+                    $map['visitorID'] = $user['id'];
+                    $res = M("MemberVisitor")->where($map)->find();   
+                    if ($res) {
+                        M("MemberVisitor")->where($map)->setField('updateTime',time());
+                    }else{    
+                        $data['memberID'] = $userid;
+                        $data['visitorID'] = $user['id'];
+                        $data['createTime'] = time();
+                        $data['updateTime'] = time();
+                        M("MemberVisitor")->add($data);
+                    }
+
+                    unset($map);
+                    $map['userID'] = $userid;
+                    $map['memberID'] = $user['id'];
+                    $list['focus'] = M('ChatFocus')->where($map)->count();
+                }
+            }
             returnJson(0,'success',$list);                                              
         }
     }

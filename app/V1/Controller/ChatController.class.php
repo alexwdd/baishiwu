@@ -461,8 +461,11 @@ class ChatController extends CommonController {
 			$content = I('post.content');
 			$cid = I('post.cid');
             $tag = I('post.tag');
-			$open = I('post.open');
-			$images = I('post.images');
+            $open = I('post.open');
+			$type = I('post.type');
+            $images = I('post.images');
+            $thumb = I('post.thumb');
+			$imageStr = I('post.imageStr');
 			if (!$user = $this->checkToken($token)) {
 				returnJson('999'); 
 			}
@@ -479,6 +482,7 @@ class ChatController extends CommonController {
 			if ($content=='') {
 				returnJson('-1','请输入内容');
 			}
+
 			if ($images!='') {
 				$imgArr = explode("###",$images);
 				$images = '';
@@ -499,9 +503,16 @@ class ChatController extends CommonController {
 					}
 				}
 			}
+
+            if ($imageStr!='') {
+                $images = $imageStr;
+                $thumb = $thumb;
+            }
+
 			$title = $this->cutstr_html($content,50);
 			$data = [
 				'cid'=>$cid,
+                'type'=>$type,
 				'cityID'=>$cityID,
 				'memberID' => $user['id'],
 				'nickname' => $user['nickname'],

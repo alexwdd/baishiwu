@@ -170,8 +170,25 @@ class ChatController extends CommonController {
                 $user = $this->checkToken($token);
             } 
             $list = $this->formatChat($list,$user);
+
+            if ($user) {
+                //未读取留言
+                unset($map);
+                $map['memberID'] = $user['id'];
+                $map['flag'] = 1;
+                $commentNumber = M("Chat")->where($map)->count();
+
+                //未读取回复
+                unset($map);
+                $map['toUserId'] = $user['id'];
+                $map['read'] = 0;
+                $replyNumber = M("ChatComment")->where($map)->count();
+            }else{
+                $replyNumber=0;
+                $commentNumber=0;
+            }
             
-            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+            returnJson(0,'success',['next'=>$next,'data'=>$list,'commentNumber'=>$commentNumber,'replyNumber'=>$replyNumber]);
         }
     }
 
@@ -199,7 +216,7 @@ class ChatController extends CommonController {
                 $num = 4-count($list);
                 unset($map);
                 $map['cityID'] = $cityID;
-                $result = M('ChatAction')->where($map)->field('memberID,count(*) as num')->group('memberID')->order('num desc')->limit($num)->select();
+                $result = M('ChatAction')->where($map)->field('memberID,count(*) as num')->group('memberID')->order('num desc')->limit($num)->select();  
                 if ($result) {
                     $ids = [];
                     foreach ($result as $key => $value) {
@@ -210,7 +227,7 @@ class ChatController extends CommonController {
                     $map['cityID'] = $cityID;
                     $map['id'] = array('in',$ids);
                     $obj = M('Member');
-                    $list1 = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->order('follow desc')->select();
+                    $list1 = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->select();      
                     $list = array_merge($list,$list1);//合并数组
                 }
             }
@@ -247,13 +264,13 @@ class ChatController extends CommonController {
             $map['cityID'] = $cityID;
             $page = I('post.page',1);            
             $page = I('post.page/d',1); 
-            $pagesize =32;
+            $pagesize =25;
             $firstRow = $pagesize*($page-1); 
 
             $obj = M('Member');
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
-            if ($page < $totalPage) {
+            if ($page < $totalPage && $page<4) {
                 $next = 1;
             }else{
                 $next = 0;
@@ -365,7 +382,26 @@ class ChatController extends CommonController {
                 $chat['content'] = $this->cutstr_html($chat['content'],50);
                 $list[$key]['chat'] = $chat;
             }            
-            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+            returnJson(0,'success',['next'=>$next,'data'=>$list,'my'=>$user['id']]);
+        }
+    }
+
+    //全部设为已读
+    public function setRead(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $token = I('post.token');
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $map['toUserId'] = $user['id'];
+            $map['read'] = 0;
+            $obj = M('ChatComment')->where($map)->setField('read',1);                      
+            returnJson(0,'success');
         }
     }
 
@@ -488,8 +524,7 @@ class ChatController extends CommonController {
 				$images = '';
 				$thumb = '';
 				foreach ($imgArr as $key => $value) {
-					$result = $this->base64_upload($value);
-
+					$result = $this->base64_upload($value);                    
 					$image = new \Think\Image();
 					$image->open('.'.$result['url']);
 					$thumbUrl = $result['path']."s_".$result['name'];
@@ -557,7 +592,7 @@ class ChatController extends CommonController {
         $path = '.'.C('UPLOAD_PATH').'chat/'.date("Ymd",time())."/";
         if(!is_dir($path)){
             mkdir($path);
-        }
+        }        
         $base64_image = str_replace(' ', '+', $base64);
         //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行
 
@@ -673,14 +708,15 @@ class ChatController extends CommonController {
             } else {
 
                 //处理标签
-                $tag = explode(",",$list['tag']);
-                $tagArr = [];
-                foreach ($tag as $k => $val) {
-                    $temp = explode("|",$val);
-                    array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
-                }
-                $list['tag'] = $tagArr;
-
+                if ($list['tag']!='') {
+                    $tag = explode(",",$list['tag']);
+                    $tagArr = [];
+                    foreach ($tag as $k => $val) {
+                        $temp = explode("|",$val);
+                        array_push($tagArr,['name'=>$temp[0],'color'=>$temp[1]]);
+                    }
+                    $list['tag'] = $tagArr;
+                } 
                 $list['createTime'] = getLastTime($list['createTime']);
                 if($list['images']!=''){
                     $img = explode("|", $list['images']);

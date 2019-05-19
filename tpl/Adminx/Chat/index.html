@@ -40,10 +40,20 @@
 				<p field="cityID" title="城市" width="100" dict="city"/>		
 				<p field="nickname" title="会员" width="100"/>
 				<p field="typeName" title="属性" width="80"/>
+				<p title="图片" width="80" templet="#imageTpl"/>
 				<p field="content" title="内容" width="50%"/>
 				<p title="状态" width="100" templet="#statusTpl"/>
 				<p field="createTime" title="发布时间" width="180"/>				
 			</div>   
+
+			<script type="text/html" id="imageTpl">
+				{{# if(d.images == ''){ }}
+				-
+				{{# }else{ }}
+				<a href="javascript:void(0)" lay-event="top" topUrl="<{:U("Chat/image")}>&id={{d.id}}" topWidth="80%" topHeight="80%" topTitle="查看图片"><i class="layui-icon">&#xe64a;</i></a>
+				{{# } }}				
+			</script>
+
 			<script type="text/html" id="statusTpl">
 				<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="已审|待审" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
 			</script>       

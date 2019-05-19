@@ -23,6 +23,9 @@ class CommentController extends AdminController {
             $firstRow = $pageSize*($pageNum-1); 
 
             $list = $obj->where($map)->order('id desc')->limit($firstRow.','.$pageSize)->select();
+            foreach ($list as $key => $value) {
+                $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
+            }
             $result = array(
                 'data'=>array(
                     'list'=>$list,

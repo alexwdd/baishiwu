@@ -51,6 +51,24 @@ class ChatController extends AdminController {
         }           
     }
 
+    public function image(){
+        $id = (int) $_GET['id'];
+        if (!isset ($id)) {
+            $this->error('参数错误');
+        }
+        $obj = M('Chat');
+        $list = $obj->where("id=$id")->find();
+        if (!$list) {
+            $this->error('信息不存在');
+        } else {
+            if ($list['images']) {
+                $list['images'] = explode("|", $list['images']);
+            }
+            $this->assign('list', $list);
+            $this->display();
+        }
+    }
+
     public function status(){
         if (!IS_POST) {E('页面不存在！');}
         $id = I('post.id');

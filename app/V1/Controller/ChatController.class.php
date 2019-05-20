@@ -86,7 +86,8 @@ class ChatController extends CommonController {
             if($value['images']!=''){
                 $img = explode("|", $value['images']);
                 $thumb = explode("|", $value['thumb']);
-                foreach ($img as $k => $val) {
+                foreach ($img as $k => $val) {    
+                    $val = str_replace('http://'.$_SERVER['HTTP_HOST'],'',$val);        
                     $imgInfo = getimagesize('.'.$val);
                     $img[$k] = [
                         'url'=>getRealUrl($val),
@@ -722,7 +723,12 @@ class ChatController extends CommonController {
                     $img = explode("|", $list['images']);
                     $thumb = explode("|", $list['thumb']);
                     foreach ($img as $k => $val) {
-                        $imgInfo = getimagesize('.'.$val);
+                        $first = substr($val,0,1);
+                        if ($first == '/') {
+                            $imgInfo = getimagesize('.'.$val);
+                        }else{
+                            $imgInfo = getimagesize($val);
+                        } 
                         $img[$k] = [
                             'url'=>getRealUrl($val),
                             'width'=>$imgInfo[0],
@@ -749,6 +755,9 @@ class ChatController extends CommonController {
                         $list['focus'] = false; 
                     }
 
+                    //是否点过赞
+                    $list['liked'] = M('ChatLike')->where(array('memberID'=>$user['id'],'chatID'=>$list['id']))->count();
+
                     //留言标识更改
                     if ($user['id'] == $list['memberID']) {
                         M('Chat')->where(array('id'=>$list['id']))->save(['flag'=>0]);
@@ -767,6 +776,7 @@ class ChatController extends CommonController {
 
                 }else{
                     $list['focus'] = false; 
+                    $list['liked'] = 0; 
                 }
                 $list['like'] = M('ChatLike')->where(array('chatID'=>$list['id']))->count();
                 $list['comment'] = M('ChatComment')->where(array('chatID'=>$list['id']))->count();

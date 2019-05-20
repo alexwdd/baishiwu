@@ -1089,6 +1089,34 @@ class AccountController extends CommonController {
             $obj = M('Member');
             $list = $obj->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();
             if ($list) {
+                if($list['gender']==0) {
+                    $list['gender'] = '未知';
+                }elseif($list['gender']==1){
+                    $list['gender'] = '男';
+                }else{
+                    $list['gender'] = '女';
+                }
+                
+                if ($list['birthday']=='') {
+                    $list['birthday'] = '未知';
+                    $list['age'] = '未知';
+                }else{
+                    $byear=date('Y',strtotime($list['birthday']));
+                    $eyear=date('Y',time());
+                    $list['age'] = $eyear - $byear;
+                    if ($list['age']<=0) {
+                        $list['age'] = '未知';
+                    }
+                }
+                if ($userid!=$user['id'] && $list['open']==0) {
+                    $list['wechat'] = '未知';
+                    $list['phone'] = '未知';
+                    $list['email'] = '未知';
+                    $list['gender'] = '未知';
+                    $list['birthday'] = '未知';
+                    $list['work'] = '未知';
+                    $list['age'] = '未知';
+                }
                 unset($map);
                 $map['memberID'] = $userid;
                 $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
@@ -1170,7 +1198,8 @@ class AccountController extends CommonController {
                 if ($value['images']!='') {
                     $images = explode("|",$value['images']);
                     foreach ($images as $k => $val) {
-                        $imgInfo = getimagesize('.'.$val);
+                        $val = str_replace('http://'.$_SERVER['HTTP_HOST'],'',$val); 
+                        $imgInfo = getimagesize('.'.$val);           
                         $img['width'] = $imgInfo[0];
                         $img['height'] = $imgInfo[1];
                         $img['url'] = getRealUrl($val);

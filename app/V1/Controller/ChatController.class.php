@@ -3,6 +3,20 @@ namespace V1\Controller;
 
 class ChatController extends CommonController {
 
+    public function userinfo(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}  
+            $token = I('post.token');
+            if ($token == '') {
+                returnJson('0','success',[]); 
+            }
+            if (!$user = $this->checkToken($token)) {
+                returnJson('0','success',[]); 
+            }
+            returnJson('0','success',['id'=>$user['id']]); 
+        }
+    }
+
     //话题
 	public function getmain(){
 		if (IS_POST) {

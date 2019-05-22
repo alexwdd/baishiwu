@@ -1090,7 +1090,7 @@ class AccountController extends CommonController {
             $list = $obj->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();
             if ($list) {
                 if($list['gender']==0) {
-                    $list['gender'] = '未知';
+                    $list['gender'] = '保密';
                 }elseif($list['gender']==1){
                     $list['gender'] = '男';
                 }else{

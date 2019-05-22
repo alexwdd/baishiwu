@@ -971,4 +971,39 @@ class ChatController extends CommonController {
         ];
         M('ChatAction')->add($data);
     }
+
+    //举报
+    public function feedback(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}  
+
+            $infoID = I('post.infoID');
+            $contact = I('post.contact');
+            $content = I('post.content');
+
+            if ($infoID=='' || !is_numeric($infoID)) {
+                returnJson('-1','参数错误');
+            }
+            if ($contact=='') {
+                returnJson('-1','请输入联系方式');
+            }
+            if ($content=='') {
+                returnJson('-1','请输入留言内容');
+            }
+
+            $data = [
+                'infoID'=>$infoID,
+                'contact'=>$contact,
+                'content'=>$content,
+                'createTime'=>time()
+            ];
+
+            $res = M('ChatJubao')->add($data);
+            if ($res) {  
+                returnJson(0,'提交成功'); 
+            }else{
+                returnJson('-1','操作失败');
+            }
+        }
+    }
 }

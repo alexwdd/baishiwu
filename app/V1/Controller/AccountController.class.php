@@ -1183,8 +1183,9 @@ class AccountController extends CommonController {
             }
 
             $map['memberID'] = $userid;
+            $map['images'] = array('neq','');
             $obj = M('Chat');
-            $list = $obj->field('id,content,images')->where($map)->order('id desc')->select();
+            $list = $obj->field('id,content,images')->where($map)->order('id desc')->limit(10)->select();
             foreach ($list as $key => $value) {
                 $list[$key]['content'] = $this->cutstr_html($value['content'],50);
                 /*if ($value['thumb']!='') {

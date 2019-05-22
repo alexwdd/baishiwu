@@ -72,7 +72,12 @@ class EditorController extends AdminController {
 			foreach($info as $file){
 				$url = $file['savepath'].$file['savename'];
 				$original = $file['name'];
-			}	
+			}
+			
+			$image = new \Think\Image();
+			$image->open('.'.C('UPLOAD_PATH').'images/'.$url);
+			$image->thumb(C('IMAGE_MAX_WIDTH'), C('IMAGE_MAX_WIDTH'))->save('.'.C('UPLOAD_PATH').'images/'.$url);
+
 			$result = array(
 				'url' => $url,   //保存后的文件路径
 		        'title'    => $title,   //文件描述，对图片来说在前端会添加到title属性上

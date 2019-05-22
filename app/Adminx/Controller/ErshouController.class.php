@@ -134,13 +134,12 @@ class ErshouController extends AdminController {
 		            if ($data['thumb_s']!=I('post.old_s')) {
 		            	$data['thumb_s'] = $this->getThumb($data['thumb_s'], 240, 180);
 		            }
-		            if ($data['thumb_b']!=I('post.old_b')) {
+		            if ($data['thumb_b']!=I('post.old_b')) {		   
 		            	$data['thumb_b'] = $this->getThumb($data['thumb_b'], 600, 450);
 		            }
 		        }else{
 		            $data['image'] = '';
 		        }
-
 	            if ($list = $obj->save($data)) {
 	            	if (I('post.makeHtml')) {
 	            		$info = $obj->where(array('articleid'=>$data['articleid']))->find();

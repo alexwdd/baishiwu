@@ -776,9 +776,12 @@ class AccountController extends CommonController {
 					$thumb_b = $url;
 				}
 				$array = array(
-					'thumb_s'=>'http://'.$_SERVER['HTTP_HOST'].$thumb_s,
+					/*'thumb_s'=>'http://'.$_SERVER['HTTP_HOST'].$thumb_s,
 					'thumb_b'=>'http://'.$_SERVER['HTTP_HOST'].$thumb_b,
-					'url'=>'http://'.$_SERVER['HTTP_HOST'].$url
+					'url'=>'http://'.$_SERVER['HTTP_HOST'].$url*/
+                    'thumb_s'=>$thumb_s,
+                    'thumb_b'=>$thumb_b,
+                    'url'=>$url
 				);
 				
 				returnJson('0',C('SUCCESS_RETURN'),$array);		

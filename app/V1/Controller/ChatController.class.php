@@ -101,7 +101,7 @@ class ChatController extends CommonController {
                 $img = explode("|", $value['images']);
                 $thumb = explode("|", $value['thumb']);
                 foreach ($img as $k => $val) {    
-                    $val = str_replace('http://'.$_SERVER['HTTP_HOST'],'',$val);        
+                    $val = str_replace('http://www.worldmedia.top','',$val);        
                     $imgInfo = getimagesize('.'.$val);
                     $img[$k] = [
                         'url'=>getRealUrl($val),
@@ -474,7 +474,6 @@ class ChatController extends CommonController {
             $res = M('Chat')->where($map)->delete();
             if ($res) {
                 M('ChatComment')->where(array('chatID'=>$id))->delete();
-                M('ChatComment')->where(array('chatID'=>$id))->delete();
                 returnJson(0,'success');
             }else{
                 returnJson('-1','操作失败');
@@ -737,6 +736,7 @@ class ChatController extends CommonController {
                     $img = explode("|", $list['images']);
                     $thumb = explode("|", $list['thumb']);
                     foreach ($img as $k => $val) {
+                        $val = str_replace("http://www.worldmedia.top", "", $val);
                         $first = substr($val,0,1);
                         if ($first == '/') {
                             $imgInfo = getimagesize('.'.$val);
@@ -918,6 +918,31 @@ class ChatController extends CommonController {
                     $list[$key]['createTime'] = getLastTime($value['createTime']);
                 }
                 returnJson(0,'success',$list);
+            }else{
+                returnJson('-1','操作失败');
+            }
+        }
+    }
+
+    //删除话题
+    public function delComment(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $id = I('post.id');
+            $token = I('post.token');
+
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+
+            $map['id'] = $id;
+            $map['memberID'] = $user['id'];
+            $res = M('ChatComment')->where($map)->delete();
+            if ($res) {
+                returnJson(0,'success');
             }else{
                 returnJson('-1','操作失败');
             }

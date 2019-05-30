@@ -3,6 +3,7 @@ namespace V1\Controller;
 
 class AccountController extends CommonController {
 
+
     public function checkMyArticle(){
         $type = I('post.type');
         $articleid = I('post.articleid');
@@ -201,7 +202,8 @@ class AccountController extends CommonController {
                 $data['token'] = $token;
                 $data['outTime'] = time()+7200;
 
-                if ($id = M('Member')->add($data)) {
+                if ($id = M('Member')->add($data)) {    
+                    $this->autoFocus($id,$cityID);                
                     $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where(array('id'=>$id))->find();
                     $user['token'] = $token;
                     returnJson('0',C('SUCCESS_RETURN'),$user);
@@ -497,6 +499,7 @@ class AccountController extends CommonController {
             $data['outTime'] = time()+7200;
 
             if ($id = M('Member')->add($data)) {
+                $this->autoFocus($id,$data['cityID']);
                 $nickname = '用户'.$id;
                 M('Member')->where(array('id'=>$id))->setField('nickname',$nickname);
                 $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where(array('id'=>$id))->find();
@@ -561,6 +564,7 @@ class AccountController extends CommonController {
             $data['outTime'] = time()+7200;
 
             if ($id = M('Member')->add($data)) {
+                $this->autoFocus($id,$data['cityID']);
                 $nickname = '用户'.$id;
                 M('Member')->where(array('id'=>$id))->setField('nickname',$nickname);
                 $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where(array('id'=>$id))->find();
@@ -573,6 +577,24 @@ class AccountController extends CommonController {
         }else{
             returnJson('-1','会员注册失败');
         }
+    }
+
+    //自动关注
+    public function autoFocus($userid,$cityID){
+        switch ($cityID) {
+            case 9:
+                $ids = [14,313,357];
+                break;            
+            default:
+                break;
+        }
+        if ($ids) {
+            $data = [];
+            foreach ($ids as $key => $value) {
+                array_push($data,['userID'=>$value,'memberID'=>$userid,'base'=>1]);
+            }
+            $result = M('ChatFocus')->addAll($data);
+        }        
     }
 
     public function verify_phone(){

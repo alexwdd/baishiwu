@@ -18,8 +18,8 @@ class ChatController extends CommonController {
     }
 
     //话题
-	public function getmain(){
-		if (IS_POST) {
+    public function getmain(){
+        if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $cid = I('post.cid');
             $cityID = I('post.cityID');
@@ -52,7 +52,7 @@ class ChatController extends CommonController {
 
             $map['cityID'] = $cityID;
             if ($cid!=0 && is_numeric($cid)) {
-            	$map['cid'] = $cid;
+                $map['cid'] = $cid;
             }
             $page = I('post.page/d',1); 
             $pagesize =10;
@@ -91,7 +91,7 @@ class ChatController extends CommonController {
             }
             returnJson(0,'success',['next'=>$next,'data'=>$list,'cate'=>$cate,'quick'=>$quick,'commentNumber'=>$commentNumber,'replyNumber'=>$replyNumber]);
         }
-	}
+    }
 
     public function formatChat($list,$user=null){
         foreach ($list as $key => $value) {
@@ -236,13 +236,13 @@ class ChatController extends CommonController {
                     $ids = [];
                     foreach ($result as $key => $value) {
                         array_push($ids,$value['memberID']);
-                    }
+                    }      
                     unset($map);
-                    $map['headimg'] = array('neq','');
-                    $map['cityID'] = $cityID;
+                    //$map['headimg'] = array('neq','');
+                    //$map['cityID'] = $cityID;
                     $map['id'] = array('in',$ids);
                     $obj = M('Member');
-                    $list1 = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->select();      
+                    $list1 = $obj->field('id as memberID,nickname,headimg,follow')->where($map)->select();     
                     $list = array_merge($list,$list1);//合并数组
                 }
             }
@@ -275,8 +275,18 @@ class ChatController extends CommonController {
                 returnJson('999'); 
             }
 
-            $map['headimg'] = array('neq','');
             $map['cityID'] = $cityID;
+            $result = M('ChatAction')->where($map)->field('memberID,count(*) as num')->group('memberID')->order('num desc')->limit(100)->select();
+            $ids = [];
+            if ($result) {                
+                foreach ($result as $key => $value) {
+                    array_push($ids,$value['memberID']);
+                }   
+            }
+
+            unset($map);
+            $map['headimg'] = array('neq','');
+            $map['id'] = array('in',$ids);
             $page = I('post.page',1);            
             $page = I('post.page/d',1); 
             $pagesize =25;
@@ -482,9 +492,9 @@ class ChatController extends CommonController {
     }
 
     //话题分类
-	public function cate(){
-		if (IS_POST) {
-			if(!checkFormDate()){returnJson('-1','ERROR');}
+    public function cate(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
             $cityID = I('post.cityID');
             if ($cityID==0) {
                 returnJson('-1','缺少cityID');
@@ -493,100 +503,100 @@ class ChatController extends CommonController {
             $map['fid'] = 152;
             $cate = M('CityCate')->field('name,cid,icon')->where($map)->select();
             foreach ($cate as $key => $value) {
-            	$cate[$key]['icon'] = getRealUrl($value['icon']);
+                $cate[$key]['icon'] = getRealUrl($value['icon']);
             }
 
             $tag = M('OptionItem')->field('id,name,value')->where(array('cate'=>8))->select();
 
             returnJson('0',C("SUCCESS_RETURN"),array('cate'=>$cate,'tag'=>$tag)); 
-		}
-	}
+        }
+    }
 
-	//发布话题
-	public function submit(){
-		if (IS_POST) {
-			if(!checkFormDate()){returnJson('-1','ERROR');}
-			$token = I('post.token');
-			$cityID = I('post.cityID');
-			$content = I('post.content');
-			$cid = I('post.cid');
+    //发布话题
+    public function submit(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $token = I('post.token');
+            $cityID = I('post.cityID');
+            $content = I('post.content');
+            $cid = I('post.cid');
             $tag = I('post.tag');
             $open = I('post.open');
-			$type = I('post.type');
+            $type = I('post.type');
             $images = I('post.images');
             $thumb = I('post.thumb');
-			$imageStr = I('post.imageStr');
-			if (!$user = $this->checkToken($token)) {
-				returnJson('999'); 
-			}
-			if ($cityID==0) {
+            $imageStr = I('post.imageStr');
+            if (!$user = $this->checkToken($token)) {
+                returnJson('999'); 
+            }
+            if ($cityID==0) {
                 returnJson('-1','缺少cityID');
             }
-			if ($cid=='' && !is_numeric($cid)) {
-				//returnJson('-1','请选择版块');
+            if ($cid=='' && !is_numeric($cid)) {
+                //returnJson('-1','请选择版块');
                 $cid = 0;
-			}
-			if ($tag=='') {
-				//returnJson('-1','请选择标签');
-			}
-			if ($content=='') {
-				returnJson('-1','请输入内容');
-			}
+            }
+            if ($tag=='') {
+                //returnJson('-1','请选择标签');
+            }
+            if ($content=='') {
+                returnJson('-1','请输入内容');
+            }
 
-			if ($images!='') {
-				$imgArr = explode("###",$images);
-				$images = '';
-				$thumb = '';
-				foreach ($imgArr as $key => $value) {
-					$result = $this->base64_upload($value);                    
-					$image = new \Think\Image();
-					$image->open('.'.$result['url']);
-					$thumbUrl = $result['path']."s_".$result['name'];
-					$image->thumb(100,100,3)->save('.'.$thumbUrl);			
-					if ($key==0) {
-						$images = $result['url'];
-						$thumb = $thumbUrl;
-					}else{
-						$images .= '|'.$result['url'];
-						$thumb .= '|'.$thumbUrl;
-					}
-				}
-			}
+            if ($images!='') {
+                $imgArr = explode("###",$images);
+                $images = '';
+                $thumb = '';
+                foreach ($imgArr as $key => $value) {
+                    $result = $this->base64_upload($value);                    
+                    $image = new \Think\Image();
+                    $image->open('.'.$result['url']);
+                    $thumbUrl = $result['path']."s_".$result['name'];
+                    $image->thumb(100,100,3)->save('.'.$thumbUrl);          
+                    if ($key==0) {
+                        $images = $result['url'];
+                        $thumb = $thumbUrl;
+                    }else{
+                        $images .= '|'.$result['url'];
+                        $thumb .= '|'.$thumbUrl;
+                    }
+                }
+            }
 
             if ($imageStr!='') {
                 $images = $imageStr;
                 $thumb = $thumb;
             }
 
-			$title = $this->cutstr_html($content,50);
-			$data = [
-				'cid'=>$cid,
+            $title = $this->cutstr_html($content,50);
+            $data = [
+                'cid'=>$cid,
                 'type'=>$type,
-				'cityID'=>$cityID,
-				'memberID' => $user['id'],
-				'nickname' => $user['nickname'],
-				'face' => $user['headimg'],
-				'content'=>$content,
-				'title'=>$title,
-				'tag'=>$tag,
-				'images'=>$images,
-				'thumb'=>$thumb,
-				'like'=>0,
+                'cityID'=>$cityID,
+                'memberID' => $user['id'],
+                'nickname' => $user['nickname'],
+                'face' => $user['headimg'],
+                'content'=>$content,
+                'title'=>$title,
+                'tag'=>$tag,
+                'images'=>$images,
+                'thumb'=>$thumb,
+                'like'=>0,
                 'status'=>1,
                 'flag'=>0,
-				'open'=>$open,
+                'open'=>$open,
                 'createTime'=>time(),
-				'updateTime'=>time(),
-			];
-			$res = M('Chat')->add($data);
-			if ($res) {
+                'updateTime'=>time(),
+            ];
+            $res = M('Chat')->add($data);
+            if ($res) {
                 $this->saveAction(1,$cityID,$user['id']);
-				returnJson('0','发布成功');
-			}else{
-				returnJson('-1','操作失败');
-			}
-		}
-	}
+                returnJson('0','发布成功');
+            }else{
+                returnJson('-1','操作失败');
+            }
+        }
+    }
 
     public function cutstr_html($string, $sublen){
         $string = strip_tags($string);
@@ -611,9 +621,9 @@ class ChatController extends CommonController {
         //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行
 
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image, $result)){
-        	$type = $result[2];
-        	if(!in_array($type,array("jpg","png","bmp","jpeg","gif"))){
-				return false;
+            $type = $result[2];
+            if(!in_array($type,array("jpg","png","bmp","jpeg","gif"))){
+                return false;
             }
             $image_name = uniqid().'.'.$type;
             $image_file = $path."/{$image_name}";
@@ -683,6 +693,9 @@ class ChatController extends CommonController {
             $map['memberID'] = $user['id'];
             $res = M('ChatFocus')->where($map)->find();
             if ($res) {
+                if($res['base']==1){
+                    returnJson('-1','客服号不能取消关注~~');
+                }
                 $result = M('ChatFocus')->where($map)->delete();
                 if ($result) {
                     M('Member')->where(array('id'=>$userID))->setDec('follow');

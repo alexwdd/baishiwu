@@ -71,8 +71,8 @@ class PayController extends BaseController
         $content['out_trade_no'] = $order['order_no'];//商户网站唯一订单号
         $content['timeout_express'] = '1d';//该笔订单允许的最晚付款时间
 
-        //$content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型)
-        $content['total_amount'] = 0.01;//订单总金额(必须定义成浮点型)
+        $content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型)
+        //$content['total_amount'] = 0.01;//订单总金额(必须定义成浮点型)
         $content['product_code'] = 'QUICK_MSECURITY_PAY';//
 
         $bizcontent = json_encode($content);
@@ -116,8 +116,8 @@ class PayController extends BaseController
         }
         //自定义订单号，此处仅作举例
         $unifiedOrder->setParameter("out_trade_no",$order['order_no']);//商户订单号 
-        //$unifiedOrder->setParameter("total_fee",$order['rmb']*100);//总金额
-        $unifiedOrder->setParameter("total_fee",1);//总金额
+        $unifiedOrder->setParameter("total_fee",$order['rmb']*100);//总金额
+        //$unifiedOrder->setParameter("total_fee",1);//总金额
 
         //通知地址 
         if ($type=='store') {

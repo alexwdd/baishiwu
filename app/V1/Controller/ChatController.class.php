@@ -609,36 +609,6 @@ class ChatController extends CommonController {
         return $string;
     }
 
-    /**
-     * 封装base64位图片上传
-     */
-    function base64_upload($base64) {
-        $path = '.'.C('UPLOAD_PATH').'chat/'.date("Ymd",time())."/";
-        if(!is_dir($path)){
-            mkdir($path);
-        }        
-        $base64_image = str_replace(' ', '+', $base64);
-        //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行
-
-        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image, $result)){
-            $type = $result[2];
-            if(!in_array($type,array("jpg","png","bmp","jpeg","gif"))){
-                return false;
-            }
-            $image_name = uniqid().'.'.$type;
-            $image_file = $path."/{$image_name}";
-            //服务器文件存储路径
-            if (file_put_contents($image_file, base64_decode(str_replace($result[1], '', $base64_image)))){
-                $path = C('UPLOAD_PATH').'chat/'.date("Ymd",time())."/";
-                return ['path'=>$path,'name'=>$image_name,'url'=>$path.$image_name];
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-    }
-
     //点赞
     public function like(){
         if (IS_POST) {

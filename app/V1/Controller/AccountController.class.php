@@ -106,6 +106,14 @@ class AccountController extends CommonController {
                         $list['age'] = '未知';
                     }
 
+                    unset($map);
+                    $map['memberID'] = $list['userid'];
+                    $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                    foreach ($phone as $key => $value) {
+                        $photo[$key]['image'] = getRealUrl($value['image']);
+                    }
+                    $list['photo'] = $phone;
+
                     //生成token
                     $str = md5(uniqid(md5(microtime(true)),true)); 
                     $token = sha1($str);
@@ -176,6 +184,14 @@ class AccountController extends CommonController {
                         $list['work'] = '未知';
                         $list['age'] = '未知';
                     }
+
+                    unset($map);
+                    $map['memberID'] = $list['userid'];
+                    $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                    foreach ($phone as $key => $value) {
+                        $photo[$key]['image'] = getRealUrl($value['image']);
+                    }
+                    $list['photo'] = $phone;
 
                     $str = md5(uniqid(md5(microtime(true)),true)); 
                     $token = sha1($str);
@@ -502,7 +518,37 @@ class AccountController extends CommonController {
                 $this->autoFocus($id,$data['cityID']);
                 $nickname = '用户'.$id;
                 M('Member')->where(array('id'=>$id))->setField('nickname',$nickname);
-                $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where(array('id'=>$id))->find();
+                $user = M('Member')->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where(array('id'=>$id))->find();
+                if($user['gender']==0) {
+                    $userid['gender'] = '保密';
+                }elseif($user['gender']==1){
+                    $user['gender'] = '男';
+                }else{
+                    $user['gender'] = '女';
+                }
+                
+                if ($user['birthday']=='') {
+                    $user['birthday'] = '未知';
+                    $user['age'] = '未知';
+                }else{
+                    $byear=date('Y',strtotime($list['birthday']));
+                    $eyear=date('Y',time());
+                    $user['age'] = $eyear - $byear;
+                    if ($user['age']<=0) {
+                        $list['age'] = '未知';
+                    }
+                }
+                if ($user['open']==0) {
+                    $user['wechat'] = '未知';
+                    $user['phone'] = '未知';
+                    $user['email'] = '未知';
+                    $user['gender'] = '未知';
+                    $user['birthday'] = '未知';
+                    $user['work'] = '未知';
+                    $user['age'] = '未知';
+                }
+
+                $user['photo'] = [];
                 $user['token'] = $token;
                 returnJson('0',C('SUCCESS_RETURN'),$user);
             }else{
@@ -567,8 +613,36 @@ class AccountController extends CommonController {
                 $this->autoFocus($id,$data['cityID']);
                 $nickname = '用户'.$id;
                 M('Member')->where(array('id'=>$id))->setField('nickname',$nickname);
-                $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where(array('id'=>$id))->find();
-
+                $user = M('Member')->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where(array('id'=>$id))->find();
+                if($user['gender']==0) {
+                    $userid['gender'] = '保密';
+                }elseif($user['gender']==1){
+                    $user['gender'] = '男';
+                }else{
+                    $user['gender'] = '女';
+                }
+                
+                if ($user['birthday']=='') {
+                    $user['birthday'] = '未知';
+                    $user['age'] = '未知';
+                }else{
+                    $byear=date('Y',strtotime($list['birthday']));
+                    $eyear=date('Y',time());
+                    $user['age'] = $eyear - $byear;
+                    if ($user['age']<=0) {
+                        $list['age'] = '未知';
+                    }
+                }
+                if ($user['open']==0) {
+                    $user['wechat'] = '未知';
+                    $user['phone'] = '未知';
+                    $user['email'] = '未知';
+                    $user['gender'] = '未知';
+                    $user['birthday'] = '未知';
+                    $user['work'] = '未知';
+                    $user['age'] = '未知';
+                }
+                $user['phone'] = [];
                 $user['token'] = $token;
                 returnJson('0',C('SUCCESS_RETURN'),$user);
             }else{

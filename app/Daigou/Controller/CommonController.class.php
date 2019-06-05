@@ -76,23 +76,15 @@ class CommonController extends BaseController {
 
     //包裹类型
     public function getBaoguo() {
-    	$map['agentID'] = $this->user['id'];
-        $list = M('Baoguo')->field('id,name')->where($map)->select();
-        if($list){
+        /*$list = db('Baoguo')->field('id,name')->select();
+        if($list){*/
             echo json_encode(array(
                 'status'=>1,
                 'results'=>array(
-                    'data'=>$list
+                    'data'=>C('baoguoType')
                     )
             ));
-        }else{
-            echo json_encode(array(
-                'status'=>1,
-                'results'=>array(
-                    'data'=>null
-                    )
-            ));
-        }
+        //}
     }
 
     //商品模型

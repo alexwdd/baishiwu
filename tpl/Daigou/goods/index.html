@@ -5,7 +5,7 @@
 		<form class="layui-form" style="margin-bottom:10px">
 			<div class="layui-inline">
 				<div class="layui-input-inline">
-					<input type="text" name="keyword" autocomplete="off" placeholder="标题" class="layui-input"/>
+					<input type="text" name="keyword" autocomplete="off" placeholder="名称" class="layui-input"/>
 				</div>
 			</div>
 			<div class="layui-inline">
@@ -33,11 +33,11 @@
 			  <i class="layui-icon">&#xe640;</i>批量删除
 			</button>
 			<button class="layui-btn layui-btn-sm" function="refresh">
-			  <i class="layui-icon">&#x1002;</i>刷新
+			  <i class="layui-icon">&#xe669;</i>刷新
 			</button>
+
 			<button class="layui-btn layui-btn-sm" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
 	    </div>
-
 
 		<div class="layui-col-md12">
 	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="{:U('Goods/index')}" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-60"></table>
@@ -45,25 +45,25 @@
 	        <div class="fsDatagridCols">
 				<p checkbox="true"/>				
 				<p field="id" title="ID" width="80"/>
-				<p field="name" title="名称" width="150"/>
+				<p field="name" title="名称" width="250"/>
+				<p field="short" title="短名称" width="150" templet="#short"/>
 				<p field="cate" title="分类" width="150"/>
-				<p field="typeID" title="模型" width="150" dict="goodsType"/>
-				<p field="baoguoID" title="包裹类型" width="150" dict="baoguo"/>
-				<p field="price" title="销售价" width="100"/>
-				<p field="kucun" title="库存" width="100"/>
-				<p field="isBaoyou" title="是否包邮" width="100" dict="baoyou"/>
-				<p field="comm" title="首页推荐" width="100" templet="#comm"/>
-				<p field="show" title="状态" width="100" dict="goodsShow"/>
-				<p field="createTime" title="添加日期" width="180"/>
-				<p field="updateTime" title="更新日期" width="180"/>
+				<p field="brandID" title="品牌" width="150" dict="brand"/>
+				<p field="inprice" title="进货价" width="80"/>
+				<p field="price" title="价格" width="80"/>
+				<p field="weight" title="重量" width="80"/>
+				<p field="stock" title="网站库存" width="100"/>
+				<p field="empty" title="售罄" width="90" dict="goodsComm"/>
+				<p field="comm" title="首页展示" width="90" dict="goodsComm"/>
+				<p field="show" title="状态" width="60" dict="goodsShow"/>
 				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="80"/>
 			</div>
 
-			<script type="text/html" id="comm">
- 				{{# if(d.comm==1){ }}
- 				<span style="color:blue">是</span>
+			<script type="text/html" id="short">
+ 				{{# if(d.color!=""){ }}
+ 				<span style="color:{{d.color}}">{{d.short}}</span>
  				{{# }else{ }}
- 				否
+ 				{{d.short}}
  				{{# } }}
 			</script>
 

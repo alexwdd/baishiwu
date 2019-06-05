@@ -7,7 +7,7 @@ class CategoryController extends CommonController {
 	public function index() {		
 		if (IS_POST) {
 			$map['agentID']=$this->user['id'];
-			$list = M('DaigouCate')->where($map)->field("id,name,user,fid,path,sort")->order('path,id asc')->select();
+			$list = M('AgentCate')->where($map)->field("id,name,user,fid,path,comm,sort")->order('path,id asc')->select();
 			foreach ($list as $key => $value) {
 				$count = count(explode('-', $value['path'])) - 2;
 				if ($value['fid'] > 0) {
@@ -26,7 +26,7 @@ class CategoryController extends CommonController {
 	/*添加分类*/
  	public function add(){
  		if($_POST){
- 			$cate = D('DaigouCate');
+ 			$cate = D('AgentCate');
 			if($data = $cate->create()){
 				$data['agentID'] = $this->user['id'];
 				if ($list=$cate->add($data)) {
@@ -43,7 +43,7 @@ class CategoryController extends CommonController {
  			$fid = I('get.id');
  			$path = I('get.path');
 			$map['agentID']=$this->user['id'];
-			$artClass = M('DaigouCate');
+			$artClass = M('AgentCate');
 			$cate = $artClass->where($map)->field("id,name,fid,path")->order('path')->select();
 			foreach ($cate as $key => $value) {
 				$count = count(explode('-', $value['path'])) - 3;
@@ -59,7 +59,7 @@ class CategoryController extends CommonController {
 
 	public function edit(){
 		if($_POST){
-			$cate = D('DaigouCate');
+			$cate = D('AgentCate');
 			if ($data = $cate->create()) {
 				if($data['id']==$data['fid']){
 					$this->error('不能以自身为上级栏目');
@@ -70,7 +70,7 @@ class CategoryController extends CommonController {
 					$this->error('根栏目不能移动');
 				}
 				if($data['fid']>0){
-					$tClass = M('DaigouCate');
+					$tClass = M('AgentCate');
 
 					$fdata = $tClass->field('path')->where('id='.$data['fid'])->find();
 
@@ -85,7 +85,7 @@ class CategoryController extends CommonController {
 
 				if ($cate->save($data)) {
 					$cate->execute("UPDATE __PREFIX__category SET path = replace(path, '".$oldPath."','".$data['path']."')");
-					$url = U('DaigouCate/index');
+					$url = U('AgentCate/index');
 					$this->success('分类编辑成功',$url);
 				} else {
 					$this->error('分类编辑失败');
@@ -98,11 +98,11 @@ class CategoryController extends CommonController {
 			if(isset($id)){
 				$map['agentID']=$this->user['id'];
 				$map['id'] = $id;
-				$list=M('DaigouCate')->where($map)->find();
+				$list=M('AgentCate')->where($map)->find();
 				if($list){
 					unset($map);
 					$map['agentID']=$this->user['id'];
-					$cate = M('DaigouCate')->where($map)->field("id,name,fid,path")->order('path')->select();
+					$cate = M('AgentCate')->where($map)->field("id,name,fid,path")->order('path')->select();
 					foreach ($cate as $key => $value) {
 						$count = count(explode('-', $value['path'])) - 3;
 						$cate[$key]['count'] = $count;
@@ -128,7 +128,7 @@ class CategoryController extends CommonController {
 
 		$map['fid'] = $id;
 		$map['agentID'] = $this->user['id'];
-		$cate = M('DaigouCate');
+		$cate = M('AgentCate');
 		$list = $cate->where($map)->find();
 
 		if($list){

@@ -26,8 +26,8 @@ layui.define([], function (exports) {
 	fsConfig["global"] = {
 		"servletUrl":"", //异步请求地址,本地工程可以不填
 		"loginUrl" : "/login", //登录url
-		"uploadUrl" : "/index.php?m=Agent&c=Upload&a=image", //上传附件url
-		"uploadHtmlUrl" : "/index.php?m=Agent&c=Upload&a=index", //上传附件html地址，默认/plugins/frame/views/upload.html
+		"uploadUrl" : "/index.php?m=Daigou&c=Upload&a=image", //上传附件url
+		"uploadHtmlUrl" : "/index.php?m=Daigou&c=Upload&a=index", //上传附件html地址，默认/plugins/frame/views/upload.html
 		"loadDataType":"0",//加载数据类型，1：使用缓存数据，0：实时查询，默认0  （编辑或查看是否取缓存数据）
 		"datagridSubmitType":"1",//数据表格提交类型，1：原数据提交，2：增删改标签提交（fsType）， 默认1
 		"result" : { //响应结果配置

@@ -25,23 +25,23 @@ layui.define(['element',"fsConfig","fsCommon"], function(exports){
 				{"menuId":"11","menuName":"商城管理","menuIcon":"fa-shopping-cart","menuHref":"","parentMenuId":"1"},
 				{"menuId":"12","menuName":"订单管理","menuIcon":"fa-rmb","menuHref":"","parentMenuId":"1"},
 
-				{"menuId":"101","menuName":"商城设置","menuIcon":"","menuHref":"/index.php?m=Agent&c=setting&a=index","parentMenuId":"10"},
-				{"menuId":"102","menuName":"广告管理","menuIcon":"","menuHref":"/index.php?m=Agent&c=ad&a=index","parentMenuId":"10"},
-				{"menuId":"103","menuName":"帮助中心","menuIcon":"","menuHref":"/index.php?m=Agent&c=article&a=index","parentMenuId":"10"},
-				{"menuId":"104","menuName":"商城留言","menuIcon":"","menuHref":"/index.php?m=Agent&c=feedback&a=index","parentMenuId":"10"},
+				{"menuId":"101","menuName":"商城设置","menuIcon":"","menuHref":"/index.php?m=Daigou&c=setting&a=index","parentMenuId":"10"},
+				{"menuId":"102","menuName":"广告管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=ad&a=index","parentMenuId":"10"},
+				{"menuId":"103","menuName":"帮助中心","menuIcon":"","menuHref":"/index.php?m=Daigou&c=article&a=index","parentMenuId":"10"},
+				{"menuId":"104","menuName":"商城留言","menuIcon":"","menuHref":"/index.php?m=Daigou&c=feedback&a=index","parentMenuId":"10"},
 
-				{"menuId":"111","menuName":"商品管理","menuIcon":"","menuHref":"/index.php?m=Agent&c=goods&a=index","parentMenuId":"11"},
-				{"menuId":"112","menuName":"商品分类","menuIcon":"","menuHref":"/index.php?m=Agent&c=category&a=index","parentMenuId":"11"},
-				{"menuId":"113","menuName":"品牌管理","menuIcon":"","menuHref":"/index.php?m=Agent&c=brand&a=index","parentMenuId":"11"},
-				{"menuId":"114","menuName":"商品模型","menuIcon":"","menuHref":"/index.php?m=Agent&c=goodsType&a=index","parentMenuId":"11"},
-				{"menuId":"115","menuName":"商品属性","menuIcon":"","menuHref":"/index.php?m=Agent&c=goodsAttribute&a=index","parentMenuId":"11"},
-				{"menuId":"116","menuName":"商品规格","menuIcon":"","menuHref":"/index.php?m=Agent&c=goodsSpec&a=index","parentMenuId":"11"},
-				{"menuId":"117","menuName":"物流管理","menuIcon":"","menuHref":"/index.php?m=Agent&c=wuliu&a=index","parentMenuId":"11"},
-				{"menuId":"118","menuName":"收款方式","menuIcon":"","menuHref":"/index.php?m=Agent&c=card&a=index","parentMenuId":"11"},
-				{"menuId":"119","menuName":"包裹类型","menuIcon":"","menuHref":"/index.php?m=Agent&c=baoguo&a=index","parentMenuId":"11"},
-				{"menuId":"120","menuName":"贴心服务","menuIcon":"","menuHref":"/index.php?m=Agent&c=server&a=index","parentMenuId":"11"},	
+				{"menuId":"111","menuName":"商品管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goods&a=index","parentMenuId":"11"},
+				{"menuId":"112","menuName":"商品分类","menuIcon":"","menuHref":"/index.php?m=Daigou&c=category&a=index","parentMenuId":"11"},
+				{"menuId":"113","menuName":"品牌管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=brand&a=index","parentMenuId":"11"},
+				/*{"menuId":"114","menuName":"商品模型","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goodsType&a=index","parentMenuId":"11"},
+				{"menuId":"115","menuName":"商品属性","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goodsAttribute&a=index","parentMenuId":"11"},
+				{"menuId":"116","menuName":"商品规格","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goodsSpec&a=index","parentMenuId":"11"},
+				{"menuId":"117","menuName":"物流管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=wuliu&a=index","parentMenuId":"11"},*/
+				{"menuId":"118","menuName":"收款方式","menuIcon":"","menuHref":"/index.php?m=Daigou&c=card&a=index","parentMenuId":"11"},
+				/*{"menuId":"119","menuName":"包裹类型","menuIcon":"","menuHref":"/index.php?m=Daigou&c=baoguo&a=index","parentMenuId":"11"},*/
+				{"menuId":"120","menuName":"贴心服务","menuIcon":"","menuHref":"/index.php?m=Daigou&c=server&a=index","parentMenuId":"11"},	
 
-				{"menuId":"linkageDatagrid2","menuName":"订单管理","menuIcon":"","menuHref":"/index.php?m=Agent&c=order&a=index","parentMenuId":"12"}	
+				{"menuId":"linkageDatagrid2","menuName":"订单管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"}	
 			] //本地数据
 	};
 

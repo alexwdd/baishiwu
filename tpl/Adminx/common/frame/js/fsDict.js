@@ -223,6 +223,17 @@ layui.fsDict = {
 		valueField : "id"
 	},
 
+	storeType : {
+		formatType : "local",
+		labelField : "name",
+		valueField : "value",
+		//静态数据
+		data:[
+			{"value":'1',"name":"普通商城"},
+			{"value":'2',"name":"代购商城"}
+		]
+	},
+
 	//支付状态
 	payStatus : {
 		formatType : "local",

@@ -995,15 +995,15 @@ class AccountController extends CommonController {
 
             $user = $this->userCheck($userid,$password,$openid);
         
-            if ($user['oauth']!=0 && $data['email']) {//不是邮箱注册的用户都可以设置邮箱
+            if ($user['oauth']!=0 && $user['email']!=$data['email'] && $data['email']!='') {//不是邮箱注册的用户都可以设置邮箱
                 if (!check_email($data['email'])) {
                     returnJson('-1','邮箱格式错误');
-                }
+                }      
                 if (M('Member')->where(array('email'=>$data['email']))->find()) {
                     //if ($type==0) {//新注册
                         returnJson('-1','邮箱重复');
                     //}           
-                }
+                }                        
             }else{
                 unset($data['email']);
             }
@@ -1020,8 +1020,7 @@ class AccountController extends CommonController {
                 returnJson('0',C('SUCCESS_RETURN'),$user);
             }else{
                 returnJson('-1','您没有做任何改动');
-            }
-            
+            }            
         }
     }
 

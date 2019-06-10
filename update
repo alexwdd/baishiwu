@@ -1,1 +1,16 @@
-Agent表 增加type
+Agent表 增加type，增加hotkey
+
+增加dg开头的表
+
+
+接口说明
+store/getMain 首页接口
+
+store/cart 购物车
+store/cartAdd 添加到购物车
+store/cartClear 清空购物车
+
+address/lists 地址列表
+address/addressPub 地址发布
+address/addressInfo 地址详细信息
+address/addressDel 	删除地址

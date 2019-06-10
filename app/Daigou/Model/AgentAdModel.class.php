@@ -2,7 +2,7 @@
 namespace Daigou\Model;
 use Think\Model;
 
-class DaigouAdModel extends Model {
+class AgentAdModel extends Model {
 
     protected $_validate = array (
 		array('name','require','名称不能为空', 1),

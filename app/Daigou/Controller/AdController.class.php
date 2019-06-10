@@ -6,7 +6,7 @@ class AdController extends CommonController {
 	public function index() {
 		if (IS_POST) {
 			$map['agentID'] = $this->user['id'];
-			$obj = M('DaigouAd');
+			$obj = M('AgentAd');
             $total = $obj->where($map)->count();
             $pageSize = I('post.pageSize',20);
 
@@ -40,7 +40,7 @@ class AdController extends CommonController {
 	#添加
 	public function add() {
 		if($_POST){
-			$this->all_add("DaigouAd",U('Ad/index'));
+			$this->all_add("AgentAd",U('Ad/index'));
 		}else{
 			$this->display();
 		}
@@ -49,7 +49,7 @@ class AdController extends CommonController {
 	#编辑
 	public function edit() {
 		if($_POST){
-			$this->all_save("DaigouAd",U('Ad/index'));
+			$this->all_save("AgentAd",U('Ad/index'));
 		}else{
 			$id = (int) $_GET['id'];
 			if (!isset ($id) || !is_numeric($id)) {
@@ -57,7 +57,7 @@ class AdController extends CommonController {
 			}
 			$map['id'] = $id;
 			$map['agentID'] = $this->user['id'];
-			$obj = M('DaigouAd');
+			$obj = M('AgentAd');
 			$list = $obj->where($map)->find();
 			if (!$list) {
 				$this->error('信息不存在');
@@ -76,7 +76,7 @@ class AdController extends CommonController {
         }else{
             $map['id'] = array('in',$id);
             $map['agentID'] = $this->user['id'];
-            $obj = M('DaigouAd');
+            $obj = M('AgentAd');
             $list = $obj->where($map)->delete();
             if ($list) {
                 $this->success('操作成功');

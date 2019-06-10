@@ -11,11 +11,13 @@ class SettingController extends CommonController {
             $data['notice'] = I('post.notice');
             $data['huilv'] = I('post.huilv');
             $data['content'] = I('post.content');
+            $data['hotkey'] = I('post.hotkey');
+            $data['hotkey'] = str_replace("，", ",", $data['hotkey']);
             if ($data['name']=='') {
                 $this->error('店铺名称不能为空');
             }
             $map['id'] = $this->user['id'];
-            M('Daigou')->where($map)->save($data);
+            M('Agent')->where($map)->save($data);
             $this->success('操作成功');
         }else{
             $this->display();

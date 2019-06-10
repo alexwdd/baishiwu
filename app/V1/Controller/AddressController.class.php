@@ -50,19 +50,19 @@ class AddressController extends CommonController {
                     }
                 }
                 if($data['id']!=''){
-                    if ($list = $obj->save($data)) {
-                        returnJson(0,'操作成功'); 
+                    if ($list = $obj->save($data)) { 
+                        returnJson(0,'操作成功',$data); 
                     } else {
                         returnJson('-1','操作失败'); 
                     }
                 }else{
                     if ($list = $obj->add($data)) {
-                        returnJson(0,'操作成功'); 
+                        $data['id'] = $list;
+                        returnJson(0,'操作成功',$data); 
                     } else {
                         returnJson('-1','操作失败'); 
                     }
-                }
-                
+                }                
             } else {
                 returnJson('-1','操作失败');
             }
@@ -103,6 +103,84 @@ class AddressController extends CommonController {
             $map['id'] = $id;
             $map['memberID'] = $this->user['id'];
             $res = M('Address')->where($map)->delete();
+            if ($res) {
+                returnJson(0,'success');
+            }else{
+                returnJson('-1','操作失败');
+            }
+        }
+    }
+
+    public function sender(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $map['memberID'] = $this->user['id']; 
+            $list = M('Sender')->where($map)->select();
+            returnJson(0,'success',$list);                 
+        }          
+    }
+
+    public function senderPub(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $obj = D('Sender');
+            if ($data = $obj->create()) {
+                $data['memberID'] = $this->user['id'];
+                if ($data['def']==1) {
+                    $list = M('Sender')->where(array('memberID'=>$this->user['id']))->setField('def',0);
+                }
+                if($data['id']!=''){
+                    if ($list = $obj->save($data)) { 
+                        returnJson(0,'操作成功',$data); 
+                    } else {
+                        returnJson('-1','操作失败'); 
+                    }
+                }else{
+                    if ($list = $obj->add($data)) {
+                        $data['id'] = $list;
+                        returnJson(0,'操作成功',$data); 
+                    } else {
+                        returnJson('-1','操作失败'); 
+                    }
+                }                
+            } else {
+                returnJson('-1','操作失败');
+            }
+        }
+    }
+
+    public function senderInfo(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $id = I('post.id');
+
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+
+            $map['id'] = $id;
+            $map['memberID'] = $this->user['id'];
+            $list = M('Sender')->where($map)->find();
+            if ($list) {
+                returnJson(0,'success',$list);
+            }else{
+                returnJson('-1','信息不存在');
+            }
+        }
+    }
+
+    public function senderDel(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}           
+            $id = I('post.id');
+
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+
+            $map['id'] = $id;
+            $map['memberID'] = $this->user['id'];
+            $res = M('Sender')->where($map)->delete();
             if ($res) {
                 returnJson(0,'success');
             }else{

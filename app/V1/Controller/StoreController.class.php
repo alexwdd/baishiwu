@@ -422,4 +422,53 @@ class StoreController extends CommonController {
             return false;
         }
     }
+
+    //创建订单
+    public function create(){
+        if (IS_POST) {
+            $kid = I("post.kid");
+            if ($kid=='' || !is_numeric($kid)) {
+                returnJson('-1','参数错误');
+            }
+
+            $map['memberID'] = $this->user['id'];
+            $count = M("DgCart")->where($map)->count();
+            if ($count==0) {
+                returnJson('-1','购物车中没有商品');
+            }
+
+            //收件信息
+            $map['memberID'] = $this->user['id'];
+            $address = M('Address')->where($map)->order('def desc , id desc')->find();
+
+            //发收人信息
+            $map['memberID'] = $this->user['id'];
+            $sender = M('Sender')->where($map)->order('def desc , id desc')->find();
+
+            //包裹信息
+            $result = $this->getYunfeiJson($this->user,$kid,$address['province']);
+            $baoguo = $result;
+           
+            $money = $this->getCartNumber($this->user);
+
+            $total = $baoguo['totalPrice']+$baoguo['totalExtend']+$money['total'];
+       
+            //是否包含签名
+            $flag = 0;//货物签名
+            foreach ($baoguo['baoguo'] as $key => $value) {
+                foreach ($value['goods'] as $k => $val) {
+                    if ($flag==0 && $val['server']!='') {
+                        if (strstr($val['server'], '2')) {
+                            $flag = 1;
+                            break;
+                        }
+                    }
+                }
+                if ($flag==1) {
+                    break;
+                }
+            }        
+            returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'flag'=>$flag]);
+        }
+    }
 }

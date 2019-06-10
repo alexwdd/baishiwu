@@ -22,6 +22,57 @@ function combineDika() {
     return $result;
 }
 
+function fix_number_precision($data, $precision = 2)
+{
+    if(is_array($data)){
+        foreach ($data as $key => $value) {
+            $data[$key] = fix_number_precision($value, $precision);
+        }
+        return $data;
+    }
+
+    if(is_numeric($data)){
+        $precision = is_float($data) ? $precision : 0;
+        return number_format($data, $precision, '.', '');
+    }
+    return $data;
+}
+
+//获取中邮快递名称
+function getBrandName($type){
+    if ($type==1 || $type==2 || $type==3) {
+        return '澳邮';
+    }
+    if ($type==5) {
+        return '中邮';
+    }
+    if (in_array($type,[12,13,14])) {
+        $config = tpCache('kuaidi');
+        return $config['kuaidi'.$type];
+    }
+    return '中环';
+}
+
+//物流单价
+function getDanjia($type,$user){
+    if ($user['group']==2 || $user['vip']==1) {
+        $field='huiyuan';
+    }else{
+        $field='price';
+    }
+    $config = tpCache("kuaidi");
+    if ($type==1 || $type==2 || $type==3) {//澳邮
+        return ['price'=>$config[$field.'1'],'inprice'=>$config['inprice1'],'otherPrice'=>$config['otherPrice1']];
+    }
+    if ($type==5) {//中邮
+        return ['price'=>$config[$field.'2'],'inprice'=>$config['inprice2'],'otherPrice'=>$config['otherPrice2']];
+    }
+    if (in_array($type,[12,13,14])) {
+        return ['price'=>$config[$field.$type],'inprice'=>$config['inprice'.$type],'otherPrice'=>$config['otherPrice'.$type]];
+    }
+    return ['price'=>$config[$field.'3'],'inprice'=>$config['inprice3'],'otherPrice'=>$config['otherPrice3']];//中环
+}
+
 /**
  * 两个数组的笛卡尔积
  * @param unknown_type $arr1

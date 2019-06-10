@@ -6,9 +6,11 @@ Agent表 增加type，增加hotkey
 接口说明
 store/getMain 首页接口
 
+store/cartNumber 购物车商品个数
 store/cart 购物车
 store/cartAdd 添加到购物车
 store/cartClear 清空购物车
+store/setCartNumber 设置购物车数量
 
 address/lists 地址列表
 address/addressPub 地址发布

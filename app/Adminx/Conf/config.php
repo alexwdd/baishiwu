@@ -96,13 +96,6 @@ return array (
             'parentMenuId'=>"1",
         ),
         array(
-            'menuId'=>'1014',
-            'menuName'=>'代购商城',
-            'menuIcon'=>'fa-shopping-cart',
-            'menuHref'=>'',
-            'parentMenuId'=>"1",
-        ),
-        array(
             'menuId' => "1005",
             'menuName'=>'财务管理',
             'menuIcon'=>'fa-rmb',

@@ -38,8 +38,8 @@ layui.define(['element',"fsConfig","fsCommon"], function(exports){
 				{"menuId":"116","menuName":"商品规格","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goodsSpec&a=index","parentMenuId":"11"},
 				{"menuId":"117","menuName":"物流管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=wuliu&a=index","parentMenuId":"11"},*/
 				{"menuId":"118","menuName":"收款方式","menuIcon":"","menuHref":"/index.php?m=Daigou&c=card&a=index","parentMenuId":"11"},
-				/*{"menuId":"119","menuName":"包裹类型","menuIcon":"","menuHref":"/index.php?m=Daigou&c=baoguo&a=index","parentMenuId":"11"},*/
-				{"menuId":"120","menuName":"贴心服务","menuIcon":"","menuHref":"/index.php?m=Daigou&c=server&a=index","parentMenuId":"11"},	
+				/*{"menuId":"119","menuName":"包裹类型","menuIcon":"","menuHref":"/index.php?m=Daigou&c=baoguo&a=index","parentMenuId":"11"},
+				{"menuId":"120","menuName":"贴心服务","menuIcon":"","menuHref":"/index.php?m=Daigou&c=server&a=index","parentMenuId":"11"},*/
 
 				{"menuId":"linkageDatagrid2","menuName":"订单管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"}	
 			] //本地数据

@@ -108,11 +108,11 @@ class AccountController extends CommonController {
 
                     unset($map);
                     $map['memberID'] = $list['userid'];
-                    $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
-                    foreach ($phone as $key => $value) {
+                    $photo = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                    foreach ($photo as $key => $value) {
                         $photo[$key]['image'] = getRealUrl($value['image']);
                     }
-                    $list['photo'] = $phone;
+                    $list['photo'] = $photo;
 
                     //生成token
                     $str = md5(uniqid(md5(microtime(true)),true)); 
@@ -187,11 +187,11 @@ class AccountController extends CommonController {
 
                     unset($map);
                     $map['memberID'] = $list['userid'];
-                    $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
-                    foreach ($phone as $key => $value) {
+                    $photo = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                    foreach ($photo as $key => $value) {
                         $photo[$key]['image'] = getRealUrl($value['image']);
                     }
-                    $list['photo'] = $phone;
+                    $list['photo'] = $photo;
 
                     $str = md5(uniqid(md5(microtime(true)),true)); 
                     $token = sha1($str);
@@ -642,7 +642,7 @@ class AccountController extends CommonController {
                     $user['work'] = '未知';
                     $user['age'] = '未知';
                 }
-                $user['phone'] = [];
+                $user['photo'] = [];
                 $user['token'] = $token;
                 returnJson('0',C('SUCCESS_RETURN'),$user);
             }else{
@@ -1245,6 +1245,8 @@ class AccountController extends CommonController {
             $obj = M('Member');
             $list = $obj->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();
             if ($list) {
+                $list['headimg'] = getRealUrl($list['headimg']);
+                
                 if($list['gender']==0) {
                     $list['gender'] = '保密';
                 }elseif($list['gender']==1){
@@ -1275,11 +1277,11 @@ class AccountController extends CommonController {
                 }
                 unset($map);
                 $map['memberID'] = $userid;
-                $phone = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
-                foreach ($phone as $key => $value) {
+                $photo = M('Photo')->field('id as imageID,image')->where($map)->order('sort asc,id desc')->select();
+                foreach ($photo as $key => $value) {
                     $photo[$key]['image'] = getRealUrl($value['image']);
                 }
-                $list['photo'] = $phone;
+                $list['photo'] = $photo;
 
                 unset($map);
                 $map['memberID'] = $userid;

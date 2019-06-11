@@ -38,8 +38,16 @@
 		<label class="layui-form-label">热门关键词</label>
 		<div class="layui-input-block">
 			<input type="text" name="hotkey" value="{$user.hotkey}" lay-verify="required" placeholder="请输入关键词" class="layui-input">
+			<p class="layui-word-aux">使用逗号分隔</p>
+		</div>		
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">活动折扣</label>
+		<div class="layui-input-inline">
+			<input type="text" name="discount" value="{$user.discount}" class="layui-input">
 		</div>
-		<div class="layui-form-mid layui-word-aux">使用逗号分隔</div>
+		<div class="layui-form-mid layui-word-aux">八五折就填写8.5，无折扣就填写0</div>
 	</div>
 
 	<div class="layui-form-item layui-form-text">

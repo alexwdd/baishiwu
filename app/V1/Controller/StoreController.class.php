@@ -471,4 +471,251 @@ class StoreController extends CommonController {
             returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'flag'=>$flag]);
         }
     }
+
+    //保存订单
+    public function doSubmit(){
+        if (!IS_POST) {die;}
+        $rate = $this->agent['huilv'];
+        if ($rate=='') {
+            returnJson('-1','无法获得当前汇率');
+        }
+
+        $sender = I("post.sender");
+        if ($sender=='') {
+            returnJson('-1','请选择寄件人');
+        }
+        $map['memberID'] = $this->user['id'];
+        $list = M("DgCart")->where($map)->select();
+        if (!$list) {
+            returnJson('-1','没有选择任何商品');
+        }
+
+        $hongjiu = 0;
+        $chengben = 0;//商品总成本
+        foreach ($list as $key => $value) {
+            $goods = M('DgGoodsIndex')->where(array('id'=>$value['itemID']))->find();
+            $goodsInprice = M("DgGoods")->where(array('id'=>$value['goodsID']))->getField("inprice");
+            $chengben += $goodsInprice * $value['goodsNumber'];
+            if ($goods) {
+                if ($goods['empty']==1) {
+                    returnJson('-1','商品【'.$goods['name'].'】库存不足');
+                }
+            }else{
+                returnJson('-1','商品【'.$goods['name'].'】已经下架');
+            }
+            if ($value['typeID']==12) {
+                $hongjiu += $value['goodsNumber'];
+            }
+        }
+
+        if ($hongjiu%2 != 0) {
+            returnJson('-1',"商品中包含红酒，红酒数量必须为偶数");
+        }
+
+        //创建订单
+        $data = I('post.');
+
+        $cart = $this->getCartNumber($this->user);
+        $totalPrice = $cart['total'];
+        $serverMoney = $cart['serverMoney'];
+
+        if ($data['kid']>0) { 
+            $result = $this->getYunfeiJson($this->user,$data['kid'],$data['province']);
+            $baoguo = $result;
+            $totalYunfei = $baoguo['totalPrice']+$baoguo['totalExtend'];
+            $totalInprice = $baoguo['totalInprice'];
+        }else{
+            returnJson('-1',"请选择快递");
+        }
+
+        $flag = 0;
+        foreach ($baoguo['baoguo'] as $key => $value) {
+            $ids = explode(",", $value['serverIds']);
+            if (in_array(2,$ids)) {
+                $flag = 1;
+                break;
+            }
+        }
+
+        if ($flag==1 && $data['sign']=='') {
+            returnJson('-1',"请输入签名");
+        }
+
+        $sender = explode(",", $data['sender']);
+        $money = $totalPrice+$totalYunfei;
+
+        $realMoney = $totalPrice+$totalYunfei;
+        $zhekou = $this->agent['discount'];
+        if($zhekou > 0){
+            $total = $realMoney * $zhekou/10;
+        }else{
+            $total = $realMoney;
+        }
+
+        $order_no = $this->getOrderNo();
+        $data['sender'] = $sender[0];
+        $data['senderMobile'] = $sender[1];
+        $data['memberID'] = $this->user['id'];
+        $data['memberMobile'] = $this->user['mobile'];        
+        $data['order_no'] = $order_no;
+        $data['total'] = $total;
+        $data['discount'] = $zhekou;
+        $data['serverMoney'] = $serverMoney;
+        $data['rmb'] = $rate * $total;
+        $data['goodsMoney'] = $totalPrice;
+        $data['money'] = 0;
+        $data['wallet'] = 0;
+        $data['inprice'] = $chengben;
+        $data['payment'] = $totalYunfei;
+        $data['wuliuInprice'] = $totalInprice;
+        $data['payType'] = 0;
+        $data['payStatus'] = 0;
+        $data['createTime'] = time();
+        $data['updateTime'] = time();
+        $data['status'] = 0;
+        $orderID = M('DgOrder')->add($data);
+        if (!$orderID) {
+            returnJson('-1','订单创建失败');
+        }
+
+        $data['orderID'] = $orderID;        
+        $data['status'] = 0;        
+        $personID = M('DgOrderPerson')->add($data);
+        foreach ($baoguo['baoguo'] as $key => $value) {
+            //保存详单
+            $detail['orderID'] = $orderID;
+            $detail['personID'] = $personID;
+            $detail['order_no'] = $data['order_no'];
+            $detail['memberID'] = $this->user['id'];  
+            $detail['payment'] = $value['yunfei'];
+            $detail['wuliuInprice'] = $value['inprice'];//物流成本
+            $detail['type'] = $value['type'];
+            $detail['weight'] = $value['totalWuliuWeight'];
+            $detail['kuaidi'] = $value['kuaidi'];
+            $detail['serverIds'] = $value['serverIds'];
+            $detail['kdNo'] = '';
+            $detail['name'] = $data['name'];
+            $detail['mobile'] = $data['mobile'];
+            $detail['province'] = $data['province'];            
+            $detail['city'] = $data['city'];
+            $detail['area'] = $data['area'];
+            $detail['address'] = $data['address'];
+            $detail['sender'] = $data['sender'];
+            $detail['senderMobile'] = $data['senderMobile'];
+            if ($value['sign']==1) {
+                $detail['sign'] = $data['sign'];
+            }else{
+                $detail['sign'] = '';
+            }
+            $detail['createTime'] = time();
+            if ($payStatus==2) {
+                $detail['status'] = 1;
+            }else{
+                $detail['status'] = 0;
+            }
+            $detail['snStatus'] = 0;
+            $detail['del'] = 0;
+            $baoguoID = M('DgOrderBaoguo')->add($detail);
+            if ($baoguoID) {
+                foreach ($value['goods'] as $k => $val) {   
+                    $gData = [
+                        'orderID'=>$orderID,
+                        'memberID'=>$this->user['id'],
+                        'baoguoID'=>$baoguoID,
+                        'goodsID'=>$val['goodsID'],
+                        'itemID'=>$val['itemID'],
+                        'name'=>$val['name'],
+                        'short'=>$val['short'],
+                        'number'=>$val['goodsNumber'],    
+                        'trueNumber'=>$val['goodsNumber'],    
+                        'price'=>$val['price'],
+                        'server'=>$val['server'],
+                        'extends'=>$val['extends'],
+                        'del'=>0,
+                        'createTime'=>time()
+                    ];
+                    M('DgOrderDetail')->add($gData);      
+                }
+            }
+            unset($detail);
+        }
+        unset($map);
+        $map['memberID'] = $this->user['id'];
+        M("DgCart")->where($map)->delete();
+        returnJson(0,'success',$order_no);           
+    }
+
+    public function orderInfo(){
+        if (IS_POST) {
+            $order_no = I('post.order_no');
+            $map['order_no'] = $order_no;
+            $map['memberID'] = $this->user['id'];
+            $list = M('DgOrder')->where($map)->find();
+            if ($list){
+                if ($list['payStatus']>0) {
+                    returnJson('-1','该订单已支付完成，不要重复支付');
+                }
+                $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
+                returnJson(0,'success',$list);
+                return view();
+            }else{  
+                returnJson('-1','没有该订单');
+            }
+        }
+    }
+
+    public function getOrderNo(){
+        $order_no = getStoreOrderNo();
+        $map['order_no'] = $order_no;
+        $count = M("DgOrder")->where($map)->count();
+        if ($count>0) {
+            return $this->getOrderNo();
+        }
+        return $order_no;
+    }
+
+    public function getCard(){
+        if (IS_POST) {
+            $map['agentID'] = $this->agent['id'];
+            $list = M('Card')->where($map)->select();
+            returnJson(0,'success',$list);
+        }
+    }
+
+    public function cardPay(){
+        if (IS_POST) {
+            $data['image'] = I("post.image");
+            $id = I("post.id");
+            $data['cardID'] = I("post.cardID");
+            if ($id=='' || !is_numeric($id)) {
+                returnJson('-1','参数错误');
+            }
+            if ($data['cardID']=='') {
+                returnJson('-1','请选择收款银行卡');
+            }
+            if ($data['image']=='') {
+                returnJson('-1','请上传支付截图');
+            }
+
+            $result = $this->base64_upload($data['image']);
+            if ($result) {
+                $data['image'] = $result['url'];
+            }else{
+                returnJson('-1','图片保存失败');
+            }
+
+            $data['payType'] = 3;
+            $data['payStatus'] = 1;
+
+            $map['memberID'] = $this->user['id'];
+            $map['payStatus'] = 0;
+            $map['id'] = $id;
+            $res = M("DgOrder")->where($map)->save($data);
+            if ($res) {
+                returnJson(0,'success');
+            }else{
+                returnJson('-1','操作失败');
+            }
+        }
+    }
 }

@@ -553,6 +553,7 @@ class StoreController extends CommonController {
         }
 
         $order_no = $this->getOrderNo();
+        $data['agentID'] = $this->agent['id'];
         $data['sender'] = $sender[0];
         $data['senderMobile'] = $sender[1];
         $data['memberID'] = $this->user['id'];
@@ -583,6 +584,7 @@ class StoreController extends CommonController {
         $personID = M('DgOrderPerson')->add($data);
         foreach ($baoguo['baoguo'] as $key => $value) {
             //保存详单
+            $detail['agentID'] = $this->agent['id'];
             $detail['orderID'] = $orderID;
             $detail['personID'] = $personID;
             $detail['order_no'] = $data['order_no'];
@@ -619,6 +621,7 @@ class StoreController extends CommonController {
             if ($baoguoID) {
                 foreach ($value['goods'] as $k => $val) {   
                     $gData = [
+                        'agentID'=>$this->agent['id'],
                         'orderID'=>$orderID,
                         'memberID'=>$this->user['id'],
                         'baoguoID'=>$baoguoID,

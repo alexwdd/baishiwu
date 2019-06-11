@@ -153,6 +153,8 @@ class AccountController extends CommonController {
             $map['openid'] = $openid;
             $list = M('Member')->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();
             if ($list) {
+                M('Member')->where($map)->setField('headimg',$headimg);
+                $list['headimg'] = $headimg;
                 if ($list['disable']==1) {
                     returnJson('-1','账户已禁用，请联系客服');
                 }else{
@@ -995,7 +997,7 @@ class AccountController extends CommonController {
 
             $user = $this->userCheck($userid,$password,$openid);
         
-            if ($user['oauth']!=0 && $data['email']) {//不是邮箱注册的用户都可以设置邮箱
+            if ($user['oauth']!=0 && $user['email']!=$data['email'] && $data['email']) {//不是邮箱注册的用户都可以设置邮箱
                 if (!check_email($data['email'])) {
                     returnJson('-1','邮箱格式错误');
                 }
@@ -1006,13 +1008,17 @@ class AccountController extends CommonController {
                 }
             }else{
                 unset($data['email']);
-            }
-
+            }            
             if(empty($data['nickname']) || $data['nickname']==''){unset($data['nickname']);};
             if(empty($data['headimg']) || $data['headimg']==''){unset($data['headimg']);};
             if(empty($data['name']) || $data['name']==''){unset($data['name']);};
             if(empty($data['wechat']) || $data['wechat']==''){unset($data['wechat']);};
-
+            if(empty($data['email']) || $data['email']==''){unset($data['email']);};
+            if(empty($data['birthday']) || $data['birthday']==''){unset($data['birthday']);};
+            if($data['gender']==''){unset($data['gender']);};
+            if(empty($data['work']) || $data['work']==''){unset($data['work']);};
+            if(empty($data['sign']) || $data['sign']==''){unset($data['sign']);};
+    
             $map['id'] = $userid;
             $res = M('Member')->where($map)->save($data);
             if ($res) {
@@ -1291,6 +1297,7 @@ class AccountController extends CommonController {
                     foreach ($ids as $key => $value) {
                         $vis = M('Member')->where(array('id'=>$value))->field('id as userid,nickname,headimg')->find();
                         if ($vis) {
+                            $vis['headimg'] = getRealUrl($vis['headimg']);
                             array_push($visitor,$vis);
                         }
                     }

@@ -5,7 +5,7 @@ return array (
   'DB_PORT' => '3306',
   'DB_NAME' => 'baishiwu',
   'DB_USER' => 'root',
-  'DB_PWD' => 'root',
+  'DB_PWD' => '',
   'DB_PREFIX' => 'pm_',	
   'DB_CHARSET'=> 'utf8mb4'
 );

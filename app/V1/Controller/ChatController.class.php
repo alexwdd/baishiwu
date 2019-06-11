@@ -97,6 +97,7 @@ class ChatController extends CommonController {
         foreach ($list as $key => $value) {
             $list[$key]['createTimeDate'] = $value['createTime'];
             $list[$key]['createTime'] = getLastTime($value['createTime']);
+            $list[$key]['face'] = getRealUrl($value['face']);
             if($value['images']!=''){
                 $img = explode("|", $value['images']);
                 $thumb = explode("|", $value['thumb']);
@@ -111,7 +112,7 @@ class ChatController extends CommonController {
                 }
                 foreach ($thumb as $k => $val) {
                     $thumb[$k] = getRealUrl($val);
-                }
+                }                
                 $list[$key]['images'] = $img;
                 $list[$key]['thumb'] = $thumb;
                 $list[$key]['num'] = count($img);
@@ -249,6 +250,7 @@ class ChatController extends CommonController {
 
             $ids = M('ChatFocus')->where(array('memberID'=>$user['id']))->getField('userID',true);
             foreach ($list as $key => $value) {
+                $list[$key]['headimg'] = getRealUrl($value['headimg']);
                 if (in_array($value['memberID'],$ids)) {
                     $list[$key]['focus'] = true;
                 }else{
@@ -303,6 +305,7 @@ class ChatController extends CommonController {
             $list = $obj->field('id,nickname,headimg,follow')->where($map)->limit($firstRow.','.$pagesize)->order('commend desc,follow desc')->select();
             $ids = M('ChatFocus')->where(array('memberID'=>$user['id']))->getField('userID',true);
             foreach ($list as $key => $value) {
+                $list[$key]['headimg'] = getRealUrl($value['headimg']);
                 if (in_array($value['id'],$ids)) {
                     $list[$key]['focus'] = true;
                 }else{
@@ -703,7 +706,7 @@ class ChatController extends CommonController {
             if (!$list) {
                 returnJson('-1','信息不存在');
             } else {
-
+                $list['face'] = getRealUrl($list['face']);
                 //处理标签
                 if ($list['tag']!='') {
                     $tag = explode(",",$list['tag']);
@@ -821,6 +824,7 @@ class ChatController extends CommonController {
                     }
                 }
                 $list[$key]['createTime'] = getLastTime($value['createTime']);
+                $list[$key]['headimg'] = getRealUrl($value['headimg']);
 
                 $reply = $obj->where(array('toID'=>$value['id']))->order('id asc')->select();
                 foreach ($reply as $k => $val) {

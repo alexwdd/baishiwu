@@ -74,6 +74,7 @@ class DgGoodsModel extends Model {
 
         $spec_data = array();   
         $baseData = array(
+            'agentID' => $data['agentID'],
             'cid' => $data['cid'],
             'path' => $data['path'],
             'cid1' => $data['cid1'],
@@ -147,6 +148,7 @@ class DgGoodsModel extends Model {
         $spec_show = I("post.spec_show/a");
 
         $baseData = array(
+            'agentID'=>$data['agentID'],
             'cid' => $data['cid'],
             'path' => $data['path'],
             'cid1' => $data['cid1'],

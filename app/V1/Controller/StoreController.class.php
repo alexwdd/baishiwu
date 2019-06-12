@@ -62,6 +62,48 @@ class StoreController extends CommonController {
         return $list;
     }
 
+    public function goods(){
+        if (IS_POST) {
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $path = I('post.path');
+            $cid = I('post.cid');
+            $keyword = I('post.keyword');
+            $page = I('post.page',1);
+
+            $map['show'] = 1;
+            if ($keyword!='') {
+                $map['name|short|keyword'] = array('like','%'.$keyword.'%');
+            }
+
+            if ($cid!='') {
+                $map['cid'] = $cid;
+            }
+
+            if ($path!='') {
+                $map['path'] = array('like',$path.'%');
+            }
+
+            $pagesize =10;
+            $firstRow = $pagesize*($page-1); 
+
+            $obj = M('DgGoodsIndex');
+            $count = $obj->where($map)->count();
+            $totalPage = ceil($count/$pagesize);
+            if ($page < $totalPage) {
+                $next = 1;
+            }else{
+                $next = 0;
+            }
+
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('sort asc,id desc')->select();  
+            foreach ($list as $k => $value) {
+                $list[$k]['picname'] = getRealUrl($value['picname']);
+                $list[$k]['num'] = 0;
+            }
+            returnJson(0,'success',['next'=>$next,'data'=>$list]);
+        }
+    }
+
     //商品详情
     public function detail(){
         if (IS_POST) {
@@ -236,7 +278,7 @@ class StoreController extends CommonController {
                 }
             }else{
                 if ($list) {
-                    if ($list['number']<=1) {
+                    if ($list['number']<=1) {                        
                         $db->where($map)->delete();
                     }else{
                         $number = $list['number']-$number;

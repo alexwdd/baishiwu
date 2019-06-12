@@ -36,11 +36,13 @@ class StoreController extends CommonController {
             unset($map);
             $map['fid'] = 0;
             $map['comm'] = 1;
+            $map['agentID'] = $this->agent['id'];
             $indexCate = M("AgentCate")->field('id,path,name')->where($map)->select();
             foreach ($indexCate as $key => $value) {
                 unset($map);
                 $map['comm'] = 1;
                 $map['show'] = 1;
+                $map['agentID'] = $this->agent['id'];
                 $map['path|path1'] = array('like',$value['path'].'%');
                 $goods = M("DgGoodsIndex")->where($map)->order('sort asc,id desc')->select();
                 foreach ($goods as $k => $val) {
@@ -68,11 +70,17 @@ class StoreController extends CommonController {
             $path = I('post.path');
             $cid = I('post.cid');
             $keyword = I('post.keyword');
+            $brandID = I('post.brandID');
             $page = I('post.page',1);
 
             $map['show'] = 1;
+            $map['agentID'] = $this->agent['id'];
             if ($keyword!='') {
                 $map['name|short|keyword'] = array('like','%'.$keyword.'%');
+            }
+
+            if ($brandID!='') {
+                $map['brandID'] = $brandID;
             }
 
             if ($cid!='') {
@@ -101,6 +109,24 @@ class StoreController extends CommonController {
                 $list[$k]['num'] = 0;
             }
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
+        }
+    }
+
+    public function getCateName(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $cid = I('post.cid');
+            $path = I('post.path');
+            if ($cid!='') {
+                $map['cid'] = $cid;
+            }
+
+            if ($path!='') {
+                $map['path'] = $path;
+            }
+            $map['agentID'] = $this->agent['id'];
+            $cate = M("AgentCate")->where($map)->find();
+            returnJson('0','success',$cate);
         }
     }
 
@@ -761,6 +787,29 @@ class StoreController extends CommonController {
             }else{
                 returnJson('-1','操作失败');
             }
+        }
+    }
+
+    public function category(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $fid = I('post.fid');
+            $map['fid'] = $fid;
+            $map['agentID'] = $this->agent['id'];
+            $list = M('AgentCate')->where($map)->order('sort asc,id desc')->select();
+            foreach ($list as $key => $value) {
+                $list[$key]['picname'] = getRealUrl($value['picname']);
+            }
+            returnJson('0','success',$list);
+        }
+    }
+
+    public function brand(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $map['agentID'] = $this->agent['id'];
+            $brand = M('Brand')->where($map)->order('sort asc,id desc')->select();
+            returnJson('0','success',$brand);
         }
     }
 }

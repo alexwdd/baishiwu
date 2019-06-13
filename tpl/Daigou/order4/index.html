@@ -12,6 +12,14 @@
 					<input type="text" name="createDate" autocomplete="off" class="layui-input fsDate" dateRange="1" placeholder=" - "/>
 				</div>
 			</div>
+			<div class="layui-input-inline">
+				<select name="payType">
+					<option value="">支付方式</option>
+					<option value="1">支付宝</option>
+					<option value="2">微信</option>
+					<option value="3">银行卡</option>
+				</select>
+			</div>	
 		</form>
 		<div style="float: left; margin-left: 10px">
 			<button class="layui-btn" type="button" function="query"><i class="layui-icon">&#xe615;</i>查询</button>
@@ -20,20 +28,31 @@
 			  <i class="layui-icon">&#xe669;</i>刷新
 			</button>
 
-			<button class="layui-btn layui-btn-danger" function="submit" method="post" url="{:U("Order/del")}" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
+			<button class="layui-btn layui-btn-danger" function="submit" method="post" url="{:U("Order4/del")}" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
 			  <i class="layui-icon">&#xe640;</i>删除
 			</button>			
 		</div>
-		
+
 		<div class="tj">总金额:<span id="total">0</span></div>
 
+	    <div class="layui-col-md12">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">					
+		         	<a href="{:U('Order4/index')}"><li <empty name="day">class="layui-this"</empty>>三天内</li></a>
+		         	<a href="{:U('Order4/index',array('day'=>7))}"><li <eq name="day" value="7">class="layui-this"</eq>>7天内</li></a>
+		         	<a href="{:U('Order4/index',array('day'=>30))}"><li <eq name="day" value="30">class="layui-this"</eq>>30天内</li></a>
+				</ul>
+			</div>
+			
+	    </div>
+
 		<div class="layui-col-md12">
-	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="{:U('Order/index')}" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-60"></table>
+	        <table id="fsDatagrid" lay-filter="fsDatagrid" class="fsDatagrid" isLoad="1" url="{:U('Order4/index','day='.$day)}" isPage="1" sortType="1" pageSize="20" defaultForm="query_form" height="full-60"></table>
 
 	        <div class="fsDatagridCols">
 				<p checkbox="true"/>	
 				<p field="id" title="ID" width="80"/>
-				<p field="memberID" title="会员账号" width="100"/>	
+				<p field="memberID" title="会员账号" width="100"/>
 				<p field="memberMobile" title="会员手机" width="120"/>	
 				<p field="order_no" title="订单号" width="190"/>			
 				<p field="total" title="总金额" width="100"/>
@@ -46,18 +65,37 @@
 				<p field="intr" title="备注" width="200" />
 				<p field="sendTime" title="发货日期" width="180"/>
 				<p field="createTime" title="提交日期" width="180"/>
-				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="80"/>
+				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="150"/>
 			</div>
-
+			<script type="text/html" id="address">
+				{{d.province}}{{d.city}}{{d.area}}{{d.address}}
+			</script>
 			<script type="text/html" id="jietu">
 				{{# if(d.image == ''){ }}
 				-
 				{{# }else{ }}
 				<a href="{{d.image}}" target="_blank"><i class="layui-icon">&#xe64a;</i></a>
 				{{# } }}				
-			</script>			
+			</script>
+			<script type="text/html" id="front">
+				{{# if(d.front == ''){ }}
+				-
+				{{# }else{ }}
+				<a href="{{d.front}}" target="_blank"><i class="layui-icon">&#xe64a;</i></a>
+				{{# } }}				
+			</script>
+			<script type="text/html" id="back">
+				{{# if(d.back == ''){ }}
+				-
+				{{# }else{ }}
+				<a href="{{d.back}}" target="_blank"><i class="layui-icon">&#xe64a;</i></a>
+				{{# } }}				
+			</script>
 			<script type="text/html" id="barDemo">
  				<a class="layui-btn layui-btn-xs" href="{:U("Order/baoguo")}?id={{d.id}}">详情</a>
+ 				{{# if(d.payType==4){ }}
+				<input type="checkbox" value="{{d.id}}" lay-skin="switch" lay-text="已复查|未复查" lay-filter="status" {{ d.status == 1 ? 'checked' : ''}} />	
+				{{# } }} 
 			</script>
 	    </div>
 	</div>
@@ -66,14 +104,14 @@
 layui.use('table', function(){
 	form = layui.form; 
 	//监听性别操作
-	form.on('switch(payStatus)', function(obj){
-		url = '{:U('Order/status')}';
+	form.on('switch(status)', function(obj){
+		url = '{:U('order/status')}';
 		var id = this.value;
 		var v = 0
 		if (obj.elem.checked){
 			v = 1;
 		} 
-		$.post(url, {id: this.value,field:"payStatus",val:v}, function (data) {console.log(data);}, "json");
+		$.post(url, {id: this.value,val:v}, function (data) {console.log(data);}, "json");
 	});
 });
 </script>

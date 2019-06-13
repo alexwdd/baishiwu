@@ -5,13 +5,17 @@ class OrderController extends CommonController {
 	#列表
 	public function index() {
 		if (IS_POST) {
-			$status = I('post.status');
+	        $status = I('post.status');        
 	        $account = I('post.account');
+	        $payType = I('post.payType');
 	        $order_no = I('post.order_no');
 	        $createDate = I('post.createDate');
 	        
 	        if ($status!='') {
 	            $map['payStatus'] = $status;
+	        }
+	        if ($payType!='') {
+	            $map['payType'] = $payType;
 	        }
 	        if ($account!='') {
 	            $map['name|mobile'] = $account;
@@ -27,7 +31,7 @@ class OrderController extends CommonController {
 	        }
 	        $map['del'] = 0;
 			$map['agentID'] = $this->user['id'];
-			$obj = M('Order');
+			$obj = M('DgOrder');
             $total = $obj->where($map)->count();
             $pageSize = I('post.pageSize',20);
 
@@ -40,18 +44,9 @@ class OrderController extends CommonController {
 
             $list = $obj->where($map)->order($field.' '.$order)->limit($firstRow.','.$pageSize)->select();
             foreach ($list as $key => $value) {
-                $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
-                $list[$key]['updateTime'] = date("Y-m-d H:i:s",$value['updateTime']);
-
-                if ($value['card']>0) {
-	                $list[$key]['pay'] = M("Card")->where('id='.$value['card'])->getField("name");
-	            }else{
-	                if ($value['payType']==1) {
-	                    $list[$key]['pay'] = '支付宝';
-	                }else{
-	                    $list[$key]['pay'] = '微信支付';
-	                }
-	            }
+                $list[$key]['pay'] = getPayType($value['payType']);
+                $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where('orderID',$value['id'])->count();
+                $list[$key]['lirun'] = $value['total']-$value['inprice']-$value['wuliuInprice'];
             }
             $result = array(
                 'data'=>array(
@@ -96,7 +91,7 @@ class OrderController extends CommonController {
 			if (!isset ($id)) {
 				$this->error('参数错误');
 			}
-			$obj = M('Order');
+			$obj = M('DgOrder');
 			$map['del'] = 0;
 			$map['id'] = $id;
 			$map['agentID'] = $this->user['id'];
@@ -104,83 +99,224 @@ class OrderController extends CommonController {
 			if (!$list) {
 				$this->error('信息不存在');
 			}else{
-				$list['baoguo'] = M('OrderBaoguo')->where(array('orderID'=>$list['id']))->select();
-	            foreach ($list['baoguo'] as $key => $value) {
-	                $goods = M('OrderDetail')->where(array('baoguoID'=>$value['id']))->select();
-	                foreach ($goods as $k => $v) {
-	                    if ($v['server']!='') {
-	                        $serverID = explode(",",$v['server']);
-	                        unset($map);
-	                        $map['id'] = array('in',$serverID);
-	                        $server = M("server")->where($map)->select();           
-	                        $goods[$k]['serverArr'] = $server;
+				$goods = M("DgOrderDetail")->field('*,sum(number) as num')->where(array('orderID'=>$list['id']))->group('itemID')->select(); 
+				foreach ($goods as $key => $value) {
+	                $item = M('DgGoodsIndex')->where(array('id'=>$value['itemID']))->find(); 
+	                if ($value['server']!='') {
+	                    $serverID = explode(",",$value['server']);
+	                    unset($map);
+	                    $map['id'] = array('in',$serverID);
+	                    $server = M("server")->field('short,price')->where($map)->select();
+	                    $goods[$key]['server'] = $server;
+	                }else{
+	                    $goods[$key]['server'] = null;
+	                }  
+	            }
+            	$this->assign('goods',$goods);
+
+				$person = M("DgOrderPerson")->where(array('orderID'=>$list['id']))->select();
+	            foreach ($person as $key => $value) {
+	                $baoguo = M('DgOrderBaoguo')->where(array('personID'=>$value['id']))->select();
+	                foreach ($baoguo as $k => $val) {
+	                    $baoguo[$k]['goods'] = M('DgOrderDetail')->where(array('baoguoID'=>$val['id']))->select();
+	                    if($val['image']){
+	                        $baoguo[$k]['image'] = explode(",", $val['image']);
+	                    }
+	                    if($val['eimg']){
+	                        $baoguo[$k]['eimg'] = explode(",", $val['eimg']);
 	                    }
 	                }
-	                $list['baoguo'][$key]['goods'] = $goods;
-	                $wuliu = M('OrderWuliu')->where(array('baoguoID'=>$value['id']))->select();
-	                foreach ($wuliu as $k => $v) {
-	                	if ($v['image']!='') {
-	                		$wuliu[$k]['image'] = explode(",", $v['image']);
-	                	}
-	                }
-	                $list['baoguo'][$key]['wuliu'] = $wuliu;
+	                $person[$key]['baoguo'] = $baoguo;
+	            }            
+	            $this->assign('person',$person);
+
+	            if ($list['discount']=='0' || $list['discount']=='') {
+	            	$list['discount'] = '无';
 	            }
-				$this->assign('list', $list);
+	            $this->assign('list',$list);
 				$this->display();
 			}
 		}
 	}
 
-	public function addwuliu(){
-		if (IS_POST) {
-			$data = I('post.');
-            $this->all_add("OrderWuliu",U('order/baoguo',['id'=>$data['orderID']]));
+	public function wuliu(){
+		if(IS_POST){			
+			$id = I("post.id");
+			$data['kdNo'] = I("post.kdNo");
+			$data['eimg'] = I("post.eimg");
+			$data['image'] = I("post.image");
+			#$data['flag'] = I("post.flag");
+			$orderID = I("post.orderID");
+
+			if ($id=='') {
+	            $this->error('参数错误');
+	        }
+	        if ($data['kdNo']=='') {
+	            $this->error('请输入运单号');
+	        }else{
+	        	$data['kdNo'] = str_replace("，",",",$data['kdNo']);
+	        }
+	        $map['id'] = $id;
+	        if ($data['image']) {
+	        	$data['flag'] = 1;
+	        }else{
+	        	$data['flag'] = 0;
+	        }
+	        $res = M('DgOrderBaoguo')->where($map)->save($data);
+	        if ($res) {
+	        	if ($data['flag']==1) {
+	        		$where['orderID'] = $orderID;
+		        	$where['flag'] = 0;
+		        	$count = M("DgOrderBaoguo")->where($where)->count();
+		        	if ($count==0) {
+		        		unset($map);
+		        		$map['id'] = $orderID;
+		        		$map['payStatus'] = array('in',[2,3]);
+		        		M("DgOrder")->where($map)->setField("payStatus",4);
+		        	}
+	        	}
+	        }
+	        $this->success("操作成功");
 		}else{
-			$id = I('get.id');
-			if ($id=='' || !is_numeric($id)) {
-				$this->error('参数错误');
+			$id = I("id");
+			$map['id'] = $id;
+			$list = M("DgOrderBaoguo")->where($map)->find();
+			if (!$list) {
+				$this->error("信息不存在");
 			}
-			$map['agentID'] = $this->user['id'];
-			$wuliu = M('Wuliu')->where($map)->select();
-			$this->assign('wuliu', $wuliu);
-			$this->assign('id', $id);
-			$this->assign('orderID', I('param.orderID'));
-			$this->display();
-		}
-	}
-
-	public function editwuliu(){
-		if (IS_POST) {
-			$data = I('post.');
-            $this->all_save("OrderWuliu",U('order/baoguo',['id'=>$data['orderID']]));
-		}else{
-			$id = I('get.id');
-			if ($id=='' || !is_numeric($id)) {
-				$this->error('参数错误');
-			}
-			$list = M("OrderWuliu")->where(array('id'=>$id))->find();
-
-			$map['agentID'] = $this->user['id'];
-			$wuliu = M('Wuliu')->where($map)->select();
-			$this->assign('wuliu', $wuliu);
-
-			if ($list['image']) {
-                $image = explode(",", $list['image']);
-            }else{
-            	$image = [];
+			if ($list['eimg']) {
+            	$list['eimg'] = explode(",", $list['eimg']);
             }
-			$this->assign('image', $image);
-			$this->assign('list', $list);
-			$this->assign('orderID', I('param.orderID'));
+			if ($list['image']) {
+            	$list['image'] = explode(",", $list['image']);
+            }
+			$this->assign('list',$list);
 			$this->display();
 		}
 	}
 
-	public function delwuliu(){
-		$id = I('get.id');
-        $map['id'] = $id;
-        M('OrderWuliu')->where($map)->delete();
-        header('Location:'.$_SERVER['HTTP_REFERER']);
+	public function image(){
+        //获取要下载的文件名
+        $filename = '.'.I('img');
+        //设置头信息
+        header('Content-Disposition:attachment;filename=' . basename($filename));
+        header('Content-Length:' . filesize($filename));
+        //读取文件并写入到输出缓冲
+        readfile($filename);
+    }
+
+	//创建运单
+	public function create(){
+		if (request()->isPost()) {
+			$id = I("post.id");
+			if ($id=="" || !is_numeric($id)) {
+				$this->error("参数错误");
+			}
+			$map['id']=$id;
+			$list = M("OrderBaoguo")->where($map)->find();
+			if (!$list) {
+				$this->error("信息不存在");
+			}
+			$res = $this->createSingleOrder($list);
+			if ($res['code']==1) {
+				M("DgOrderBaoguo")->where($map)->setField('kdNo',$res['msg']);
+				$this->success("操作成功，运单号：".$res['msg']);
+			}else{
+				$this->error($res['msg']);
+			}
+		}
+	}
+
+	public function uploadPhoto(){
+		if (request()->isPost()){
+			$id = I("post.id");
+			if ($id=="" || !is_numeric($id)) {
+				$this->error("参数错误");
+			}
+
+			$map['id']=$id;
+			$list = M("DgOrderBaoguo")->where($map)->find();
+			if (!$list) {
+				$this->error("信息不存在");
+			}
+			if ($list['kdNo']=='') {
+				$this->error("请先生成运单");
+			}
+			$order = M('DgOrder')->where(array('id'=>$list['orderID']))->find();
+
+			if ($order['front']=='' || $order['back']=='') {
+				$this->error("请先完善身份证信息");
+			}
+
+			$config = C("aue");
+			$token = $this->getAueToken();
+			$data = [
+				'OrderIds'=>[$list['kdNo']],
+				'ReceiverName'=>$order['name'],
+				'ReceiverPhone'=>$order['mobile'],
+				'PhotoID'=>$order['sn'],
+				'PhotoFront'=>base64EncodeImage('.'.$order['front']),
+				'PhotoRear'=>base64EncodeImage('.'.$order['back'])
+			];
+
+			$url = 'http://aueapi.auexpress.com/api/PhotoIdUpload';
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$token));
+			$result = curl_exec($ch);
+			$result = json_decode($result,true);
+			if ($result['Code']==0 && $result['ReturnResult']=='Success') {
+				M("OrderBaoguo")->where($map)->setField('snStatus',1);
+				$this->success("上传成功");
+			}else{
+				$this->error("操作失败");
+			}
+		}
+	}
+
+	public function mprint(){
+		$ids = I('get.ids');
+		$ids = explode(",",$ids);
+
+		$map['eimg'] = array('neq','');
+		$map['id'] = array('in',$ids);
+		M("OrderBaoguo")->where($map)->setField('print',1);
+
+		$list = M("OrderBaoguo")->where($map)->select();
+		$this->assign('list',$list);
+
+		unset($map);
+		$map['id'] = array('in',$ids);
+		$map['eimg'] = array('neq','');
+		$map['type'] = array('in',[1,2,3]);
+		$map['sign'] = array('eq','');
+		M("OrderBaoguo")->where($map)->save(['flag'=>1,'updateTime'=>time()]);
+
+
+		foreach ($list as $key => $value) {
+			unset($where);
+			$where['orderID'] = $value['orderID'];
+        	$where['print'] = 0;
+        	$printNumber = M("OrderBaoguo")->where($where)->count();//未打印总数
+
+        	unset($where);
+			$where['orderID'] = $value['orderID'];
+        	$where['flag'] = 0;
+        	$flagNumber = M("OrderBaoguo")->where($where)->count();//未发货总数
+
+
+        	unset($map);
+    		$map['id'] = $value['orderID'];
+    		$map['payStatus'] = array('in',[2,3]);
+        	if ($flagNumber==0 && $printNumber==0) {
+        		M("Order")->where($map)->setField("payStatus",4);
+        	}elseif($printNumber==0){
+	        	M("Order")->where($map)->setField("payStatus",3);
+        	}
+		}
+		$this->display();
 	}
 
 	#删除

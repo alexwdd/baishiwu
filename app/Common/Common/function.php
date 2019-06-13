@@ -38,6 +38,17 @@ function fix_number_precision($data, $precision = 2)
     return $data;
 }
 
+//获取中邮快递ID
+function getBrandID($type){
+    if ($type==1 || $type==2 || $type==3) {
+        return 1;
+    }
+    if ($type==5) {
+        return 2;
+    }
+    return 3;
+}
+
 //获取中邮快递名称
 function getBrandName($type){
     if ($type==1 || $type==2 || $type==3) {
@@ -116,6 +127,23 @@ function getPayStatus($v){
             break;
         case 1:
             return '<span class="green">已付款</span>';
+            break;
+    }
+}
+
+function getPayType($v){
+    switch ($v) {
+        case 0:
+            return '-';
+            break;
+        case 1:
+            return '支付宝';
+            break;
+        case 2:
+            return '微信';
+            break;
+        case 3:
+            return '银行卡';
             break;
     }
 }

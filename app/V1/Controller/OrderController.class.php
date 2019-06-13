@@ -111,7 +111,7 @@ class OrderController extends CommonController {
     }
 
     //订单详情
-    public function orderInfo(){
+    public function detail(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             
@@ -125,6 +125,8 @@ class OrderController extends CommonController {
             if (!$list) {
                 returnJson('-1','不存在的订单');
             }
+            $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
+            $list['payType'] = getPayType($list['payType']);
 
             $person = M("DgOrderPerson")->where(array('orderID'=>$list['id']))->select();
             foreach ($person as $key => $value) {
@@ -132,18 +134,27 @@ class OrderController extends CommonController {
                 foreach ($baoguo as $k => $val) {
                     $baoguo[$k]['goods'] = M('DgOrderDetail')->where(array('baoguoID'=>$val['id']))->select();
                     if($val['eimg']){
-                        $baoguo[$k]['eimg'] = explode(",", $val['eimg']);
+                        $temp = explode(",", $val['eimg']);
+                        foreach ($temp as $key => $value) {
+                            $temp[$key] = getRealUrl($value);
+                        }
+                        $baoguo[$k]['eimg'] = $temp;
                     }
                     if($val['image']){
-                        $baoguo[$k]['image'] = explode(",", $val['image']);
+                        $temp = explode(",", $val['image']);
+                        foreach ($temp as $key => $value) {
+                            $temp[$key] = getRealUrl($value);
+                        }
+                        $baoguo[$k]['image'] = $temp;
                     }
                 }
                 $person[$key]['baoguo'] = $baoguo;
             }
 
-            $goods = M("DgOrderDetail")->field('itemID,price,server,trueNumber,extends,sum(number) as num')->where(array('orderID'=>$list['id']))->group('itemID')->select(); 
+            $goods = M("DgOrderDetail")->field('itemID,price,server,trueNumber,extends,sum(number) as num')->where(array('orderID'=>$list['id']))->group('itemID')->select();    
             foreach ($goods as $key => $value) {
-                $item = M('DgGoodsIndex')->where(array('id'=>$value['itemID']))->find(); 
+                $item = M('DgGoodsIndex')->where(array('id'=>$value['itemID']))->find();
+                $item['picname'] = getRealUrl($item['picname']);
                 if ($value['server']!='') {
                     $serverID = explode(",",$value['server']);
                     unset($map);
@@ -158,6 +169,27 @@ class OrderController extends CommonController {
                 $goods[$key]['money'] = $value['price']*($value['num']/$item['number']);
             }
             returnJson(0,'success',['goods'=>$goods,'person'=>$person,'order'=>$list]);
+        }
+    }
+
+    public function del(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $id = I('post.id');
+            $map['id'] = $id;
+            $map['memberID'] = $this->user['id'];
+            $map['payStatus'] = 0;
+            $map['image'] = array('eq','');    
+            $list = M('DgOrder')->where($map)->find();
+            if ($list) {
+                M('DgOrder')->where(array('id'=>$id))->delete();
+                M('DgOrderBaoguo')->where(array('orderID'=>$id))->delete();
+                M('DgOrderPerson')->where(array('orderID'=>$id))->delete();
+                M('DgOrderDetail')->where(array('orderID'=>$id))->delete();
+                returnJson(0,'success');
+            }else{
+                returnJson('-1','操作失败');
+            }
         }
     }
 }

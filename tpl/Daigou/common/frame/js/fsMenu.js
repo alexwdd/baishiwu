@@ -41,7 +41,14 @@ layui.define(['element',"fsConfig","fsCommon"], function(exports){
 				/*{"menuId":"119","menuName":"包裹类型","menuIcon":"","menuHref":"/index.php?m=Daigou&c=baoguo&a=index","parentMenuId":"11"},
 				{"menuId":"120","menuName":"贴心服务","menuIcon":"","menuHref":"/index.php?m=Daigou&c=server&a=index","parentMenuId":"11"},*/
 
-				{"menuId":"linkageDatagrid2","menuName":"订单管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"}	
+				{"menuId":"121","menuName":"待审核","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order1&a=index","parentMenuId":"12"},
+				{"menuId":"122","menuName":"待付款","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order2&a=index","parentMenuId":"12"},
+				{"menuId":"123","menuName":"已付款","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order3&a=index","parentMenuId":"12"},
+				{"menuId":"124","menuName":"已发货","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order4&a=index","parentMenuId":"12"},
+				{"menuId":"125","menuName":"取消订单","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order5&a=index","parentMenuId":"12"},
+				{"menuId":"126","menuName":"历史订单","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
+				{"menuId":"127","menuName":"包裹定位","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
+				{"menuId":"128","menuName":"每日结算","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
 			] //本地数据
 	};
 

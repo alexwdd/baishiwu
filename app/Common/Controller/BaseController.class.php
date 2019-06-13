@@ -101,7 +101,151 @@ class BaseController extends Controller{
         }
     }  
 
-    public function https_post($url,$data = null){
+    public function getAueToken(){
+        if (S("aueToken")) {
+            return S("aueToken");
+        }else{
+            $url = 'http://auth.auexpress.com/api/token';
+            $data = C('aue');
+            $res = $this->https_post($url,$data,true);
+            $res = json_decode($res,true);   
+            if ($res['Token']) {
+                $token = $res['Token'];
+                S("aueToken",$token,7200);
+                return $token;
+            }else{
+                return '';
+            }           
+        }
+    }
+
+    public function saveAuePng($orderNo){        
+        $token = $this->getAueToken();
+        $url = 'http://aueapi.auexpress.com/api/OrderLabelPrint?orderId='.$orderNo.'&printMode=1&fileType=0&fontSize=0';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$token));
+        $res = curl_exec($ch);
+        if ($res=='') {
+            return '';
+        }else{
+            $path = C('UPLOAD_PATH').'order/'.date("Ymd").'/'.$orderNo.'.png';
+            $filename = '.'.$path;   // 文件保存路径
+            $this->createDir(dirname($filename));
+            $fp= @fopen($filename,"w"); 
+            fwrite($fp,$res);
+            return $path;
+        }        
+    }
+
+    public function createSingleOrder($order){
+        $goods = M("OrderDetail")->where(array('baoguoID'=>$order['id']))->select();
+        $content = '';
+        foreach ($goods as $k => $val) {
+            if ($val['extends']!='') {
+                $goodsName = $val['short'].'['.$val['extends'].']';
+            }else{
+                $goodsName = $val['short'];
+            }
+            if ($k==0) {
+                $content .= $goodsName.'*'.$val['trueNumber'];
+            }else{
+                $content .= ";".$goodsName.'*'.$val['trueNumber'];
+            }
+        }
+
+        $brandID = getBrandID($order['type']);
+        $config = C("aue");
+        $data = [
+            'MemberId'=>$config['MemberId'],
+            'BrandId'=>$brandID,
+            'SenderName'=>$order['sender'],
+            'SenderPhone'=>$order['senderMobile'],
+            'ReceiverName'=>$order['name'],
+            'ReceiverPhone'=>$order['mobile'],
+            'ReceiverProvince'=>$order['province'],
+            'ReceiverCity'=>$order['city'],
+            'ReceiverAddr1'=>$order['area'].$order['address'],
+            'ChargeWeight'=>0,
+            'Value'=>0,
+            'ShipmentContent'=>$content
+        ];
+
+        $note = '';
+        if ($order['serverIds']) {
+            $ids = explode(",",$order['serverIds']);
+            $where['id'] = array('in',$ids);
+            $server = M("Server")->field('id,short')->where($where)->select();
+            foreach ($server as $k => $val) {
+                if ($val['short']!="") {
+                    if ($val['id']==2 && $order['sign']) {
+                        $note .='['.$order['sign'].']';
+                    }else{
+                        $note .= '['.$val['short'].']';
+                    }
+                }                                   
+            }
+        }
+        $data['Notes'] = $note;
+        $token = $this->getAueToken();
+        $url = 'http://aueapi.auexpress.com/api/AgentShipmentOrder/Create';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,'['.json_encode($data).']');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$token));
+        $result = curl_exec($ch);
+        $result = json_decode($result,true);    
+
+        if ($result['Message']=='Authentication failed, invalid token.') {
+            Cache::rm('aueToken');  
+        }
+
+        if ($result['Code']==0 && $result['Message']!='' && $result['Message']!='Authentication failed, invalid' && $result['Message']!='Authentication failed, invalid token.') {
+            $update = [
+                'kdNo'=>$result['Message']
+            ];
+            M("OrderBaoguo")->where(array('id'=>$order['id']))->save($update);
+            return ['code'=>1,'msg'=>$result['Message']];
+        }else{
+            return ['code'=>0,'msg'=>$result['Errors'][0]['Message']];
+        }
+    }
+
+    public function createDir($path){ 
+        if (!file_exists($path)){ 
+            $this->createDir(dirname($path)); 
+            mkdir($path, 0777); 
+        } 
+    }
+
+    public function https_post($url,$data = null,$json = false){
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_SSLVERSION, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+        if (!empty($data)) {
+            if ($json && is_array($data)) {
+                $data = json_encode($data);
+            }
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);            
+            if ($json) {//发送JSON数据
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            }
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);       
+        return $output;
+    } 
+
+    public function https_post1111($url,$data = null){
         $ch = curl_init();
         $header = "Accept-Charset: utf-8";
         curl_setopt($ch, CURLOPT_URL, $url);

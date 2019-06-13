@@ -16,7 +16,7 @@ if(IS_WIN){
 	'DEFAULT_MODULE'        =>  'V1',
 
 	//预载入配置文件
-	'LOAD_EXT_CONFIG' 		=> 'db,ueditor,upfile,route,cache,finance,api,pay',
+	'LOAD_EXT_CONFIG' 		=> 'db,ueditor,upfile,route,cache,finance,api,pay,aue',
 
 	//输入字符预处理
 	'DEFAULT_FILTER' => 'htmlspecialchars,trim,inject_replace',

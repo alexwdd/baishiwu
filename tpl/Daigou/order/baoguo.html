@@ -286,12 +286,12 @@ $(function(){
 			data = {id:id};
 			$.post("{:U('order/create')}",data,function(res){
 				layer.close(load);
-				if (res.code==1){
-					layer.alert(res.msg,function(){
+				if (res.status==1){
+					layer.alert(res.info,function(){
 						window.location.reload();
 					});
 				}else{
-					layer.alert(res.msg);
+					layer.alert(res.info);
 				}
 			},"json")
 		})
@@ -305,12 +305,12 @@ $(function(){
 			data = {id:id};
 			$.post("{:U('order/uploadPhoto')}",data,function(res){
 				layer.close(load);
-				if (res.code==1){
-					layer.alert(res.msg,function(){
+				if (res.status==1){
+					layer.alert(res.info,function(){
 						window.location.reload();
 					});
 				}else{
-					layer.alert(res.msg);
+					layer.alert(res.info);
 				}
 			},"json")
 		})

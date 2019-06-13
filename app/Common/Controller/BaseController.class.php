@@ -140,7 +140,7 @@ class BaseController extends Controller{
     }
 
     public function createSingleOrder($order){
-        $goods = M("OrderDetail")->where(array('baoguoID'=>$order['id']))->select();
+        $goods = M("DgOrderDetail")->where(array('baoguoID'=>$order['id']))->select();
         $content = '';
         foreach ($goods as $k => $val) {
             if ($val['extends']!='') {
@@ -206,7 +206,7 @@ class BaseController extends Controller{
             $update = [
                 'kdNo'=>$result['Message']
             ];
-            M("OrderBaoguo")->where(array('id'=>$order['id']))->save($update);
+            M("DgOrderBaoguo")->where(array('id'=>$order['id']))->save($update);
             return ['code'=>1,'msg'=>$result['Message']];
         }else{
             return ['code'=>0,'msg'=>$result['Errors'][0]['Message']];

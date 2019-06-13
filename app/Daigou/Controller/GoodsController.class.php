@@ -196,5 +196,38 @@ class GoodsController extends CommonController {
             M("DgGoodsIndex")->where(array('id'=>I('post.id')))->delete();
         }
     }
+
+    public function import(){
+        if (IS_POST) {
+            set_time_limit(0);
+            ini_set("memory_limit", "512M"); 
+            
+            $file = I('post.excel');
+            import("Common.ORG.PHPExcel");
+            $objReader = \PHPExcel_IOFactory::createReader ( 'Excel5' );
+            $objReader->setReadDataOnly(true);
+            $objPHPExcel = $objReader->load('.'.$file);
+            $sheet = $objPHPExcel->getSheet(0); // 读取第一個工作表
+            $highestRow = $sheet->getHighestRow(); // 取得总行数
+            $highestColumm = $sheet->getHighestColumn(); // 取得总列数
+
+            //$highestColumm= PHPExcel_Cell::columnIndexFromString($highestColumm); //字母列转换为数字列 如:AA变为27
+            $obj = M('DgGoodsIndex');
+            $obj1 = M('DgGoods');
+            $total = 0;
+            $error = '';
+            for ( $i = 2; $i <= $highestRow; $i++) {
+                $agsID = trim($sheet->getCellByColumnAndRow(0, $i)->getValue());
+                $price = trim($sheet->getCellByColumnAndRow(1, $i)->getValue());         
+                $obj->where(array('agsID'=>$agsID))->setField('price',$price);
+                $obj1->where(array('agsID'=>$agsID))->setField('price',$price);
+            }
+            
+            $msg = '共'.($highestRow-1).'条数据，成功导入'.$total.'条，错误信息'.$error;
+            $this->success($msg);
+        }else{
+            $this->display();
+        }
+    }   
 }
 ?>

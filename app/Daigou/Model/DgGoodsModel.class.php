@@ -63,6 +63,7 @@ class DgGoodsModel extends Model {
         // 商品规格价钱处理
         $spec_id = I("post.spec_id/a");
         $spec_name = I("post.spec_name/a");
+        $spec_agsID = I("post.spec_agsID/a");
         $spec_short = I("post.spec_short/a");
         $spec_cid = I("post.spec_cid/a");
         $spec_cid1 = I("post.spec_cid1/a");
@@ -75,6 +76,7 @@ class DgGoodsModel extends Model {
         $spec_data = array();   
         $baseData = array(
             'agentID' => $data['agentID'],
+            'agsID'=>$data['agsID'],
             'cid' => $data['cid'],
             'path' => $data['path'],
             'cid1' => $data['cid1'],
@@ -112,6 +114,7 @@ class DgGoodsModel extends Model {
                 }
                 $temp = $baseData;
                 $temp['base'] = 0;
+                $temp['agsID'] = $spec_agsID[$i];
                 $temp['cid'] = $scid[0];
                 $temp['path'] = $scid[1];
                 $temp['cid1'] = $scid1[0];
@@ -140,6 +143,7 @@ class DgGoodsModel extends Model {
         $spec_cid = I("post.spec_cid/a");
         $spec_cid1 = I("post.spec_cid1/a");
         $spec_name = I("post.spec_name/a");
+        $spec_agsID = I("post.spec_agsID/a");
         $spec_short = I("post.spec_short/a");
         $spec_price = I("post.spec_price/a");
         $spec_number = I("post.spec_number/a");
@@ -148,7 +152,7 @@ class DgGoodsModel extends Model {
         $spec_show = I("post.spec_show/a");
 
         $baseData = array(
-            'agentID'=>$data['agentID'],
+            'agsID'=>$data['agsID'],
             'cid' => $data['cid'],
             'path' => $data['path'],
             'cid1' => $data['cid1'],
@@ -184,6 +188,7 @@ class DgGoodsModel extends Model {
                 }
                 $temp = $baseData;
                 $temp['base'] = 0;
+                $temp['agsID'] = $spec_agsID[$i];
                 $temp['cid'] = $scid[0];
                 $temp['path'] = $scid[1];
                 $temp['cid1'] = $scid1[0];

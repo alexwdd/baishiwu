@@ -19,6 +19,17 @@ layui.fsDict = {
 		]
 	},
 
+	print : {
+		formatType : "local",
+		labelField : "name",
+		valueField : "value",
+		//静态数据
+		data:[
+			{"value":0,"name":"未打印"},
+			{"value":1,"name":"已打印","style":"color:blue;"}
+		]
+	},
+
 	//商品状态
 	goodsShow : {
 		formatType : "local",

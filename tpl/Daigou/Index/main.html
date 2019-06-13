@@ -1,52 +1,118 @@
 <layout name='layout' />
 
+<style type="text/css">
+.echart{width: 100%; height: 400px}
+body{background: #f1f1f1}
+.bar{width: 100%; height:6px;background: #e2e2e2; border-radius:3px}
+.bar span{height:6px; border-radius:6px; display: block; float: left; background: #1E9FFF}
+</style>
 <div class="admin-main">
-	<fieldset class="layui-elem-field layui-field-title">
-	  <legend>系统信息</legend>
-	</fieldset>  
-	<div class="layui-tab-content">
-        <div class="count">
-            <li>
-                <div class="countItem">
-                    <label>今日订单</label>
-                    <p><span>{$count.number1}</span></p>
+    <div class="layui-row">
+        <p style="text-align: center; margin-bottom: 10px">
+        <button type="button" class="layui-btn" onclick="window.location.reload()">刷新页面</button>
+        </p>
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">系统信息</div>
+                <div class="layui-card-body">
+                    <div class="count">
+                        <li>
+                            <label>今日订单</label>
+                            <p><span>${$count.order1|default="0"}</span></p>
+                        </li> 
+                        <li>
+                            <label>本月订单</label>
+                            <p><span>${$count.order2|default="0"}</span></p>
+                        </li>   
+                    </div>
                 </div>
-                <div class="countItem">
-                    <label>本月订单</label>
-                    <p><span>{$count.number2}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>上月订单</label>
-                    <p><span>{$count.number3}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>本年订单</label>
-                    <p><span>{$count.number4}</span></p>
-                </div>
-            </li>  
-
-            <li>
-                <div class="countItem">
-                    <label>总订单</label>
-                    <p><span>{$count.order}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>待付款</label>
-                    <p><span>{$count.order1}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>待确认</label>
-                    <p><span>{$count.order2}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>已付款</label>
-                    <p><span>{$count.order3}</span></p>
-                </div>
-                <div class="countItem">
-                    <label>已发货</label>
-                    <p><span>{$count.order4}</span></p>
-                </div>
-            </li>      
-        </div>   
+            </div>
+        </div>
     </div>
+
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">本月销量</div>
+                <div class="layui-card-body">
+                    <div id="month" class="echart"></div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">年度销量</div>
+            <div class="layui-card-body">
+                <div id="year" class="echart"></div>
+            </div>
+        </div>            
+    </div> 
 </div>
+
+<script src="{:RES}/echarts/echarts.min.js"></script>
+<script type="text/javascript">
+var monthChart = echarts.init(document.getElementById("month"));
+var yearChart = echarts.init(document.getElementById("year"));
+var app = {};
+option = {
+    grid: {  
+        left: '20',  
+        right: '20',  
+        top: '20',  
+        bottom: '20',  
+        containLabel: true  
+    },
+    xAxis: {
+        type: 'category',
+        data: [{$monthData.date}]
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'当天销量',
+            type:'line',
+            stack: '金额',
+            data:[{$monthData.money}]
+        }
+    ]
+};
+
+option1 = {
+    grid: {  
+        left: '20',  
+        right: '20',  
+        top: '20',  
+        bottom: '20',  
+        containLabel: true  
+    },
+    xAxis: {
+        type: 'category',
+        data: [{$yearData.date}]
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            name:'当月销量',
+            type:'bar',
+            stack: '金额',
+            data:[{$yearData.money}]
+        }
+    ]
+};
+if (option && typeof option === "object") {
+    monthChart.setOption(option, true);
+    yearChart.setOption(option1, true);
+}
+</script>

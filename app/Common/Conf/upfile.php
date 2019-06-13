@@ -6,6 +6,6 @@ return array (
 	'THUMB_HEIGHT' => 150, //缩略图高度
 	'IMAGE_MAX_WIDTH' => 800,  //图片最大宽度
 
-  	'image_exts' => 'jpg,png,bmp,jpeg,gif,mp4',
+  	'image_exts' => 'jpg,png,bmp,jpeg,gif,mp4,xls',
   	'image_size' => 10, //单位兆
 );

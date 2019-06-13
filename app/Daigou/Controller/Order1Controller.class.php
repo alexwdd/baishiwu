@@ -71,6 +71,7 @@ class Order1Controller extends CommonController {
         	$map['id'] = array('in',$id);
         	$res = M('DgOrder')->where($map)->setField('payStatus',2);
             if($res){
+                unset($map);
                 $map['orderID'] = array('in',$id);
                 M("DgOrderBaoguo")->where($map)->setField('status',1);
                 $detail = M("DgOrderDetail")->where($map)->select();

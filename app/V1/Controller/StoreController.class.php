@@ -11,7 +11,8 @@ class StoreController extends CommonController {
         parent::_initialize();
         $token = I('post.token');
         if (!$user = $this->checkToken($token)) {
-            returnJson('999','登录超时'); 
+            //returnJson('999','登录超时'); 
+            $this->user = ['id'=>0];
         }else{
             $this->user = $user;
         }
@@ -103,7 +104,7 @@ class StoreController extends CommonController {
                 $next = 0;
             }
 
-            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('sort asc,id desc')->select();  
+            $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('sort asc,id desc')->select();
             foreach ($list as $k => $value) {
                 $list[$k]['picname'] = getRealUrl($value['picname']);
                 $list[$k]['num'] = 0;
@@ -191,6 +192,9 @@ class StoreController extends CommonController {
 
     public function cart(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $map['memberID'] = $this->user['id'];
             $list = M("DgCart")->where($map)->order('typeID asc,number desc')->select();
@@ -251,6 +255,9 @@ class StoreController extends CommonController {
     //添加到购物车
     public function cartAdd(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             if(!checkFormDate()){returnJson('-1','ERROR');} 
             $goodsID = I('post.goodsID');
             $number = I('post.number');
@@ -322,6 +329,9 @@ class StoreController extends CommonController {
     //设置购物车数量
     public function setCartNumber(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $id = I('post.id');
 
@@ -351,6 +361,9 @@ class StoreController extends CommonController {
     //清空购物车
     public function cartClear(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             if(!checkFormDate()){returnJson('-1','ERROR');}       
             $count = M("DgCart")->where(array('memberID'=>$this->user['id']))->delete();
             returnJson(0,'success'); 
@@ -360,6 +373,9 @@ class StoreController extends CommonController {
     //删除购物车
     public function cartDel(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             if(!checkFormDate()){returnJson('-1','ERROR');}           
             $id = I('post.id');
 
@@ -494,6 +510,9 @@ class StoreController extends CommonController {
     //创建订单
     public function create(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             $kid = I("post.kid");
             if ($kid=='' || !is_numeric($kid)) {
                 returnJson('-1','参数错误');
@@ -543,6 +562,10 @@ class StoreController extends CommonController {
     //保存订单
     public function doSubmit(){
         if (!IS_POST) {die;}
+        if($this->user['id']==0){
+            returnJson('999','请先登录');
+        }
+
         $rate = $this->agent['huilv'];
         if ($rate=='') {
             returnJson('-1','无法获得当前汇率');
@@ -718,6 +741,9 @@ class StoreController extends CommonController {
 
     public function orderInfo(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             $order_no = I('post.order_no');
             $map['order_no'] = $order_no;
             $map['memberID'] = $this->user['id'];
@@ -747,6 +773,9 @@ class StoreController extends CommonController {
 
     public function getCard(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             $map['agentID'] = $this->agent['id'];
             $list = M('Card')->where($map)->select();
             returnJson(0,'success',$list);
@@ -755,6 +784,9 @@ class StoreController extends CommonController {
 
     public function cardPay(){
         if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
             $data['image'] = I("post.image");
             $id = I("post.id");
             $data['cardID'] = I("post.cardID");

@@ -5,7 +5,7 @@ class UploadController extends CommonController{
 
  	#图片上传
  	public function image(){
- 		$water = I('get.water')?I('get.water'):1;
+  		$water = I('get.water')?I('get.water'):1;
  		$thumb = I('get.thumb')?I('get.thumb'):1;
  		$resault = $this->_saveimage("images",$water,$thumb);
  		$this->ajaxReturn($resault);
@@ -77,6 +77,41 @@ class UploadController extends CommonController{
 		}else{
 			//是专门来获取上传的错误信息的	
 			return array('status'=>0,'info'=>$upload->getError());
+		}
+	}	
+
+	public function file(){
+		if(!checkRequest()){
+	        return array('state'=>'非法提交');
+	    }
+
+		$path = '.'.C('UPLOAD_PATH');
+	
+		if(!is_dir($path)){
+    		mkdir($path);
+		}
+		
+		$upload = new \Think\Upload();// 实例化上传类
+		$upload->rootPath = $path;
+		$upload->autoSub = true;
+		$upload->replace=true;     //如果存在同名文件是否进行覆盖
+		$upload->exts= explode(',',C('image_exts'));     //准许上传的文件后缀
+		$info = $upload->upload();	
+		if($info){
+			foreach($info as $file){
+				$filepath = C('UPLOAD_PATH').$file['savepath'];
+				$url = C('UPLOAD_PATH').$file['savepath'].$file['savename'];
+			}	
+			echo json_encode(array(
+	            'status'=>1,	            
+                'data'=>array(
+                    'url'=>$url
+                    )
+	               
+	        ));		
+		}else{
+			//是专门来获取上传的错误信息的	
+			echo json_encode(array('status'=>0,'info'=>$upload->getError()));
 		}
 	}	
 }

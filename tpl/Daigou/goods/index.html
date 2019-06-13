@@ -32,6 +32,10 @@
 			<button class="layui-btn layui-btn-sm layui-btn-danger" function="submit" method="post" url="{:U("Goods/del")}" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
 			  <i class="layui-icon">&#xe640;</i>批量删除
 			</button>
+
+			<button class="layui-btn layui-btn-sm" function="top" topUrl="{:U('goods/import')}" topWidth="80%" isMaximize="0" topHeight="80%" topTitle="AGS导入">AGS导入
+			</button>
+
 			<button class="layui-btn layui-btn-sm" function="refresh">
 			  <i class="layui-icon">&#xe669;</i>刷新
 			</button>
@@ -45,6 +49,7 @@
 	        <div class="fsDatagridCols">
 				<p checkbox="true"/>				
 				<p field="id" title="ID" width="80"/>
+				<p field="agsID" title="agsID" width="80"/>
 				<p field="name" title="名称" width="250"/>
 				<p field="short" title="短名称" width="150" templet="#short"/>
 				<p field="cate" title="分类" width="150"/>

@@ -47,8 +47,8 @@ layui.define(['element',"fsConfig","fsCommon"], function(exports){
 				{"menuId":"124","menuName":"已发货","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order4&a=index","parentMenuId":"12"},
 				{"menuId":"125","menuName":"取消订单","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order5&a=index","parentMenuId":"12"},
 				{"menuId":"126","menuName":"历史订单","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
-				{"menuId":"127","menuName":"包裹定位","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
-				{"menuId":"128","menuName":"每日结算","menuIcon":"","menuHref":"/index.php?m=Daigou&c=order&a=index","parentMenuId":"12"},
+				{"menuId":"127","menuName":"包裹定位","menuIcon":"","menuHref":"/index.php?m=Daigou&c=bag&a=index","parentMenuId":"12"},
+				{"menuId":"128","menuName":"每日结算","menuIcon":"","menuHref":"/index.php?m=Daigou&c=day&a=index","parentMenuId":"12"},
 			] //本地数据
 	};
 

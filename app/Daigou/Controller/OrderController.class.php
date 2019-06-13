@@ -45,8 +45,10 @@ class OrderController extends CommonController {
             $list = $obj->where($map)->order($field.' '.$order)->limit($firstRow.','.$pageSize)->select();
             foreach ($list as $key => $value) {
                 $list[$key]['pay'] = getPayType($value['payType']);
-                $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where('orderID',$value['id'])->count();
+                $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where(array('orderID'=>$value['id']))->count();
                 $list[$key]['lirun'] = $value['total']-$value['inprice']-$value['wuliuInprice'];
+                $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
+                $list[$key]['sendTime'] = date("Y-m-d",$value['sendTime']);
             }
             $result = array(
                 'data'=>array(
@@ -68,23 +70,32 @@ class OrderController extends CommonController {
 		if(IS_POST){
             $orderID = I('id'); 
             $sendTime = I('post.sendTime');
-            $chengben = I('post.chengben');
-            $status = I('post.status');
+            $total = I('post.total');
+            $payStatus = I('post.payStatus');
 	        $remark = I('post.remark');
 
-            $order['chengben'] = $chengben;
-            $order['status'] = $status;
-            if ($status>1) {
-            	$order['payStatus'] = 1;
-            }
+            $order['payStatus'] = $payStatus;
 	        $order['remark'] = $remark;
+	        if ($total>0) {
+	        	$order['total'] = $total;
+	        }
             if ($sendTime!='') {
             	$order['sendTime'] = strtotime($sendTime);
             }else{
             	$order['sendTime'] = 0;
             }
-            M('Order')->where(array('id'=>$orderID,'agentID'=>$this->user['id']))->save($order);
-
+            if ($payStatus==99) {
+            	$order['cancel'] = 1;
+            }
+            M('DgOrder')->where(array('id'=>$orderID,'agentID'=>$this->user['id']))->save($order);
+            if ($payStatus==99) {
+            	unset($map);
+            	$map['orderID'] = $orderID;
+            	$map['agentID'] = $this->user['id'];
+            	M('DgOrderPerson')->where($map)->setField('cancel',1);
+            	M('DgOrderDetail')->where($map)->setField('cancel',1);
+            	M('DgOrderBaoguo')->where($map)->setField('cancel',1);
+            }
             $this->success('操作成功',U('order/index')); 
         }else{
 			$id = I("get.id");
@@ -207,13 +218,13 @@ class OrderController extends CommonController {
 
 	//创建运单
 	public function create(){
-		if (request()->isPost()) {
+		if(IS_POST){
 			$id = I("post.id");
 			if ($id=="" || !is_numeric($id)) {
 				$this->error("参数错误");
 			}
 			$map['id']=$id;
-			$list = M("OrderBaoguo")->where($map)->find();
+			$list = M("DgOrderBaoguo")->where($map)->find();
 			if (!$list) {
 				$this->error("信息不存在");
 			}
@@ -228,7 +239,7 @@ class OrderController extends CommonController {
 	}
 
 	public function uploadPhoto(){
-		if (request()->isPost()){
+		if(IS_POST){
 			$id = I("post.id");
 			if ($id=="" || !is_numeric($id)) {
 				$this->error("参数错误");
@@ -268,7 +279,7 @@ class OrderController extends CommonController {
 			$result = curl_exec($ch);
 			$result = json_decode($result,true);
 			if ($result['Code']==0 && $result['ReturnResult']=='Success') {
-				M("OrderBaoguo")->where($map)->setField('snStatus',1);
+				M("DgOrderBaoguo")->where($map)->setField('snStatus',1);
 				$this->success("上传成功");
 			}else{
 				$this->error("操作失败");
@@ -282,9 +293,9 @@ class OrderController extends CommonController {
 
 		$map['eimg'] = array('neq','');
 		$map['id'] = array('in',$ids);
-		M("OrderBaoguo")->where($map)->setField('print',1);
+		M("DgOrderBaoguo")->where($map)->setField('print',1);
 
-		$list = M("OrderBaoguo")->where($map)->select();
+		$list = M("DgOrderBaoguo")->where($map)->select();
 		$this->assign('list',$list);
 
 		unset($map);
@@ -292,28 +303,28 @@ class OrderController extends CommonController {
 		$map['eimg'] = array('neq','');
 		$map['type'] = array('in',[1,2,3]);
 		$map['sign'] = array('eq','');
-		M("OrderBaoguo")->where($map)->save(['flag'=>1,'updateTime'=>time()]);
+		M("DgOrderBaoguo")->where($map)->save(['flag'=>1,'updateTime'=>time()]);
 
 
 		foreach ($list as $key => $value) {
 			unset($where);
 			$where['orderID'] = $value['orderID'];
         	$where['print'] = 0;
-        	$printNumber = M("OrderBaoguo")->where($where)->count();//未打印总数
+        	$printNumber = M("DgOrderBaoguo")->where($where)->count();//未打印总数
 
         	unset($where);
 			$where['orderID'] = $value['orderID'];
         	$where['flag'] = 0;
-        	$flagNumber = M("OrderBaoguo")->where($where)->count();//未发货总数
+        	$flagNumber = M("DgOrderBaoguo")->where($where)->count();//未发货总数
 
 
         	unset($map);
     		$map['id'] = $value['orderID'];
     		$map['payStatus'] = array('in',[2,3]);
         	if ($flagNumber==0 && $printNumber==0) {
-        		M("Order")->where($map)->setField("payStatus",4);
+        		M("DgOrder")->where($map)->setField("payStatus",4);
         	}elseif($printNumber==0){
-	        	M("Order")->where($map)->setField("payStatus",3);
+	        	M("DgOrder")->where($map)->setField("payStatus",3);
         	}
 		}
 		$this->display();
@@ -327,7 +338,7 @@ class OrderController extends CommonController {
         }else{
             $map['id'] = array('in',$id);
             $map['agentID'] = $this->user['id'];
-            $obj = M('Order');
+            $obj = M('DgOrder');
             $list = $obj->where($map)->setField('del',1);
             if ($list) {
                 $this->success('操作成功');

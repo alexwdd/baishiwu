@@ -11,7 +11,7 @@ class FeedbackController extends CommonController {
 				$map['title'] = array('like', '%'.$keyword.'%');
 			}
 			$map['agentID'] = $this->user['id'];
-			$obj = M('DaigouFeedback');
+			$obj = M('AgentFeedback');
 			$total = $obj->where($map)->count();
             $pageSize = I('post.pageSize',20);
 
@@ -58,7 +58,7 @@ class FeedbackController extends CommonController {
 			}
 			$map['id'] = $id;
 			$map['agentID'] = $this->user['id'];
-			$list = M('DaigouFeedback')->where($map)->save($data);
+			$list = M('AgentFeedback')->where($map)->save($data);
 			if ($list) {
 				$this->success('操作成功',U('Feedback/index'));
 			}else{
@@ -70,7 +70,7 @@ class FeedbackController extends CommonController {
 			if (!isset ($id)) {
 				$this->error('参数错误');
 			}
-			$obj = M('DaigouFeedback');
+			$obj = M('AgentFeedback');
 			$map['agentID'] = $this->user['id'];
 			$map['id'] = $id;
 			$list = $obj->where($map)->find();
@@ -91,7 +91,7 @@ class FeedbackController extends CommonController {
         }else{
             $map['id'] = array('in',$id);
             $map['agentID'] = $this->user['id'];
-            $obj = M('DaigouFeedback');
+            $obj = M('AgentFeedback');
             $list = $obj->where($map)->delete();
             if ($list) {
                 $this->success('操作成功');

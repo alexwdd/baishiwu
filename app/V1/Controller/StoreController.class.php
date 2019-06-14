@@ -20,7 +20,7 @@ class StoreController extends CommonController {
         $agentID = I('agentid');
         if ($agentID=='' || !is_numeric($agentID)) {die;}
         $map['id'] = $agentID;
-        $map['show'] = 1;
+        //$map['show'] = 1;
         $agent = M('Agent')->where($map)->find();        
         if (!$agent) {die;}
         $this->agent = $agent;
@@ -49,6 +49,9 @@ class StoreController extends CommonController {
                 foreach ($goods as $k => $val) {
                     $goods[$k]['picname'] = getRealUrl($val['picname']);
                     $goods[$k]['num'] = 0;
+                    if ($val['tag']>0) {
+                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
+                    }
                 }
                 $indexCate[$key]['goods'] = $goods;
             }
@@ -202,6 +205,7 @@ class StoreController extends CommonController {
             $weight = 0;
             foreach ($list as $key => $value) {
                 $goods = M('DgGoodsIndex')->where('id='.$value['itemID'])->find(); 
+                $goods['picname'] = getRealUrl($goods['picname']);
                 if ($value['server']!='') {
                     $serverID = explode(",",$value['server']);
                     unset($map);
@@ -243,7 +247,7 @@ class StoreController extends CommonController {
 
             //贴心服务需要计算商品个数，所以要乘套餐里边商品的数量
             $goodsMoney = $goods['price'] * $value['number'];
-            $serverMoney = $serverMoney * $value['goodsNumber'];
+            $serverMoney = $serverMoney * $value['goodsNumber'] * $goods['number'];
             $total += $goodsMoney + $serverMoney;
             $server += $serverMoney;
             $weight += $value['goodsNumber'] * $goods['weight'];       

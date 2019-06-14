@@ -152,6 +152,7 @@ class DgGoodsModel extends Model {
         $spec_show = I("post.spec_show/a");
 
         $baseData = array(
+            'agentID' => $data['agentID'],
             'agsID'=>$data['agsID'],
             'cid' => $data['cid'],
             'path' => $data['path'],

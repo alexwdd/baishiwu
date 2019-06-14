@@ -10,7 +10,7 @@ class ArticleController extends CommonController {
 				$map['title'] = array('like', '%'.$keyword.'%');
 			}
 			$map['agentID'] = $this->user['id'];
-			$obj = M('DaigouArticle');
+			$obj = M('AgentArticle');
             $total = $obj->where($map)->count();
             $pageSize = I('post.pageSize',20);
 
@@ -44,7 +44,7 @@ class ArticleController extends CommonController {
 	#添加
 	public function add() {
 		if($_POST){
-			$this->all_add("DaigouArticle",U('Ad/index'));
+			$this->all_add("AgentArticle",U('Ad/index'));
 		}else{
 			$this->assign('date',date("Y-m-d"));
 			$this->display();
@@ -54,7 +54,7 @@ class ArticleController extends CommonController {
 	#编辑
 	public function edit() {
 		if($_POST){
-			$this->all_save("DaigouArticle",U('Ad/index'));
+			$this->all_save("AgentArticle",U('Ad/index'));
 		}else{
 			$id = (int) $_GET['id'];
 			if (!isset ($id) || !is_numeric($id)) {
@@ -62,7 +62,7 @@ class ArticleController extends CommonController {
 			}
 			$map['id'] = $id;
 			$map['agentID'] = $this->user['id'];
-			$obj = M('DaigouArticle');
+			$obj = M('AgentArticle');
 			$list = $obj->where($map)->find();
 			if (!$list) {
 				$this->error('信息不存在');
@@ -81,7 +81,7 @@ class ArticleController extends CommonController {
         }else{
             $map['id'] = array('in',$id);
             $map['agentID'] = $this->user['id'];
-            $obj = M('DaigouArticle');
+            $obj = M('AgentArticle');
             $list = $obj->where($map)->delete();
             if ($list) {
                 $this->success('操作成功');

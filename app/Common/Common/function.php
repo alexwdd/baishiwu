@@ -580,4 +580,17 @@ function isMobile() {
     } 
     return false;
 }
+
+function base64EncodeImage($image_file) {
+    $base64_image = '';
+    $image_info = getimagesize($image_file);
+    if($image_info){
+        $image_data = fread(fopen($image_file, 'r'), filesize($image_file));
+        //$base64_image = 'data:' . $image_info['mime'] . ';base64,' . chunk_split(base64_encode($image_data));
+        $base64_image = chunk_split(base64_encode($image_data));
+        return $base64_image;
+    }else{
+        return '';
+    }    
+}
 ?>

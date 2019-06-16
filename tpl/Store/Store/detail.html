@@ -1,0 +1,385 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+    <a href="{:U('index/index',array('agentid'=>$agent['id'],'token'=>$token))}"><i class="mui-icon mui-icon-home"></i></a>
+    <div class="title">商品详情</div>
+    <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>
+
+    <a href="javascript:void(0)" class="cartIcon"><i class="icon icon-cart"></i><span class="mui-badge" id="barNumber" style="display: none;"></span></a>
+</div>
+
+<div id="topPopover" class="mui-popover my-pop">
+    <div class="down">
+        <div class="hd"><img src="{:RES}/image/down{$app.css}.png"></div>
+        <div class="bd">
+            <li><a href="{$app.aUrl}"><img src="{:RES}/image/googleplay.png"></a></li>
+            <li><a :href="{$app.iUrl}"><img src="{:RES}/image/appstore.png"></a></li>
+        </div>
+    </div>
+</div> 
+
+<script>
+var is_weixin = {$is_weixin};
+$(function(){
+    $(".cartIcon").click(function(){
+        if (is_weixin==1){
+            mui('#topPopover').popover('toggle');
+            return false;
+        }else{
+            window.location.href = '{:U('store/cart',array('agentid'=>$agent['id'],'token'=>$token))}';
+        }
+    })
+})
+</script>
+
+<div style="height:44px;clear:both"></div>
+
+<div class="mui-content">
+    <div class="mui-slider">
+        <div class="mui-slider-group mui-slider-loop">  
+            <volist name="image" id="vo">
+            <div class="mui-slider-item">
+            <img src="{$vo}" style="display:block">
+            </div>
+            </volist>
+        </div>        
+        <div class="mui-slider-indicator">
+            <volist name="image" id="vo">
+            <div class='mui-indicator'></div>
+            </volist>
+        </div>
+    </div>
+
+    <div class="goodsInfo">
+        <div class="goodsName">{$list.name}</div>
+        <notempty name="list.intr">
+        <div class="goodsIntr"><p>{$list.intr}</p></div>
+        </notempty>
+        <div class="priceBox">
+            <li><span class="money">${$list.price}</span>重量{$list.weight}kg</li>
+            <li>
+            <eq name="list.isBaoyou" value="1">
+            商品包邮
+            <else/>
+            运费 ${$list.yunfei}/kg
+            </eq>
+            </li>
+            <li>库存 {$list.kucun} 件，已销售：{$list['sellNumber']}件</li>
+            <gt name="list.brandID" value="0">
+            <li>品牌 {$list.brandName}</li>
+            </gt>
+        </div>   
+        
+            
+        <ul class="mui-table-view" style="margin-top: 10px;">
+            <li class="mui-table-view-cell">
+                <a href="javascript:void(0)" id="parmBtn" class="mui-navigate-right">选择规格</a>
+            </li>
+
+            <li class="mui-table-view-cell">
+                <a href="javascript:void(0)" id="attrBtn" class="mui-navigate-right">参数</a>
+            </li>
+        </ul>
+
+        <div class="goodsContent">
+            <div class="hd">商品介绍</div>
+            <div class="bd">{$list.content|htmlspecialchars_decode=###}</div>
+        </div>        
+    </div>
+
+    <div class="selectFooter">
+        <div class="cartInfo" onclick="window.location.href='{:U('store/cart',array('agentid'=>$agent['id'],'token'=>$token))}'">
+            <em id="cartNum">0</em> <i class="icon icon-cart"></i> 购物车
+        </div>            
+        
+        <div class="btn cartBtn" onclick="buy_now();">加入购物车</div>
+        <div class="btn" onclick="buy_now();">立即购买</div>
+    </div>
+</div>
+
+<div id="attrBox" class="mui-popover mui-popover-action mui-popover-bottom" style="background: #F2F2F2;">
+    <div class="sTitle">商品参数</div>    
+    <div class="attr">
+        <empty name="attr">
+        <div class="empty"><p style="line-height:100px">暂无信息</p></div>
+        <else/>
+        <volist name="attr" id="vo">
+        <li>
+            <label>{$vo.name}</label>
+            <p>{$vo.attr_value}</p>
+        </li>        
+        </volist>
+        </empty>
+    </div>
+</div>
+
+<div id="parmBox" class="mui-popover mui-popover-action mui-popover-bottom"  style="background: #F2F2F2;">
+    <div class="sTitle">选择规格</div>
+    <div class="shulges">
+        <p>价格：<span id="goods_price" style="color:#f00; font-size:20px">${$list.price}</span></p>
+    </div>
+    <!--div class="shulges">
+        <p>运费：<span id="goods_yunfei">${$list.totalYunfei}</span></p>
+    </div-->
+    <div class="shulges">
+        <p>数量</p>
+        <!--选择数量-->
+        <div class="plus">
+            <span class="mp_minous" onclick="changeNum(-1);">-</span>
+            <span class="mp_mp">
+                <input type="tel" class="num buyNum" id="buyNum" residuenum="{$goods.store_count}" name="goods_num" value="1" min="1" max="{$goods.store_count}" readonly="readonly">
+            </span>
+            <span class="mp_plus" onclick="changeNum(1);">+</span>
+        </div>
+    </div>
+
+    <if condition="$filter_spec neq ''">
+    <foreach item="spec" key="key" name="filter_spec">
+    <div class="shulges">
+        <p>{$key}</p>  
+        <div class="plus choic-sel">               
+            <foreach name="spec" item="v2" key="k2">
+            <span id="goods_spec_a_{$v2[item_id]}" title="{$v2[item]}" onclick="switch_spec(this);">
+            <input id="goods_spec_{$v2[item_id]}" type="radio" style="display:none;" name="goods_spec[{$key}]" value="{$v2[item_id]}"/>{$v2[item]}</span>        
+            </foreach>
+        </div>   
+    </div>
+    </foreach>
+    </if>
+
+    <notempty name="server">
+    <div class="shulges">
+        <p>贴心服务</p> 
+        <div class="serverBox">
+            <volist name="server" id="vo">
+            <li class="serLi" data-id="{$vo.id}" data-price="{$vo.price}">{$vo.name} ${$vo.price}</li>
+            </volist>
+        </div>
+    </div>
+    </notempty>
+
+    <div class="selectBtn">
+        <li><button type="button" class="mui-btn mui-btn-warning" onClick="AjaxAddCart({$list.id});">加入购物车</button></li>
+        <li><button type="button" class="mui-btn mui-btn-danger" onclick="doBuy();">立即购买</button></li>
+    </div>
+</div>
+
+<input type="hidden" id="item_id" name="item_id" value="0">
+<input type="hidden" id="price" value="{$list.price}">
+<input type="hidden" id="yunfei" value="{$list.yunfei}">
+<input type="hidden" id="weight" value="{$list.weight}">
+<input type="hidden" id="isBaoyou" value="{$list.isBaoyou}">
+<input type="hidden" id="server" value="">
+
+<script type="text/javascript" charset="utf-8">
+var spec_goods_price = {$spec_goods_price|default='null'};//规格库存价格 
+mui.init();
+mui.ready(function(){ 
+    //规格菜单
+    $(function(){
+        $.get("/store/store/ajaxCartNumber?agentid={$agent.id}&token={$token}&temp="+new Date().getTime(),function(res){
+            if (res==0){
+                $("#cartNum").addClass("none").html(res);
+            }else{
+                $("#cartNum").removeClass("none").html(res);
+            }
+        });
+
+        $(".serLi").click(function(){
+            if ($(this).hasClass('active')){
+                $(this).removeClass('active');        
+            }else{
+                $(this).addClass('active');
+            } 
+
+            var val = '';
+            $(".serverBox li.active").each(function(i){
+                if (i==0){
+                    val = $(this).attr("data-id");
+                }else{
+                    val += ","+$(this).attr("data-id");
+                }            
+            })
+            $("#server").val(val);
+            initGoodsPrice();
+        });
+
+        $("#attrBtn").click(function(){
+            mui("#attrBox").popover("toggle");
+        });
+
+        $("#parmBtn").click(function(){
+            mui("#parmBox").popover("toggle");
+        });
+    })
+})
+
+function AjaxAddCart(){
+    if (is_weixin==1){
+        mui('#topPopover').popover('toggle');
+            return false;
+        return false;
+    };
+
+    var itemID = $("#item_id").val();
+    var number = $("#buyNum").val();
+    var server = $("#server").val();
+    var goodsID = {$list.id};
+    var baoguoID = {$list.baoguoID};
+    /*if (!$.isEmptyObject(spec_goods_price)) {
+        if(itemID==0){
+            mui.toast("请选择商品规格");
+            return false;
+        }
+    }*/
+    mui.showLoading();
+    $.get("/store/store/addcart?agentid={$agent.id}&token={$token}&goodsID="+goodsID+"&baoguoID="+baoguoID+"&itemID="+itemID+"&number="+number+"&server="+server+"&temp="+new Date().getTime(),function(res){
+        mui.hideLoading();
+        if (res.status==0){
+            mui.alert("操作失败");
+        }else{
+            mui('#parmBox').popover('hide');
+            $("#cartNum").removeClass("none").html(res.info);
+        }
+    },'json');
+}
+
+function doBuy(){
+    if (is_weixin==1){
+        mui('#topPopover').popover('toggle');
+        return false;
+    };
+
+    var itemID = $("#item_id").val();
+    var number = $("#buyNum").val();
+    var goodsID = {$list.id};
+    var baoguoID = {$list.baoguoID};
+    var server = $("#server").val();
+    /*if (!$.isEmptyObject(spec_goods_price)) {
+        if(itemID==0){
+            mui.toast("请选择商品规格");
+            return false;
+        }
+    }*/
+    mui.showLoading();
+    $.get("/store/store/addcart?agentid={$agent.id}&token={$token}&goodsID="+goodsID+"&baoguoID="+baoguoID+"&itemID="+itemID+"&number="+number+"&server="+server+"&temp="+new Date().getTime(),function(res){
+        mui.hideLoading();
+        if (res.status==0){
+            mui.alert("操作失败");
+        }else{
+            window.location.href="{:U('store/cart',array('agentid'=>$agent['id'],'token'=>$token))}";
+        }
+    },'json');
+}
+
+function buy_now(){    
+    if (is_weixin==1){
+        mui('#topPopover').popover('toggle');
+        return false;
+    };
+    $('#parmBtn').trigger("click");
+}
+
+function changeNum(type){
+    oldNum = parseInt($("#buyNum").val());
+    if (type > 0) {
+        v = oldNum+1;
+    }else if(type="del"){
+        v = oldNum-1;
+        if (v<1) {
+          v=1;
+        }    
+    }
+    $("#buyNum").val(v);  
+    initGoodsPrice();
+}
+
+//切换规格
+function switch_spec(spec) {
+    $(spec).siblings().removeClass('red');
+    $(spec).parent().parent().find('input').removeAttr('checked');
+    if ($(spec).hasClass('red')){
+        $(spec).removeClass('red');        
+        $(spec).children('input').removeAttr('checked');
+    }else{
+        $(spec).addClass('red');        
+        $(spec).children('input').attr('checked', 'checked');
+    }    
+    //商品价格库存显示
+    initGoodsPrice();
+}
+
+function initGoodsPrice() {
+    if (!$.isEmptyObject(spec_goods_price)) {
+        var serverMoney = getServerMoney();
+        var goods_spec_arr = [];
+        $("input[name^='goods_spec']").each(function () {
+            if($(this).attr('checked') == 'checked'){
+                goods_spec_arr.push($(this).val());
+            }
+        });
+        var spec_key = goods_spec_arr.sort(sortNumber).join('_');  //排序后组合成 key        
+        if (spec_goods_price[spec_key] != undefined){
+            var item_id = spec_goods_price[spec_key]['item_id'];
+            var price = spec_goods_price[spec_key]['price'];
+            var weight = spec_goods_price[spec_key]['weight'];
+            var isBaoyou = spec_goods_price[spec_key]['isBaoyou'];
+            var number = spec_goods_price[spec_key]['number'];//套餐中几个单品
+            var num = $("#buyNum").val();      
+            var yunfei = $("#yunfei").val();  
+            serverMoney = number * serverMoney;
+            goodsMoney = price * num + serverMoney;
+            $('input[name=item_id]').val(item_id);
+            $("#goods_price").html("$"+goodsMoney.toFixed(2));
+            $("#goods_weight").html(weight * num);
+            /*if (isBaoyou==1){
+                $("#goods_yunfei").html("包邮");
+            }else{
+                $("#goods_yunfei").html("$"+(weight * yunfei * num).toFixed(2));
+            } */      
+            
+            $("#price").val(price); 
+            $("#isBaoyou").val(isBaoyou); 
+            $("#weight").val(weight); 
+        }else{
+            var serverMoney = getServerMoney();
+            var price = {$list.price};
+            var weight = {$list.weight};
+            var yunfei = {$list.yunfei};
+            var isBaoyou = {$list.isBaoyou};
+            var num = $("#buyNum").val();
+            $("#isBaoyou").val(isBaoyou);
+            $("#price").val(price); 
+            $("#weight").val(weight); 
+
+            $('input[name=item_id]').val(0);
+            goodsMoney = parseFloat(price * num) + parseFloat(serverMoney);
+            $("#goods_price").html("$"+goodsMoney.toFixed(2)); 
+            $("#goods_weight").html((weight * num).toFixed(2)); 
+            /*if (isBaoyou==1){
+                $("#goods_yunfei").html("包邮");
+            }else{
+                $("#goods_yunfei").html("$"+(weight * yunfei * num).toFixed(2));
+            }*/
+            return false;
+        }
+    }
+}
+
+function sortNumber(a,b){
+    return a - b;
+}
+
+function getServerMoney(){
+    var money = 0;
+    var num = parseFloat($("#buyNum").val());
+    $(".serverBox li").each(function(){
+        if ($(this).hasClass("active")){
+            money += parseFloat($(this).attr("data-price"));
+        }
+    })
+    money = (money*num).toFixed(2);
+    return money;
+}
+</script>

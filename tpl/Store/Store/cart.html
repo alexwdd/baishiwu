@@ -1,0 +1,65 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+    <a href="{:U('index/index',array('agentid'=>$agent['id'],'token'=>$token))}"><i class="mui-icon mui-icon-home"></i></a>
+    <div class="title">购物车</div>
+    <a></a>
+    <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>    
+</div>
+
+<div style="height:44px;clear:both"></div>
+
+<div class="mui-content" id="cartContent">
+ 
+</div>
+<script>
+$(function(){
+    $.get("/store/store/ajaxCart?agentid={$agent.id}&token={$token}&addID={$addID}&temp="+new Date().getTime(),function(res){
+            $("#cartContent").html(res);
+        },'html');
+    $("#cartContent").on("click",".delBtn",function(){
+        var btnArray = ['确认', '取消'];
+        var url = $(this).attr("data-url");
+        mui.confirm('确定吗？',function(e){
+            if (e.index == 1) {
+                $.get(url,function(res){
+                	window.location.reload();                    
+                });
+            }
+        })
+    });
+})
+
+/* 购物车数量 */
+function changeNum(type,cartID){
+    danjia = parseFloat($("#goodsPrice"+cartID).val());
+    total = parseFloat($("#totalMoney").html());
+    yunfei = parseFloat($("#yunfei").html());
+    heji = parseFloat($("#heji").html());
+    oldNum = parseInt($("#buyNum"+cartID).html());
+
+    if (type=='add') {
+        v = oldNum+1;
+    }else if(type="del"){
+        v = oldNum-1;
+        if (v<1) {
+          v=1;
+        }    
+    }
+    
+    $("#buyNum"+cartID).html(v); 
+    if (v != oldNum){
+        var quhuoType = $("#quhuoType").val();
+        $.get("/store/store/setCartNum?agentid={$agent.id}&token={$token}&number="+v+"&cartID="+cartID+"&quhuoType="+quhuoType+"&temp="+new Date().getTime(),function(res){
+            $("#totalMoney").html(res.totalPrice);
+            $("#yunfei").html(res.yunfei);
+            $("#heji").html(res.heji);
+            $("#rmb").html("(~"+res.rmb+"RMB)");
+            _yunfei = res.yunfei;
+            _price = res.totalPrice;
+            console.log(_yunfei);
+        },'json'); 
+    }
+}
+</script>

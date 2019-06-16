@@ -1,0 +1,47 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">选择文件</label>
+		<div class="layui-input-inline" style="width:400px">
+			<input type="text" id="file" name="file" class="layui-input" lay-verify="required">
+		</div>
+		<div class="layui-inline">
+			<button type="button" class="layui-btn" id="upload-file">上传</button>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button class="layui-btn" lay-submit="" lay-filter="save" url="{:U('bag/import')}">导入</button>
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+</form>
+<script>
+layui.use(['upload'], function() {    
+    var $ = layui.$,
+        upload = layui.upload;
+    var uploadInst = upload.render({
+        elem: '#upload-file',
+        url: '{:U('upload/file')}',
+        accept:'file',
+        before: function(obj) {
+            layer.load(2); //上传loading
+        },
+        done: function(res){
+            layer.closeAll(); //关闭loading
+            //如果上传失败
+            if (res.status != 1) {
+                return layer.msg(res.info);
+            }
+            //上传成功
+            $("#file").val(res.data.url);
+        },
+        error: function(){
+          //请求异常回调
+        }
+    });
+})
+</script>

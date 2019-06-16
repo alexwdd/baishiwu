@@ -1,0 +1,94 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+    <a href="{:U('index/index',array('agentid'=>$agent['id'],'token'=>$token))}"><i class="mui-icon mui-icon-home"></i></a>
+    <div class="title">分类</div>
+    <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>
+
+    <a href="javascript:void(0)" class="cartIcon"><i class="icon icon-cart"></i><span class="mui-badge" id="barNumber" style="display: none;"></span></a>
+</div>
+
+<div id="topPopover" class="mui-popover my-pop">
+    <div class="down">
+        <div class="hd"><img src="{:RES}/image/down{$app.css}.png"></div>
+        <div class="bd">
+            <li><a href="{$app.aUrl}"><img src="{:RES}/image/googleplay.png"></a></li>
+            <li><a :href="{$app.iUrl}"><img src="{:RES}/image/appstore.png"></a></li>
+        </div>
+    </div>
+</div> 
+
+<script>
+var is_weixin = {$is_weixin};
+$(function(){
+    $(".cartIcon").click(function(){
+        if (is_weixin==1){
+            mui('#topPopover').popover('toggle');
+            return false;
+        }else{
+            window.location.href = '{:U('store/cart',array('agentid'=>$agent['id'],'token'=>$token))}';
+        }
+    })
+})
+</script>
+
+<div style="height:44px;clear:both"></div>
+
+
+<div class="mui-content">	
+	<div class="cateBox">
+		<div class="cateLeft">
+			<volist name="list" id="vo">
+			<li>{$vo.name}</li>
+			</volist>
+			<li>品牌</li>
+		</div>
+		<div class="cateRight">
+			<volist name="list" id="vo">
+			<div class="showCate">
+			<volist name="vo.child" id="f">
+			<div class="cate">
+				<div class="hd"><a href="{:U('store/index',array('path'=>$f['path'],'agentid'=>$agent['id'],'token'=>$token))}">{$f.name} <span>查看</span></a></div>
+				<div class="bd">
+					<volist name="f.child" id="c">
+					<li><a href="{:U('store/index',array('path'=>$c['path'],'agentid'=>$agent['id'],'token'=>$token))}"><img src="{$c.picname}"><span>{$c.name}</span></a></li>
+					</volist>
+				</div>
+			</div>
+			</volist>
+			</div>
+			</volist>
+
+			<div class="showCate">
+				<div class="cate">
+					<div class="bd">
+						<volist name="brand" id="c">
+						<li><a href="{:U('store/index',array('brandID'=>$c['id'],'agentid'=>$agent['id'],'token'=>$token))}"><img src="{$c.logo}"><span>{$c.name}</span></a></li>
+						</volist>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	h = $(window).height();
+	$(".cateLeft").height(h-44);
+	$(".cateRight").height(h-44);
+
+	$(".cateLeft li").eq(0).addClass("active");
+	$(".showCate").eq(0).show();
+
+	$(".cateLeft li").click(function(){
+		$(".cateLeft li").removeClass("active");
+		$(this).addClass("active");
+		index = $(this).index();
+		$(".showCate").hide();
+		$(".showCate").eq(index).show();
+	})
+})
+</script>
+
+<input type="hidden" id="activeIndex" value="category" />

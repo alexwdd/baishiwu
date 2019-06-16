@@ -1,0 +1,92 @@
+<layout name='layout' />
+
+<div class="indexHeader">
+    <a class="mui-action-back"><i class="mui-icon mui-icon-left-nav"></i></a>
+    
+    <div class="title">在线支付</div>
+
+    <a href="app://shareURL?url={$shareUrl}"><i class="icon icon-share"></i></a>
+</div>
+
+<div style="height:44px;clear:both"></div>
+
+<div class="mui-content">
+
+    <div class="price">
+        <li>
+            <h2>￥{$list.rmb}</h2>    
+            <span>应付RMB</span>        
+        </li>        
+    </div>
+
+	<form id="myForm" style="background:none">    
+	<div class="payOk">
+		<div class="fd">
+            <p>澳币 <span>${$list.money}</span></p>
+            <p>人民币 <span>￥{$list.rmb}</span></p>  
+            <p>单号<span>{$list.order_no}</span></p>
+			<p>下单时间<span>{$list.createTime|date="Y-m-d H:i:s",###}</span></p>
+		</div>
+	</div>
+    
+    <p style="margin: 10px;">选择支付方式</p>
+
+    <div class="payType">
+        <li data-id="1">
+            <p>支付宝</p>
+            <span class="active"></span>
+        </li>
+        <li data-id="2">
+            <p>微信支付</p>
+            <span></span>
+        </li>     
+        <input type="hidden" id="payType" value="1" >  
+    </div>
+
+    
+    <div style="height:50px; clear:both; border:0px"></div>
+
+    <div class="selectFooter">
+        <div class="footSingleBtn" id="payBtn">
+            确认支付
+        </div>
+    </div> 
+    <input type="hidden" name="id" value="{$list.id}">
+    <input type="hidden" name="payStatus" value="{$list.payStatus}">
+    <input type="hidden" name="agentid" value="{$agent.id}">
+    <input type="hidden" name="token" value="{$token}">  
+    </form>
+</div>
+<script src="{:RES}/js/clipboard.min.js"></script>
+<script>
+$(function(){
+    $(".payType li").click(function(){
+        $(".payType li span").removeClass("active");
+        $(this).find('span').addClass("active");
+        $("#payType").val($(this).attr("data-id"))
+    });
+
+    $("#payBtn").click(function(){
+        var payType = $("#payType").val();
+        if (payType==1){
+            url = 'app://MallPay?payType=1&order_no={$list.order_no}';
+            window.location.href=url;            
+        }else{
+            url = 'app://MallPay?payType=2&order_no={$list.order_no}';
+            window.location.href=url;
+        }
+    })
+})
+
+function myOrder(){
+    window.location.href="{:U('Order/index',array('agentid'=>$agent['id'],'token'=>$token))}";
+}
+
+var clipboard = new ClipboardJS('.copyBtn');
+clipboard.on('success', function(e) {
+    mui.toast("已复制到粘贴板");
+});
+clipboard.on('error', function(e) {
+    mui.toast("系统不支持");
+});
+</script>

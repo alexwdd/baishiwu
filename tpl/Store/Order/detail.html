@@ -1,0 +1,103 @@
+<layout name='layout' />
+
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">订单详情</h1>
+</header>
+
+<div class="mui-content">
+
+	<volist name="list.baoguo" id="vo">
+    <div class="orderList">
+        <div class="hd">{$vo.typeName}</div>
+        <div class="bd">
+            <volist name="vo.goods" id="f">
+            <div class="orderDetail">
+                <img src="{$f.picname}">
+                <li>
+                    <p>{$f.pname}</p>
+                    <p>单价：{$f.price}</p>
+                    <p>数量：{$f.number}</p> 
+                    <notempty name="f.pram">
+                    <p>{$f.pram}</p>
+                    </notempty>
+
+                    <volist name="f.serverArr" id="s">
+                    <div class="base" data-name="{$s.name}" data-price="{$s.price}" data-number="{$vo.goodsNumber}">
+                        <p>{$s.name} ${$s.price}</p>                
+                    </div>
+                    </volist>
+                </li>
+            </div>
+            </volist>
+        </div>
+        <volist name="vo.wuliu" id="w">
+        <div class="wuliu">
+            <div class="bs">
+                <p><span style="color:#000; font-weight:bold">{$w.wuliu}</span> 快递单号：{$w.number} <span class="copyBtn" data-clipboard-text="{$w.number}">复制</span></p> 
+                <p><a href="{:U('order/wuliu')}?url={$w.wuliuUrl}&cityID={$cityID}&token={$token}" class="mui-btn mui-btn-danger" style="color:#fff;padding:3px 5px;">物流查询</a></p>
+            </div>
+            <div class="wimg">
+                <volist name="w.image" id="img">
+                <img src="{$img}" />
+                </volist>
+            </div>
+        </div>
+        </volist>
+    </div>
+    </volist>
+
+    
+    <form id="myForm" class="mui-input-group" style="background:none">
+    <div class="infobox" style="margin-bottom:10px">
+        <div class="hd">身份证(应海关清关需求，需上传身份证信息)</div>
+        <div class="bd">
+            <div class="sn" onclick="uploadImage('front','{:U('upload/image','water=1')}');"><img id="front_src" src="<empty name="list.front">{:RES}/image/sn1.png<else/>{$list.front}</empty>" /></div>
+            <div class="sn" onclick="uploadImage('back','{:U('upload/image','water=1')}');"><img id="back_src" src="<empty name="list.back">{:RES}/image/sn2.png<else/>{$list.back}</empty>" /></div>
+        </div>
+        <div style="margin:10px; margin-top:0">
+            <input type="text" name="sn" value="{$list.sn}" placeholder="输入身份证号" style="border:1px #dbdbdb solid;">
+        </div>
+        
+        <input type="hidden" name="front" id="front" value="{$list.front}" >
+        <input type="hidden" name="back" id="back" value="{$list.back}" >
+        <input type="hidden" name="mobile" value="{$list.mobile}" >
+        <input type="hidden" name="id" id="id" value="{$list.id}">
+        <input type="hidden" name="agentid" value="{$agentid}">
+        <input type="hidden" name="token" value="{$token}">  
+        <div style="border:0; padding:0 10px">
+        <button type="button" id="submitBtn" action="{:U('Order/save')}" class="mui-btn mui-btn-block my-btn">保存</button>
+        </div>        
+        <input type="file" id="uploadfile"/> 
+    </div>
+    </form>
+
+	<div class="payOk">
+		<div class="fd">
+			<p>单号<span>{$list.order_no}</span></p>
+			<p>下单时间<span>{$list.createTime|date="Y-m-d H:i:s",###}</span></p>
+			<p>商品金额<span>${$list.goodsMoney}</span></p>
+			<p>运费<span>${$list['payment']}</span></p>
+			<p>总金额<span>${$list.money}</span></p>
+            <p>支付方式<span>{$list.pay}</span></p>
+			<p>状态<span>{$list.status|getPayStatus}</span></p>
+            <p>寄件人<span>{$list.sendName}，{$list.sendPhone}</span></p>
+			<p>收件人<span>{$list.name}，{$list.mobile}</span></p>
+            <p>地址：{$list.address}</p>   
+			<p>备注：{$list.intr}</p>	
+		</div>
+	</div>
+</div>
+
+<input type="hidden" id="activeIndex" value="member" />
+
+<script src="{:RES}/js/clipboard.min.js"></script>
+<script>
+var clipboard = new ClipboardJS('.copyBtn');
+clipboard.on('success', function(e) {
+    mui.toast("已复制到粘贴板");
+});
+clipboard.on('error', function(e) {
+    mui.toast("系统不支持");
+});
+</script>

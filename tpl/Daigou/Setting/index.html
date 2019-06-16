@@ -1,0 +1,94 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-block">
+			<input type="text" name="name" value="{$user.name}" lay-verify="required" placeholder="店铺名称" class="layui-input">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">商城LOGO</label>
+		<div class="layui-input-inline" style="width:400px">
+			<input type="text" id="siteLogo" name="siteLogo" value="{$user.siteLogo}" class="layui-input">
+		</div>
+		<div class="layui-inline">
+			<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="{:U('Upload/image')}"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="siteLogo"
+			 >上传图片</button>
+			 <i class="layui-icon showImage" tag="siteLogo">&#xe64a;</i>
+		</div>
+	</div>
+  
+  	<div class="layui-form-item">
+		<label class="layui-form-label">汇率1澳元=</label>
+		<div class="layui-input-inline">
+			<input type="text" name="huilv" value="{$user.huilv}" lay-verify="required" placeholder="请输入汇率" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux">RMB</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">热门关键词</label>
+		<div class="layui-input-block">
+			<input type="text" name="hotkey" value="{$user.hotkey}" lay-verify="required" placeholder="请输入关键词" class="layui-input">
+			<p class="layui-word-aux">使用逗号分隔</p>
+		</div>		
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">活动折扣</label>
+		<div class="layui-input-inline">
+			<input type="text" name="discount" value="{$user.discount}" class="layui-input">
+		</div>
+		<div class="layui-form-mid layui-word-aux">八五折就填写8.5，无折扣就填写0</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">商城公告</label>
+		<div class="layui-input-block">
+			<textarea name="notice" class="layui-textarea">{$user.notice}</textarea>
+		</div>	
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">店铺介绍</label>
+		<div class="layui-input-block">
+			<textarea name="content" id="container" lay-verify="content">{$user.content}</textarea>
+			<script type="text/javascript" src="{:C('UE_CONFIG.uedir')}/my.config.js"></script>
+			<script type="text/javascript" src="{:C('UE_CONFIG.uedir')}/ueditor.all.min.js"></script>
+			<script type="text/javascript" src="{:C('UE_CONFIG.uedir')}/lang/zh-cn/zh-cn.js"></script>
+			<script type="text/javascript">
+			var editor = UE.getEditor('container');
+			</script>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button id="subBtn" class="layui-btn" lay-submit="" lay-filter="save" url="{:U('Setting/index')}">修改</button>
+	</div>
+</form>
+<script>
+$(function(){
+	$(".showImage").click(function(){
+		var o = $(this).attr("tag");
+		if ($("#"+o).val()!=''){
+			layui.use('layer', function(){
+				layer.open({
+					content: '<img src="'+$("#"+o).val()+'" />'
+				});
+			})
+		};
+	});
+})
+</script>
+<script src="{:RES}/js/upload.js"></script>

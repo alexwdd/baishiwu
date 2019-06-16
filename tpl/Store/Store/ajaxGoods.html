@@ -1,0 +1,11 @@
+<volist name="list" id="vo">
+<li>
+    <div class="item">
+        <a href="{:U('store/detail',['id'=>$vo['id'],'agentid'=>$agent['id'],'token'=>$token])}">
+        <img src="{$vo.picname}">    
+        <p class="mui-ellipsis">{$vo.name}</p>
+        <span><i>$</i> {$vo.price}</span>
+        </a>
+    </div>
+</li>
+</volist>

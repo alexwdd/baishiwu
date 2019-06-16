@@ -1,0 +1,64 @@
+<volist name="list" id="vo">
+    <div class="orderList" id="order{$vo.id}">
+        <div class="hd">{$vo.order_no}<?php
+        if ($vo['front']=='' || $vo['back']=='') {
+            echo '<font style="color:#f00">(未传身份证)</font>';
+        }
+        ?><span color="red">${$vo.money}</span></div>
+        <div class="bd">
+            <volist name="vo.goods" id="f">
+            <div class="orderDetail">
+                <img src="{$f.picname}">
+                <li>
+                    <p>{$f.pname}</p>
+                    <p>单价：{$f.price}</p>
+                    <p>数量：{$f.number}</p> 
+                    <notempty name="f.pram">
+                    <p>{$f.pram}</p>
+                    </notempty>
+                </li>
+            </div>
+            </volist>
+        </div>
+        <div class="fd">                    
+            <span style="float:left">
+            <eq name="vo.status" value="0">
+            <a href="{:U('order/pay',['orderID'=>$vo['id'],'cityID'=>$cityID,'agentid'=>$agent['id'],'token'=>$token])}" class="mui-btn my-btn">去付款</a>
+
+            <a href="javascript:void(0)" data-id="{$vo.id}" data-url="{:U('order/cancel',['id'=>$vo['id'],'agentid'=>$agent['id'],'token'=>$token])}" class="mui-btn mui-btn-default delBtn">删除订单</a>
+            </eq>
+
+            <eq name="vo.status" value="1">
+            <a href="{:U('order/pay',['orderID'=>$vo['id'],'cityID'=>$cityID,'agentid'=>$agent['id'],'token'=>$token])}"  class="mui-btn my-btn">已付款待确认 查看</a>
+            </eq>
+
+            <eq name="vo.status" value="2">
+            <span class="mui-btn mui-btn-success">支付完成</span>
+            </eq>
+
+            <eq name="vo.status" value="99">
+            <span class="mui-btn mui-btn-danger">交易失败</span>
+            </eq>
+          
+            </span>            
+            <a href="{:U('order/detail',['id'=>$vo['id'],'cityID'=>$cityID,'agentid'=>$agent['id'],'token'=>$token])}" class="mui-btn mui-btn-default">订单详情</a> 
+        </div>
+    </div>
+    </volist>
+<script>
+$(function(){
+    $(".delBtn").click(function(){
+        var btnArray = ['确认', '取消'];
+        var url = $(this).attr("data-url");
+        var id = $(this).attr("data-id");
+        mui.confirm('确定吗？',function(e){
+            if (e.index == 1) {
+                $.get(url+"?temp="+new Date().getTime(),function(res){
+                    //window.location.reload();
+                    $("#order"+id).remove();
+                },'html');
+            }
+        })
+    });
+})
+</script>

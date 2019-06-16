@@ -1,0 +1,66 @@
+<layout name='layout' />
+
+<header class="mui-bar mui-bar-nav">
+    <notempty name="agentid">
+    <a href="javascript:window.history.go(-1)" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <else/>
+    <a href="app://goback" class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+    </notempty>
+    <h1 class="mui-title">收货地址</h1>
+</header>
+
+<div class="mui-content">
+    <div class="myaddress">
+        <volist name="list" id="vo">
+            <p id="a{$vo.id}">{$vo.province} {$vo.city} {$vo.area} {$vo.address}<br>{$vo.name}, {$vo.mobile} <span><notempty name="agentid"><a href="{:U('store/cart',array('addID'=>$vo['id'],'agentid'=>$agentid,'token'=>$token))}">选择</a>&nbsp;&nbsp;&nbsp;&nbsp;</notempty><a href="javascript:void(0)" data-url="{:U('Address/edit',array('id'=>$vo['id'],'cityID'=>$cityID,'agentid'=>$agentid,'token'=>$token))}" class="editBtn">编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" data-id="a{$vo.id}" data-url="{:U('Address/del',array('id'=>$vo['id'],'agentid'=>$agentid,'token'=>$token))}" class="delBtn">删除</a></span>
+            </p>
+        </volist>
+        <p><button class="mui-btn my-btn" id="add_btn">添加收货地址</a></button></p>
+    </div>
+
+    <div id="add_address" <empty name="list">style="display:block"</empty>>
+        
+    </div>
+</div>
+<input type="file" id="uploadfile"/> 
+
+<script type="text/javascript">
+$(function(){
+    $.get("/store/address/add?agentid={$agentid}&token={$token}&temp="+new Date().getTime(),function(res){
+            $("#add_address").html(res);
+        },'html');
+
+    $(".editBtn").click(function(){
+        $("#add_address").slideDown(100);
+        url = $(this).attr("data-url");
+        $.get(url+"?temp="+new Date().getTime(),function(res){
+            $("#add_address").html(res);
+        },'html');
+    });
+
+    $(".delBtn").click(function(){
+        var btnArray = ['确认', '取消'];
+        var url = $(this).attr("data-url");
+        var o = $(this).attr("data-id");
+        mui.confirm('确定吗？',function(e){
+            if (e.index == 1) {
+                $("#"+o).remove();
+                $.get(url,function(res){
+                    $("#add_address").html(res);
+                });
+            }
+        })
+    });
+
+    $("#add_btn").bind('click',function(){
+        $("#add_address").slideDown(100);
+        $.get("/store/address/add?agentid={$agentid}&token={$token}&temp="+new Date().getTime(),function(res){
+            $("#add_address").html(res);
+        },'html');          
+    })
+
+    $("#add_address").on('click',"#cancel_btn",function(){
+        $("#add_address").slideUp(100);         
+    })
+})
+</script>

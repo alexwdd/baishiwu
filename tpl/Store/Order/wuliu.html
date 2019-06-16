@@ -1,0 +1,20 @@
+<layout name='layout' />
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">物流查询</h1>
+</header>
+
+<div class="mui-content" id="abc">
+<iframe id="mainiframe" width="100%" height="600" src="{$url}"  frameborder="0" scrolling="auto"></iframe>
+</div>
+<script>
+function changeFrameHeight(){
+    var ifm= document.getElementById("mainiframe");
+    ifm.height=document.documentElement.clientHeight-44;
+}
+
+window.onresize=function(){ changeFrameHeight();}
+
+$(function(){changeFrameHeight();});
+</script>

@@ -1,0 +1,196 @@
+
+    <a href="{:U('store/category',array('agentid'=>$agent['id'],'token'=>$token))}" style="background: #fff; display: block; line-height: 36px; text-align: center; color: #f60">~ 再去逛逛 ~</a>
+    <form id="myForm" class="mui-input-group" style="background:none">
+    <empty name="list">
+    <div class="emptyCart">
+        <p>您没有选择任何商品！</p>
+        <a href="{:U('store/index',array('agentid'=>$agent['id'],'token'=>$token))}" class="mui-btn my-btn">去购买</a>
+    </div>
+    <else/>
+
+    <volist name="list" id="vo">
+    <div class="mui-row cartList">
+        <div class="mui-col-xs-3">
+            <img src="{$vo.picname}">
+        </div>
+
+        <div class="mui-col-xs-8" style="padding-left:10px">
+            <p>{$vo.pname}</p>
+            <notempty name="vo.pram">
+            <p>{$vo.pram}</p>
+            </notempty>
+            <p>{$vo.weight}kg</p>
+            <p class="m">{$vo.price}</p>
+            <volist name="vo.serverArr" id="s">
+            <div class="base" data-name="{$s.name}" data-price="{$s.price}" data-number="{$vo.goodsNumber}">
+                <p>{$s.name} ${$s.price}</p>                
+            </div>
+            </volist>
+
+            <input type="hidden" id="goodsPrice{$vo.id}" value="{$vo.price}" />
+            <div class="numberAction">
+                <div onclick="changeNum('del',{$vo.id})">-</div>
+                <div class="buyNumber" id="buyNum{$vo.id}">{$vo.number}</div>
+                <div onclick="changeNum('add',{$vo.id})">+</div>
+            </div>
+        </div>
+
+        <div class="mui-col-xs-1" style="text-align:center">
+            <a href="javascript:void(0)" style="color:#999;" class="delBtn" data-url="{:U('store/delcart',array('id'=>$vo['id'],'agentid'=>$agent['id'],'token'=>$token))}"><i class="mui-icon mui-icon-trash" style="font-size:18px"></i></a>
+        </div>
+    </div>
+    </volist>
+    
+    <eq name="agent.pay" value="0">
+    <div class="infobox" style="margin-bottom:10px">
+        <div class="hd">支付方式</div>
+        <div class="payType">
+            <volist name="card" id="vo" key="i">
+            <li data-id="{$vo.id}">
+                <p>{$vo.name}</p>
+                <span <eq name="i" value="1">class="active"</eq>></span>
+            </li>
+            </volist>            
+        </div>
+        <input type="hidden" name="card" id="card" value="{$payType[0]['id']}" >
+    </div>
+    <else/>
+    <input type="hidden" name="card" id="card" value="0" >
+    </eq>
+
+    <div class="infobox" style="margin-bottom:10px">
+        <div class="hd">取货方式</div>
+        <div class="payType quhuo">
+            <li data-id="1">
+                <p>无痕代发</p>
+                <span class="active"></span>
+            </li>
+            <li data-id="2">
+                <p>门店自提(免邮费)</p>
+                <span></span>
+            </li>
+        </div>
+        <input type="hidden" name="quhuoType" id="quhuoType" value="1" >
+    </div>
+
+    <div class="infobox" id="addressInfo" style="margin-bottom:10px">
+        <div class="hd">寄件人信息</div>
+        <div class="bd">
+            <div class="mui-input-row">
+                <label>姓名</label>
+                <input type="text" name="sendName" id="sendName" value="{$last.sendName}" class="mui-input-clear mui-input" checkType="required" checkMsg="请输入寄件人姓名" placeholder="寄件人姓名">
+            </div>
+
+            <div class="mui-input-row">
+                <label>电话</label>
+                <input type="number" name="sendPhone" id="sendPhone" value="{$last.sendPhone}" class="mui-input-clear mui-input" checkType="aphone" checkMsg="请输入正确的电话格式" placeholder="格式：0410123456（必填）">
+            </div>
+        </div>
+    </div>
+
+    <div class="infobox" id="addressInfo" style="margin-bottom:10px">
+        <div class="hd">收件人信息</div>
+        <notempty name="address">
+            <p class="address_item">{$address['province']} {$address['city']} {$address['area']} {$address['address']} <br>
+                {$address['name']}, {$address['mobile']}</p>
+            <input type="hidden" id="address" name="address" value="{$address['province']} {$address['city']} {$address['area']}, {$address['address']}">
+            <input type="hidden" name="name" id="name" value="{$address['name']}">
+            <input type="hidden" name="mobile" id="mobile" value="{$address['mobile']}">
+        <else/>
+            <input type="hidden" id="address" name="address" value="" checkType="required" checkMsg="请选择收货地址">
+        </notempty>
+        <p><a href="{:U('address/index',array('agentid'=>$agent['id'],'token'=>$token))}" class="mui-btn my-btn">管理收货地址</a></p>
+        <input type="hidden" name="addressID" id="addressID" value="{$address['id']}">
+    </div>
+
+    <div class="infobox" style="margin-bottom:10px">
+        <div class="hd">收件人身份证(应海关清关需求，需上传身份证信息)</div>
+        <div class="bd">
+            <div class="sn" onclick="uploadImage('front','{:U('upload/image','water=1')}');"><img id="front_src" src="<empty name="address.front">{:RES}/image/sn1.png<else/>{$address.front}</empty>" /></div>
+            <div class="sn" onclick="uploadImage('back','{:U('upload/image','water=1')}');"><img id="back_src" src="<empty name="address.back">{:RES}/image/sn2.png<else/>{$address.back}</empty>" /></div>
+        </div>
+        <input type="hidden" name="front" id="front" value="{$address.front}" >
+        <input type="hidden" name="back" id="back" value="{$address.back}" >
+        <div style="margin:10px; margin-top:0">
+            <input type="text" name="sn" value="{$address.sn}" placeholder="输入身份证号" style="border:1px #dbdbdb solid;">
+        </div>
+    </div>
+
+    <div class="infobox">
+        <div class="hd">备注</div>
+        <textarea name="intr" id="intr" style="height:50px;margin:0;border:0"></textarea>
+    </div>
+    
+    <div style="height:50px; clear:both"></div>
+    <div class="selectFooter">
+        <div class="cartInfo" style="font-size: 12px">
+            <div class="priceDetail">
+                <p>商品 $<span id="totalMoney" style="color:#f00">{$totalPrice}</span></p>
+                <p>运费 $<span id="yunfei" style="color:#f00">{$baoguo.totalYunfei}</span></p>
+            </div>            
+            合计 $<span id="heji" style="color:#f00">{$heji}</span>
+            <span id="rmb" style="color:#f00">(~{$totalPriceRmb}RMB)</span>
+        </div> 
+        <div id="submitBtn" action="{:U('Store/order')}" class="btn">提交订单</div>
+    </div>
+
+    <input type="hidden" name="agentid" value="{$agent.id}">
+    <input type="hidden" name="token" value="{$token}">          
+    <input type="hidden" name="memberID" value="{$user.id}">
+
+    </empty>
+    </form>
+
+
+<input type="file" id="uploadfile"/> 
+<script src="{:RES}/js/jquery.min.js"></script>
+<script src="{:RES}/js/vue.min.js"></script>
+<script type="text/javascript" src="{:RES}/mui/js/mui.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{:RES}/mui/plugin/loading.js"></script>
+<script type="text/javascript" src="{:RES}/mui/plugin/form.js"></script>
+<script src="{:RES}/js/common.js?v=1.01" type="text/javascript" charset="utf-8"></script>
+<script>
+var _yunfei = {$baoguo.totalYunfei};
+var _price = {$totalPrice};
+var _huilv = {$agent.huilv};
+mui.init();
+mui.ready(function(){ 
+    $(function(){
+        $(".payType li").click(function(){
+            $(this).parent().find("span").removeClass("active");
+            $(this).find('span').addClass("active");
+            $(this).parent().parent().find("input").val($(this).attr("data-id"));
+        });
+
+        $(".quhuo li").click(function(){
+            $(this).parent().find("span").removeClass("active");
+            $(this).find('span').addClass("active");
+            $(this).parent().parent().find("input").val($(this).attr("data-id"));
+
+            var quhuoType = $("#quhuoType").val();
+            $.get("/store/store/getCartYunfei?agentid={$agent.id}&token={$token}&quhuoType="+quhuoType+"&temp="+new Date().getTime(),function(res){
+                $("#totalMoney").html(res.totalPrice);
+                $("#yunfei").html(res.yunfei);
+                $("#heji").html(res.heji);
+                $("#rmb").html("(~"+res.rmb+"RMB)");
+                _yunfei = res.yunfei;
+                _price = res.totalPrice;
+                console.log(_yunfei);
+            },'json'); 
+
+            /*if ($(this).attr("data-id")==2){
+                $("#yunfei").html("0");
+                t = _price * _huilv;
+                $("#rmb").html("(~"+t.toFixed(2)+"RMB)");
+                $("#heji").html(_price.toFixed(2));
+            }else{
+                $("#yunfei").html(_yunfei);
+                t = (_price+_yunfei) * _huilv;
+                $("#rmb").html("(~"+t.toFixed(2)+"RMB)");
+                t = parseFloat(_price)+parseFloat(_yunfei);
+                $("#heji").html(t.toFixed(2));
+            }*/
+        });
+    })
+})
+</script>

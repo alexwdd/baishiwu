@@ -3,9 +3,9 @@ namespace Daigou\Controller;
 use Common\Controller\BaseController;
 
 class IndexController extends CommonController {
-    public function index() {   
+    public function index() {  
         $this->display();
-    }    
+    }
 
     public function main(){
     	$beginToday=mktime(0,0,0,date('m'),date('d'),date('Y')); 

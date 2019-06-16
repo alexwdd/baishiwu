@@ -13,7 +13,7 @@ class BrandController extends CommonController {
 
             $map['agentID'] = $this->user['id'];
             $obj = M('Brand');
-            $total = $obj->where($map)->count();
+            $total = $obj->where($map)->count();            
             $pageSize = I('post.pageSize',20);
 
             $field = I('post.field','id');

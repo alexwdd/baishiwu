@@ -1021,9 +1021,30 @@ class AccountController extends CommonController {
     
             $map['id'] = $userid;
             $res = M('Member')->where($map)->save($data);
-            if ($res) {
-                $user = M('Member')->field('id as userid,phone,email,headimg,name,nickname,wechat')->where($map)->find();
-                returnJson('0',C('SUCCESS_RETURN'),$user);
+            if ($res) {        
+                $list = M('Member')->field('id as userid,nickname,headimg,wechat,phone,email,birthday,work,sign,gender,open')->where($map)->find();         
+                $list['headimg'] = getRealUrl($list['headimg']);
+                
+                if($list['gender']==0) {
+                    $list['gender'] = '保密';
+                }elseif($list['gender']==1){
+                    $list['gender'] = '男';
+                }else{
+                    $list['gender'] = '女';
+                }
+                
+                if ($list['birthday']=='') {
+                    $list['birthday'] = '未知';
+                    $list['age'] = '未知';
+                }else{
+                    $byear=date('Y',strtotime($list['birthday']));
+                    $eyear=date('Y',time());
+                    $list['age'] = $eyear - $byear;
+                    if ($list['age']<=0) {
+                        $list['age'] = '未知';
+                    }
+                }            
+                returnJson('0',C('SUCCESS_RETURN'),$list);
             }else{
                 returnJson('-1','您没有做任何改动');
             }

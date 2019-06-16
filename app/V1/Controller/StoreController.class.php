@@ -29,7 +29,9 @@ class StoreController extends CommonController {
     public function getMain(){
         if (IS_POST) {
             if(!checkFormDate()){returnJson('-1','ERROR');}
-            $ad = $this->getAd();
+            $banner = $this->getAd(1);
+            $quick = $this->getAd(2);
+            $ad = $this->getAd(3);
             if ($this->agent['hotkey']!='') {
                 $hotkey = explode(",", $this->agent['hotkey']);
             }
@@ -55,11 +57,12 @@ class StoreController extends CommonController {
                 }
                 $indexCate[$key]['goods'] = $goods;
             }
-            returnJson(0,'success',['ad'=>$ad,'hotkey'=>$hotkey,'notice'=>$this->agent['notice'],'goods'=>$indexCate]);      
+            returnJson(0,'success',['banner'=>$banner,'ad'=>$ad,'quick'=>$quick,'hotkey'=>$hotkey,'notice'=>$this->agent['notice'],'goods'=>$indexCate]);      
         } 
     }
 
-    public function getAd(){
+    public function getAd($type){
+        $map['type'] = $type;
         $map['agentID'] = $this->agent['id'];
         $list = M('AgentAd')->cache(true)->where($map)->select();
         foreach ($list as $key => $value) {
@@ -834,6 +837,7 @@ class StoreController extends CommonController {
             $map['agentID'] = $this->agent['id'];
             $list = M('AgentCate')->where($map)->order('sort asc,id desc')->select();
             foreach ($list as $key => $value) {
+                $list[$key]['index'] = $key+1;
                 $list[$key]['picname'] = getRealUrl($value['picname']);
             }
             returnJson('0','success',$list);

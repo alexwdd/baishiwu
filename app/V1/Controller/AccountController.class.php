@@ -1047,8 +1047,7 @@ class AccountController extends CommonController {
                 returnJson('0',C('SUCCESS_RETURN'),$list);
             }else{
                 returnJson('-1','您没有做任何改动');
-            }
-            
+            }            
         }
     }
     

@@ -21,6 +21,7 @@
 	        <div class="fsDatagridCols">
 				<p checkbox="true"/>
 				<p field="name" title="名称" width="20%"/>	
+				<p field="type" title="类别" width="100" templet="#typeTpl"/>	
 				<p title="图片" width="60" templet="#faceTpl"/>	
 				<p field="goodsId" title="商品ID" width="100"/>
 				<p field="url" title="URL" width="300"/>		
@@ -29,6 +30,16 @@
 				<p field="updateTime" title="更新日期" width="180" sort="true"/>
 				<p fixed="right" align="left" toolbar="#barDemo" title="操作" width="80"/>
 			</div>
+
+			<script type="text/html" id="typeTpl">
+				{{# if(d.type == 1){ }}
+				Banner
+				{{# }else if(d.type == 2){ }}
+				小图标
+				{{# }else if(d.type == 3){ }}
+				广告
+				{{# } }}				
+			</script>
 
 			<script type="text/html" id="faceTpl">
 				{{# if(d.image == ''){ }}

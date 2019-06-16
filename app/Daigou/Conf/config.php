@@ -28,6 +28,8 @@ return array (
         array("id"=>18,"name"=>"x15包邮"),
         array("id"=>19,"name"=>"x20包邮"),
         array("id"=>20,"name"=>"买一赠一"),
+        array("id"=>21,"name"=>"今日特价"),
+        array("id"=>22,"name"=>"特惠清仓"),
     ),
 );
 ?>

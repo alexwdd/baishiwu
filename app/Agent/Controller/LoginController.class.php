@@ -37,7 +37,7 @@ class LoginController extends BaseController {
         }*/
 
         $user = M('Agent');
-        $rs = $user->where(array("username" => $username, 'status' => array('eq', 1)))->find();
+        $rs = $user->where(array("username" => $username,"type"=>2, 'status' => array('eq', 1)))->find();
         if ($rs) {
             if ($rs['password'] === md5($password)) {
                 $data = array(

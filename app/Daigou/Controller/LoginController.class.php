@@ -50,7 +50,7 @@ class LoginController extends BaseController {
                 $crypt = new \Think\Crypt;
                 $cryptStr = $rs['id'].','.get_client_ip(0,1);
                 $flag = $crypt->encrypt($cryptStr,C('DATA_CRYPT_KEY'),0);
-                session('flag', $flag);
+                session('dgflag', $flag);
                 $this->success('欢迎回来！', U('Index/index'));
             } else {
                 $this->error('密码不正确！');

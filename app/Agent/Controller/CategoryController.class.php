@@ -84,7 +84,7 @@ class CategoryController extends CommonController {
 				$oldPath = I('post.path');
 
 				if ($cate->save($data)) {
-					$cate->execute("UPDATE __PREFIX__category SET path = replace(path, '".$oldPath."','".$data['path']."')");
+					$cate->execute("UPDATE __PREFIX__agent_cate SET path = replace(path, '".$oldPath."','".$data['path']."')");
 					$url = U('AgentCate/index');
 					$this->success('分类编辑成功',$url);
 				} else {

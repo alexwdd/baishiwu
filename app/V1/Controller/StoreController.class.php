@@ -40,7 +40,7 @@ class StoreController extends CommonController {
             $map['fid'] = 0;
             $map['comm'] = 1;
             $map['agentID'] = $this->agent['id'];
-            $indexCate = M("AgentCate")->field('id,path,name')->where($map)->select();
+            $indexCate = M("DgCate")->field('id,path,name')->where($map)->select();
             foreach ($indexCate as $key => $value) {
                 unset($map);
                 $map['comm'] = 1;
@@ -51,6 +51,7 @@ class StoreController extends CommonController {
                 foreach ($goods as $k => $val) {
                     $goods[$k]['picname'] = getRealUrl($val['picname']);
                     $goods[$k]['num'] = 0;
+                    $goods[$k]['rmb'] = number_format($this->agent['huilv']*$val['price'],1);
                     if ($val['tag']>0) {
                         $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
                     }
@@ -114,6 +115,10 @@ class StoreController extends CommonController {
             foreach ($list as $k => $value) {
                 $list[$k]['picname'] = getRealUrl($value['picname']);
                 $list[$k]['num'] = 0;
+                $list[$k]['rmb'] = number_format($this->agent['huilv']*$value['price'],1);
+                if ($value['tag']>0) {
+                    $list[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$value['tag'].'.png';   
+                }
             }
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
         }
@@ -132,8 +137,14 @@ class StoreController extends CommonController {
                 $map['path'] = $path;
             }
             $map['agentID'] = $this->agent['id'];
-            $cate = M("AgentCate")->where($map)->find();
-            returnJson('0','success',$cate);
+            $cate = M("DgCate")->where($map)->find();
+            unset($map);
+            $map['fid'] = $cate['id'];
+            $child = M("DgCate")->where($map)->select();
+            foreach ($child as $key => $value) {
+                $child[$key]['index'] = $key+1;
+            }
+            returnJson('0','success',['cate'=>$cate,'child'=>$child]);
         }
     }
 
@@ -192,6 +203,7 @@ class StoreController extends CommonController {
             $spec = M("DgGoodsIndex")->where($map)->select();
 
             $list['content'] = htmlspecialchars_decode($list['content']);
+            $list['rmb'] = number_format($this->agent['huilv']*$list['price'],1);
             returnJson(0,'success',['goods'=>$list,'server'=>$server,'spec'=>$spec,'thisSpec'=>$thisSpec]);
         }
     }
@@ -835,7 +847,7 @@ class StoreController extends CommonController {
             $fid = I('post.fid');
             $map['fid'] = $fid;
             $map['agentID'] = $this->agent['id'];
-            $list = M('AgentCate')->where($map)->order('sort asc,id desc')->select();
+            $list = M('DgCate')->where($map)->order('sort asc,id desc')->select();
             foreach ($list as $key => $value) {
                 $list[$key]['index'] = $key+1;
                 $list[$key]['picname'] = getRealUrl($value['picname']);

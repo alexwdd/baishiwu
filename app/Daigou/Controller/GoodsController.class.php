@@ -7,7 +7,7 @@ class GoodsController extends CommonController {
     public function index() {
         if (IS_POST) {
             $map['agentID']=$this->user['id'];
-            $cateArr = M('AgentCate')->where($map)->getField('id,name');
+            $cateArr = M('DgCate')->where($map)->getField('id,name');
             unset($map);
 
             $path = I('path');
@@ -50,7 +50,7 @@ class GoodsController extends CommonController {
             echo $this->return_json($result);       
         }else{
             $map['agentID'] = $this->user['id'];
-            $cate = M("AgentCate")->where($map)->order('path,id asc')->select();
+            $cate = M("DgCate")->where($map)->order('path,id asc')->select();
             foreach ($cate as $key => $value) {
                 $count = count(explode('-', $value['path'])) - 3;
                 $cate[$key]['count'] = $count;
@@ -65,7 +65,7 @@ class GoodsController extends CommonController {
             $this->all_add('DgGoods',U('Goods/index'));  
         }else{
             $map['agentID'] = $this->user['id'];
-            $cate = M("AgentCate")->where($map)->order('path,id asc')->select();
+            $cate = M("DgCate")->where($map)->order('path,id asc')->select();
             foreach ($cate as $key => $value) {
                 $count = count(explode('-', $value['path'])) - 3;
                 $cate[$key]['count'] = $count;
@@ -124,7 +124,7 @@ class GoodsController extends CommonController {
 
                 unset($map);
                 $map['agentID'] = $this->user['id'];
-                $cate = M("AgentCate")->where($map)->order('path,id asc')->select();
+                $cate = M("DgCate")->where($map)->order('path,id asc')->select();
                 foreach ($cate as $key => $value) {
                     $count = count(explode('-', $value['path'])) - 3;
                     $cate[$key]['count'] = $count;
@@ -178,7 +178,7 @@ class GoodsController extends CommonController {
 
         unset($map);
         $map['agentID'] = $this->user['id'];
-        $cate = M("AgentCate")->where($map)->order('path,id asc')->select();
+        $cate = M("DgCate")->where($map)->order('path,id asc')->select();
         foreach ($cate as $key => $value) {
             $count = count(explode('-', $value['path'])) - 3;
             $cate[$key]['count'] = $count;

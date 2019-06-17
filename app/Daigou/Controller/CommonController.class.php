@@ -11,7 +11,7 @@ class CommonController extends BaseController {
 
 		parent::_initialize();
 
-		if (!session('flag')) {
+		if (!session('dgflag')) {
 			$this->redirect('Daigou/Login/index');
 		}else{
 			$crypt = new \Think\Crypt;

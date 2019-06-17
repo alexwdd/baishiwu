@@ -62,7 +62,7 @@ class LoginController extends BaseController {
     }   
 
     public function signout(){
-        session('flag', null);
+        session('dgflag', null);
         $this->success('退出成功!', u('login/index'));
     }
 }

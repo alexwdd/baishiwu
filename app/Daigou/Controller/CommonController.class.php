@@ -15,7 +15,7 @@ class CommonController extends BaseController {
 			$this->redirect('Daigou/Login/index');
 		}else{
 			$crypt = new \Think\Crypt;
-            $flag = $crypt->decrypt(session('flag'),C('DATA_CRYPT_KEY'));
+            $flag = $crypt->decrypt(session('dgflag'),C('DATA_CRYPT_KEY'));
             $flagArr = explode(',', $flag);
             if ($flagArr[1]!=get_client_ip(0,1)) {
             	$this->redirect('Daigou/Login/index');

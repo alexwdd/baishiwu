@@ -24,11 +24,20 @@ class DaigouController extends BaseController
 			if (!$list) {
 				returnJson('-1','订单不存在');
 			}
-	        $cityID = M("Agent")->where("id=".$list['agentID'])->getField("cityID");
+
+	        $agent = M("Agent")->where("id=".$list['agentID'])->find();
+
+            $shouxufei = C('site.shouxufei');
+            $huilv = $agent['huilv'];
+            $data['shouxufei'] = $shouxufei/100;
+            $data['rmb'] = ($list['total'] + $shouxufei*$list['total'])*$huilv;
+            $list = M('DgOrder')->where($map)->save($data);
+            $list['rmb'] = number_format($data['rmb'],1);
+
     		if ($payType==2) {
-    			$result = $this->wxPub($list,$cityID);
+    			$result = $this->wxPub($list,$agent['cityID']);
     		}else{
-                $result = $this->aliPub($list,$cityID);
+                $result = $this->aliPub($list,$agent['cityID']);
             }    
     		returnJson(0,'success',$result);	    	
     	}

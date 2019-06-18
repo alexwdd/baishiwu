@@ -1,10 +1,4 @@
-Agent表 增加type，增加hotkey、discount
-wuliu表 增加weight price otherPrice
-
-增加agentID字段 dgGoods dgGoodsIndex 表单相关四个表
-
-增加dg开头的表
-增加sender表
+dgOrder 增加手续费字段
 
 
 接口说明

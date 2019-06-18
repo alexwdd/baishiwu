@@ -772,7 +772,9 @@ class StoreController extends CommonController {
                     returnJson('-1','该订单已支付完成，不要重复支付');
                 }
                 $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
-                returnJson(0,'success',$list);
+                $shouxufei = C('site.shouxufei');
+                $huilv = $this->agent['huilv'];
+                returnJson(0,'success',['data'=>$list,'huilv'=>$huilv,'shouxufei'=>$shouxufei]);
                 return view();
             }else{  
                 returnJson('-1','没有该订单');

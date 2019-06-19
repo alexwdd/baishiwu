@@ -51,6 +51,7 @@ class StoreController extends CommonController {
                 foreach ($goods as $k => $val) {
                     $goods[$k]['picname'] = getRealUrl($val['picname']);
                     $goods[$k]['num'] = 0;
+                    $goods[$k]['cartShow'] = true;
                     $goods[$k]['rmb'] = number_format($this->agent['huilv']*$val['price'],1);
                     if ($val['tag']>0) {
                         $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
@@ -115,6 +116,7 @@ class StoreController extends CommonController {
             foreach ($list as $k => $value) {
                 $list[$k]['picname'] = getRealUrl($value['picname']);
                 $list[$k]['num'] = 0;
+                $list[$k]['cartShow'] = true;
                 $list[$k]['rmb'] = number_format($this->agent['huilv']*$value['price'],1);
                 if ($value['tag']>0) {
                     $list[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$value['tag'].'.png';   

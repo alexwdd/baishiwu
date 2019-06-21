@@ -271,6 +271,7 @@ class ArticleController extends CommonController {
         	$map['articleid'] = $articleid;        	
         	$list = $obj = M($arr['db'])->where($map)->find();
         	if ($list){
+        		$this->setHit($list['cityID']);
         		M($arr['db'])->where($map)->setInc('hit');
         		/*if ($list['status']==0) {
         			returnJson('-1','信息审核中');

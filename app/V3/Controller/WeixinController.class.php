@@ -205,6 +205,7 @@ class WeixinController extends CommonController {
             $map['status'] = 1;
             $list = M('Article')->where($map)->find();
             M('Article')->where($map)->setInc('hit');
+            $this->setHit($cityID);
             if (!$list) {
                 returnJson('-1','信息不存在');
             } else {
@@ -501,6 +502,7 @@ class WeixinController extends CommonController {
             $map['articleid'] = $articleid;         
             $list = $obj = M($arr['db'])->where($map)->find();
             if ($list){
+                $this->setHit($cityID);
                 M($arr['db'])->where($map)->setInc('hit');
                 $list['thumb_s'] = getRealUrl($list['thumb_s']);
                 $list['thumb_b'] = getRealUrl($list['thumb_b']);

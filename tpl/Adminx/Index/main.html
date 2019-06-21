@@ -1,21 +1,47 @@
 <layout name='layout' />
 
-<div class="admin-main">
-	<fieldset class="layui-elem-field layui-field-title">
-	  <legend>系统信息</legend>
-	</fieldset>  
-	<div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
-            <table class="layui-table">
-                <tbody>
-                    <volist name="info" id="v">
-                    <tr>
-                        <td><{$key}></td>
-                        <td><{$v}></td>
-                    </tr>
-                    </volist>
-            	</tbody>
-            </table>
+<div class="admin-main" style="background: #f7f7f7">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md5">
+            <div class="layui-card">
+                <div class="layui-card-header">访问量</div>
+                <div class="layui-card-body">
+                    <table class="layui-table">
+                        <thead>
+                            <tr>
+                                <th>城市</th>
+                                <th>访问量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <volist name="city" id="vo">
+                            <tr>
+                                <td><{$vo.name}></td>
+                                <td><{$vo.number}></td>
+                            </tr>
+                            </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>   
+        </div>
+
+        <div class="layui-col-md7">
+            <div class="layui-card">
+                <div class="layui-card-header">系统信息</div>
+                <div class="layui-card-body">
+                    <table class="layui-table">
+                        <tbody>
+                            <volist name="info" id="v">
+                            <tr>
+                                <td><{$key}></td>
+                                <td><{$v}></td>
+                            </tr>
+                            </volist>
+                        </tbody>
+                    </table>
+                </div>
+            </div>   
         </div>
     </div>
 </div>

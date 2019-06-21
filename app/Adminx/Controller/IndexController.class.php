@@ -69,6 +69,16 @@ class IndexController extends AdminController {
             '用户的IP地址'=>$_SERVER['REMOTE_ADDR'],
         );
         $this->assign("info",$info);
+
+        $city = M('OptionItem')->where(array('cate'=>1))->select();
+        foreach ($city as $key => $value) {
+            $number = M('CityVisit')->where(array('cityID'=>$value['id']))->getField('hit');
+            if(!$number){
+                $number=0;
+            }
+            $city[$key]['number'] = $number;
+        }
+        $this->assign('city',$city);
         $this->display();
     }
 

@@ -295,4 +295,16 @@ class BaseController extends Controller{
 
         echo json_encode($josn_arr);
     }
+
+    public function setHit($cityID){
+        $map['cityID'] = $cityID;
+        $res = M('CityVisit')->where($map)->find();
+        if (!$res) {
+            $data['cityID'] = $cityID;
+            $data['hit'] = 1;
+            M('CityVisit')->add($data);
+        }else{
+            M('CityVisit')->where($map)->setInc('hit');
+        }
+    }
 }

@@ -60,8 +60,9 @@ class PinyouController extends CommonController {
 				returnJson('-1','缺少articleid');
 			}
         	$map['articleid'] = $articleid;        	
-        	$list = M('Tuan')->field('articleid,title,userid,type,goodstype,address,longitude,latitude,maxWeight,contact,phone,wechat,detail,bill,status,auth,order,company,isStop,createTime')->where($map)->find();
+        	$list = M('Tuan')->field('articleid,cityID,title,userid,type,goodstype,address,longitude,latitude,maxWeight,contact,phone,wechat,detail,bill,status,auth,order,company,isStop,createTime')->where($map)->find();
         	if ($list){
+                $this->setHit($list['cityID']);
         		$list['goods'] = M('TuanDetail')->field('goodsid,contact,status,detail,weight,weight_a,createTime')->where(array('articleid'=>$articleid))->select();
                 $list['currentWeight'] = 0;
         		$list['currentWeight_a'] = 0;

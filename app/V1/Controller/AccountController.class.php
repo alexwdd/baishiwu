@@ -78,6 +78,7 @@ class AccountController extends CommonController {
                 if ($list['disable']==1) {
                     returnJson('-1','账户已禁用，请联系客服');
                 }else{
+                    $list['headimg'] = getRealUrl($list['headimg']);
                     if($list['gender']==0) {
                         $list['gender'] = '保密';
                     }elseif($list['gender']==1){
@@ -85,7 +86,7 @@ class AccountController extends CommonController {
                     }else{
                         $list['gender'] = '女';
                     }                    
-                    if ($list['birthday']=='') {
+                    /*if ($list['birthday']=='') {
                         $list['birthday'] = '未知';
                         $list['age'] = '未知';
                     }else{
@@ -104,7 +105,7 @@ class AccountController extends CommonController {
                         $list['birthday'] = '未知';
                         $list['work'] = '未知';
                         $list['age'] = '未知';
-                    }
+                    }*/
 
                     unset($map);
                     $map['memberID'] = $list['userid'];
@@ -1033,7 +1034,7 @@ class AccountController extends CommonController {
                     $list['gender'] = '女';
                 }
                 
-                if ($list['birthday']=='') {
+                /*if ($list['birthday']=='') {
                     $list['birthday'] = '未知';
                     $list['age'] = '未知';
                 }else{
@@ -1043,7 +1044,7 @@ class AccountController extends CommonController {
                     if ($list['age']<=0) {
                         $list['age'] = '未知';
                     }
-                }            
+                } */           
                 returnJson('0',C('SUCCESS_RETURN'),$list);
             }else{
                 returnJson('-1','您没有做任何改动');
@@ -1157,7 +1158,7 @@ class AccountController extends CommonController {
             $list = $obj->field('userID')->where($map)->limit($firstRow.','.$pagesize)->order('id desc')->select();
             foreach ($list as $key => $value) {
                 $member = M('Member')->where(array('id'=>$value['userID']))->find();
-                $list[$key]['headimg'] = $member['headimg'];
+                $list[$key]['headimg'] = getRealUrl($member['headimg']);
                 $list[$key]['nickname'] = $member['nickname'];
                 $list[$key]['headimg'] = $member['headimg'];
             }

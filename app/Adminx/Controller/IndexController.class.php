@@ -70,9 +70,17 @@ class IndexController extends AdminController {
         );
         $this->assign("info",$info);
 
+        $date=date("Y-m-d");  //当前日期
+        $first=1; //$first =1 表示每周星期一为开始日期 0表示每周日为开始日期
+        $w=date('w',strtotime($date));  //获取当前周的第几天 周日是0周一到周六是1-6
+        $week_start=date('Y-m-d',strtotime("$date -".($w==0 ? 6 : $w - $first).' days')); //获取本周开始日期，如果$w是0，则表示周日，减去6天
+        $week_end=date('Y-m-d',strtotime("$week_start +6 days"));  //本周结束日期
+
+        $map['createTime'] = array('between',array(strtotime($week_start),strtotime($week_end)+86399));
         $city = M('OptionItem')->where(array('cate'=>1))->select();
         foreach ($city as $key => $value) {
-            $number = M('CityVisit')->where(array('cityID'=>$value['id']))->getField('hit');
+            $map['cityID'] = $value['id'];
+            $number = M('CityVisit')->where($map)->count();
             if(!$number){
                 $number=0;
             }

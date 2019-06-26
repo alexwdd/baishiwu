@@ -77,8 +77,7 @@ class AccountController extends CommonController {
             if ($list) {
                 if ($list['disable']==1) {
                     returnJson('-1','账户已禁用，请联系客服');
-                }else{
-                    
+                }else{                    
                     $list['headimg'] = getRealUrl($list['headimg']);
                     if($list['gender']==0) {
                         $list['gender'] = '保密';

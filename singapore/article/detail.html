@@ -132,7 +132,7 @@ p img{max-width:100%;height:auto}
 				</li>				
 			</div>			
 			<div class="fd">
-				<a :href="'comments.html?articleid='+info.articleid+'&type='+type+'&commentid='+commentid">查看全部评论 <i class="mui-icon mui-icon-arrowright"></i></a>
+				<a :href="'comments.html?articleid='+info.articleid+'&type='+type+'&userid='+userid">查看全部评论 <i class="mui-icon mui-icon-arrowright"></i></a>
 			</div>
 		</div>
 
@@ -165,7 +165,7 @@ p img{max-width:100%;height:auto}
 			type:'',
 			fixHead:'',
 			price:'面议',
-			commentid :0,
+			userid :0,
 			fav:'<i class="icon icon-star"></i> 收藏',
 			comments :[],
 			currentComponent: request.type,
@@ -352,7 +352,7 @@ p img{max-width:100%;height:auto}
 			var that = this;
     		mui.showLoading('数据加载中');
     		that.type = request.type;
-    		that.commentid = request.commentid;
+    		that.userid = request.userid;
     		if (that.type=='tc') {
     			that.price = '免费';
     		}; 
@@ -514,9 +514,9 @@ p img{max-width:100%;height:auto}
 		var type = request.type;
 		var articleid = request.articleid;
 		var comments=document.getElementById("pinlunTXT").value;
-		var commentid = request.commentid;
+		var userid = request.userid;
 		mui("#writeBox").popover("toggle");
-		if(commentid==null || commentid==undefined){
+		if(userid==null || userid==undefined){
 			window.location.href = 'app://login';
 			return false; 
 		}else{
@@ -525,7 +525,7 @@ p img{max-width:100%;height:auto}
 			$.post(
 				config.userinfo,
 				{
-			        userid:commentid
+			        userid:userid
 			   	},
 			   	function(res){		        	
 					if(res.code=='0'){
@@ -539,7 +539,7 @@ p img{max-width:100%;height:auto}
 								articleid : articleid,
 								comments : comments,
 								type : type,
-						        userid:commentid,
+						        userid:userid,
 						        password:data.password,
 						        openid:data.openid,
 						   	},

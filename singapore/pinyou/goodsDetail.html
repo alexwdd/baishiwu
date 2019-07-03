@@ -82,13 +82,13 @@
 
 	<div class="pyInfo">
 		<div class="hd">
-			<a :href="'detail.html?articleid='+info.articleid">
+			<a :href="'app://pinyoudetail?articleid='+info.articleid">
 			所参拼团
 			<span class="mui-pull-right"><i class="mui-icon mui-icon-arrowright"></i></span>
 			</a>
 		</div>	
 		<div class="pinyou" style="margin: 0">
-		<a :href="'detail.html?articleid='+pinyou.articleid">
+		<a :href="'app://pinyoudetail?articleid='+pinyou.articleid">
 			<div class="hd" style="margin: 0; font-weight: normal;">
 				<div class="code">{{pinyou.articleid}}号团			
 					<span v-if="pinyou.type == 0">个人团</span>

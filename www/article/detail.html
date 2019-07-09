@@ -194,15 +194,19 @@ height: auto;
 			<div class="price" v-else>{{fixHead}}${{info.price}}</div>
 			<div class="fav" id="fav" v-on:click="doFav" v-html="fav"></div>			
 		</div>
-
+		
+	
 		<div class="tag">
 			<span class="my-badge my-badge-green">{{info.sortName}}</span>
 			<span class="my-badge my-badge-auth" v-if="info.auth == 1">已实名认证</span>
-		</div>		
+
+			<div style="float: right; font-size: 12px; line-height: 18px"> <i class="icon icon-eye"></i> {{info.hit}}</div>
+		</div>
+		
 
 		<div class="content">
 			<div class="hd">描述</div>
-			<div class="bd">{{info.detail}}</div>
+			<div class="bd" v-html="info.detail"></div>
 		</div>
 
 		<div class="list">
@@ -485,7 +489,8 @@ height: auto;
 					if(res.code=='0'){
 						data = res.body;										
 						that.banner = data.images;
-						that.info = data;
+						that.info = data;						
+						that.info.detail = that.info.detail.replace(/\r/ig, '<br>').replace(/\n/ig, '<br>');
 						that.lng = data.longitude;						
 						that.lat = data.latitude;						
 						that.comments = data.comments;	

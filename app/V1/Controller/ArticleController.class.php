@@ -277,7 +277,8 @@ class ArticleController extends CommonController {
         			returnJson('-1','信息审核中');
         		}
         		unset($list['status']);*/
-        		$list['detail'] = str_replace(array("/r", "/n", "/r/n"), "<br/>", $list['detail']);
+        		//$list['detail'] = str_replace(array("\r", "\n", "\r\n"), "<br/>", $list['detail']);
+
         		$list['thumb_s'] = getRealUrl($list['thumb_s']);
         		$list['thumb_b'] = getRealUrl($list['thumb_b']);
         		if ($list['image']!='') {        			

@@ -38,7 +38,10 @@ class NewsController extends CommonController {
         	$list = $obj->field('id,picname as thumb,title,createTime as time,hit,from,url')->where($map)->limit($firstRow.','.$pagesize)->order('top desc,id desc')->select();
         	foreach ($list as $key => $value) {
         		if ($value['thumb']!='') {
-        			$list[$key]['thumb'] = C('site.domain').$value['thumb'];
+                    $list[$key]['thumb'] = C('site.domain').$value['thumb'];
+                    $imgInfo = getimagesize('.'.$value['thumb']);
+                    $list[$key]['width'] = $imgInfo[0];
+                    $list[$key]['height'] = $imgInfo[1];
          		}
          		$list[$key]['time'] = date("Y-m-d",$value['time']);
         		$list[$key]['html'] = C('site.domain').'/HTML/Article/'.date("ym",$value['time']).'/'.$value['id'].'.html';

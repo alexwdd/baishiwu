@@ -233,8 +233,8 @@ class PayController extends BaseController
             }
 
             $cityID = M("Tuan")->where("articleid=".$list['articleid'])->getField("cityID");
-            if ($payType==2) {
-                $list['rmb'] = $list['money'];
+            $list['rmb'] = $list['money'];
+            if ($payType==2) {                
                 $result = $this->wxPub($list,$cityID,'tuan');
             }else{
                 $result = $this->aliPub($list,$cityID,'tuan');

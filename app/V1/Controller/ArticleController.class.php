@@ -78,6 +78,11 @@ class ArticleController extends CommonController {
         	if (!$arr) {
         		returnJson('-1','type类型错误');
         	}
+
+        	if($type == 'sp' && I('post.image')==''){
+        		returnJson('-1','请上传图片');
+        	}
+
         	$obj = D($arr['db']);
         	$fid = $arr['fid'];
         	if ($data = $obj->create()) {

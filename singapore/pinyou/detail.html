@@ -15,6 +15,9 @@
 <script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
 <script src="../static/js/cart.js"></script>
+<style type="text/css">
+.quick{position: fixed; right: 0; bottom: 100px; width: 50px; height: 50px; border-radius: 50%; background: rgba(117, 7, 194, 0.8); color: #fff; text-align: center; font-size: 14px; box-sizing: border-box; padding: 0 10px; line-height: 100%; padding-top: 10px}
+</style>
 </head>
 <body>
 
@@ -167,12 +170,15 @@
 	
 	<div class="block"></div>
 	<div class="footAction" v-on:click="doUpdate" :class="status.class" :id="status.id">{{status.msg}}</div>
+
+	<div class="quick" v-show="quickShow" @click="insertBag">添加包裹</div>
 </div>
 <script>
 //alert(window.location.href);
 vm = new Vue({
 	el : "#vm",
 	data : {
+		quickShow:false,
 		open:false,
 		bill:0,
 		status :[],
@@ -212,6 +218,10 @@ vm = new Vue({
 		search:function(){
 			that = this;
 			window.location.href= that.info.companyUrl;
+		},
+		insertBag:function(){
+			url = 'app://pinyoujoin?articleid='+this.info.articleid;
+			window.location.href = url
 		},
 		updateDetail:function(e){
 			var detail=document.getElementById("detail").value;
@@ -373,7 +383,8 @@ vm = new Vue({
 						that.status.msg = '更新置顶';
 						that.status.class = '';
 						that.status.func = 'doUpdate';
-						that.status.id = 'updateBtn';						
+						that.status.id = 'updateBtn';		
+						that.quickShow = true;				
 					}else{
 						if (data.isStop==1 || data.status>1){
 							that.status.my = 0;

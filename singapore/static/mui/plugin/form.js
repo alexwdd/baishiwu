@@ -66,7 +66,7 @@ function muiFormCheckBase(obj){
 		break;
 		case 'phone' :
 			//var reg = /^13[0-9]{9}$|14[0-9]{9}|15[0-9]{9}$|18[0-9]{9}$/;
-			var reg = /^[0-9]{10}$|^[0-9]{8}$/;
+			var reg = /^[0-9]{8}$/;
 			if(!reg.test(checkVal)){return muiFormCheckShowErrMsg(checkMsg);}
 		break;
 		case 'url'  :

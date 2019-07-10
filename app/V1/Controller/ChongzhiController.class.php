@@ -337,7 +337,8 @@ class ChongzhiController extends CommonController {
 
     public function doChongzhi($order){
     	$config = C("XINJIAPO_PAY");
-    	$url = 'http://www.topupcard.sg/api20/topup.asmx/SendEasyTopup?userName='.$config['PHONE_NAME'].'&password='.$config['PHONE_PASSWORD'].'&productID='.$order['productID'].'&quantity='.$order['money'].'&MobileNo='.$order['mobile'].'&CircleCode=proNO1&PaymentMethod=9&Originator=SGLIFECIRCLE';
+    	#$url = 'http://www.topupcard.sg/api20/topup.asmx/SendEasyTopup?userName='.$config['PHONE_NAME'].'&password='.$config['PHONE_PASSWORD'].'&productID='.$order['productID'].'&quantity='.$order['money'].'&MobileNo='.$order['mobile'].'&CircleCode=proNO1&PaymentMethod=9&Originator=SGLIFECIRCLE';
+    	$url = 'http://www.topupcard.sg/api20/topup.asmx/SendEasyTopup?userName='.$config['PHONE_NAME'].'&password='.$config['PHONE_PASSWORD'].'&productID='.$order['productID'].'&quantity=1&MobileNo='.$order['mobile'].'&CircleCode=proNO1&PaymentMethod=9&Originator=SGLIFECIRCLE';
     	$con = file_get_contents($url);
 		$p = xml_parser_create();
 		xml_parse_into_struct($p, $con, $vals, $index);

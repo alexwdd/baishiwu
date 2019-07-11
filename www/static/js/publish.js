@@ -89,7 +89,7 @@ mui.ready(function(){
 var xhr;
 function uploadMultiFile(o){
 	$("#uploadfile").click();
-	$("#uploadfile").bind("change", function(){
+	$("#uploadfile").unbind().bind("change", function(){
 		if ($(this).val() != "") {
 			mui.showLoading('上传中');
 			var fileObj = document.getElementById("uploadfile").files[0]; // js 获取文件对象

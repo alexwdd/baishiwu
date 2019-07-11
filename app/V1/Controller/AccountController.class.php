@@ -167,7 +167,7 @@ class AccountController extends CommonController {
                         $list['gender'] = '女';
                     }
                     
-                    if ($list['birthday']=='') {
+                    /*if ($list['birthday']=='') {
                         $list['birthday'] = '未知';
                         $list['age'] = '未知';
                     }else{
@@ -186,7 +186,7 @@ class AccountController extends CommonController {
                         $list['birthday'] = '未知';
                         $list['work'] = '未知';
                         $list['age'] = '未知';
-                    }
+                    }*/
 
                     unset($map);
                     $map['memberID'] = $list['userid'];

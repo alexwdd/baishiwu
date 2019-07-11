@@ -14,7 +14,8 @@ class ArticleController extends CommonController {
 			if ($cityID=='' || !is_numeric($cityID)) {
 				returnJson('-1','缺少cityID');
 			}
-        	$map['cityID'] = $cityID;   
+			
+        	$map['cityID'] = $cityID;
         	$map['fid'] = 0;
         	$map['cid'] = array('neq',152);
         	$list = M('CityCate')->field('cid,name')->where($map)->order('sort asc')->select();
@@ -79,7 +80,7 @@ class ArticleController extends CommonController {
         		returnJson('-1','type类型错误');
         	}
 
-        	if($type == 'sp' && I('post.image')==''){
+        	if($type == 'sp' && I('post.thumb_s')==''){
         		returnJson('-1','请上传图片');
         	}
 

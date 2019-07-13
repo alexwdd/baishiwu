@@ -20,7 +20,19 @@
 
 <div class="mui-content" id="vm" v-cloak>
 	<ul class="mui-table-view" v-for="vo in lists">
-        <li class="mui-table-view-cell">
+		<li class="mui-table-view-cell" v-if="vo.py=='zp'">
+            <a :href="'../article/zhaopin.html?userid='+req.userid+'&cityID='+req.cityID+'&type='+vo.py" class="mui-navigate-right" style="padding:20px 10px">
+            {{vo.type}}
+            <span class="mui-pull-right" style="padding-right: 30px">{{vo.num}}</span>
+        	</a>
+        </li>
+        <li class="mui-table-view-cell" v-else-if="vo.py=='zf'">
+            <a :href="'../article/zufang.html?userid='+req.userid+'&cityID='+req.cityID+'&type='+vo.py" class="mui-navigate-right" style="padding:20px 10px">
+            {{vo.type}}
+            <span class="mui-pull-right" style="padding-right: 30px">{{vo.num}}</span>
+        	</a>
+        </li>
+        <li class="mui-table-view-cell" v-else="">
             <a :href="'../article/list.html?userid='+req.userid+'&cityID='+req.cityID+'&type='+vo.py" class="mui-navigate-right" style="padding:20px 10px">
             {{vo.type}}
             <span class="mui-pull-right" style="padding-right: 30px">{{vo.num}}</span>

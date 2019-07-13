@@ -18,8 +18,10 @@ class ChongzhiController extends CommonController {
 				$ad[$key]['image'] = 'http://' . $_SERVER['HTTP_HOST'] .$value['image'];
               	if($value['url']!=''){
 					$ad[$key]['url'] = 'app://html?url='.$value['url'].'&title='.$value['title'];
+					$ad[$key]['realUrl'] = $value['url'];
 				}else{
 					$ad[$key]['url'] = 'app://articledetail?articleid='.$value["articleid"].'&type='.$value['type'];
+					$ad[$key]['realUrl'] = 'http://www.worldmedia.top/singapore/article/detail.html?articleid='.$value['articleid'].'&type='.$value['type'];
 				}
 			}
 

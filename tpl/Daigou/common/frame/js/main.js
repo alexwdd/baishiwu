@@ -144,7 +144,7 @@ layui.use(['fsMenu','layer','fsTab','fsCommon','fsConfig'], function(){
                 layer.close(index);
                 layer.load(0, {shade:[0.5,'#000'],time:0});
                 $.ajax({
-                    url:"/index.php?m=agent&c=setting&a=clearcache",
+                    url:"/index.php?m=daigou&c=setting&a=clearcache",
                     success:function(data){
                         layer.closeAll();
                         if(data.status==1){
@@ -173,7 +173,7 @@ layui.use(['fsMenu','layer','fsTab','fsCommon','fsConfig'], function(){
 	//退出
 	$("#signout").on("click",function(){		
 		layui.define(["fsCommon"], function(exports){
-			url = "/index.php/agent/login/signout";
+			url = "/index.php/daigou/login/signout";
 			statusName = $.result(fsConfig,"global.result.statusName","status");
 			successNo = $.result(fsConfig,"global.result.successNo",1);
 			msgName = $.result(fsConfig,"global.result.msgName","info");

@@ -18,7 +18,7 @@ return array(
 
 	'AOZHOU_PAY'=>array(
 		'APP_ID'=>'wx2e8d4431ba2f21e6',
-		'MCH_KEY'=>'htYEVpmOwz3oj1IdTkfisqOE24GOL0xC',
+		'MCH_KEY'=>'6yhjk8dybflmn38765dvgteox6543gdk',
 		'MCH_ID'=>'1528612271',
 
 		'ALI_APP_ID'=>'2019031963561720',

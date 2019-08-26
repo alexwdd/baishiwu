@@ -68,6 +68,9 @@ class ChatController extends CommonController {
             }
 
             $list = $obj->where($map)->limit($firstRow.','.$pagesize)->order('updateTime desc')->select();
+            foreach ($list as $key => $value) {
+                $obj->where(array('id'=>$value['id']))->setInc('hit');
+            }
             if ($token!='') {
                 $user = $this->checkToken($token);
             }

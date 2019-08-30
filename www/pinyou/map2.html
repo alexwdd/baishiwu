@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>澳洲生活圈</title>
+<link rel="stylesheet" type="text/css" href="../static/fonts/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+<script src="../static/js/config.js"></script>
+<script src="../static/vue/vue.min.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/mui/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../static/mui/plugin/loading.js" type="text/javascript" charset="utf-8"></script>
+<style>
+html,body{width: 100%; height: 100%}
+</style>
+</head>
+<body>
+<div class="showMap" id="vm" v-cloak>
+	<!-- <div class="back mui-icon mui-icon-back"></div> -->
+
+	<div class="infoList">
+		<div class="hd" id="btn">
+			<div class="ico down"></div>
+			<span id="num">{{num}}条信息</span>		
+		</div>
+		<div class="bd" id="infoBox">
+			<li v-for="(vo,index) in lists" @click="setMapCenter(vo.lat,vo.lng,index)">
+				<div class="num">{{index+1}}</div>
+				<div class="info">
+					<h1>{{vo.articleid}}号团
+						<span v-if="vo.status == 0">等待包裹</span>
+						<span v-else-if="vo.status == 1">包裹到齐</span>
+						<span v-else-if="vo.status == 2">等待发货</span>
+						<span v-else-if="vo.status == 3" style="color:#f00">成功发货</span>
+						<span v-else>发货失败</span>			
+					</h1>
+					<div style="font-size:12px; margin-top:5px">货物类型：<span class="green" v-if="vo.goodstype == 1">普通货</span><span style="color:#f00" v-else>敏感货</span></div>
+				</div>
+				<div class="juli"><span>{{vo.distance|juli}}</span></div>
+			</li>
+
+			<p v-show="next" @click="loadmore" style="text-align:center">加载更多</p>
+		</div>
+	</div>
+
+	<div class="mapInfo" id="mapInfo">
+		<div class="info">
+			<div class="pinyou">
+				<a :href="'app://pinyoudetail?articleid='+info.articleid">
+					<div class="hd">
+						<div class="code">{{info.articleid}}号团						
+						<span v-if="info.goodstype == 1" class="green">普通货</span>
+						<span style="color:#f00" v-else>敏感货</span>		
+						</div>			
+						<div style="font-size: 12px" class="status" v-if="info.status == 0">等待包裹</div>
+						<div style="font-size: 12px" class="status" v-else-if="info.status == 1">包裹到齐</div>
+						<div style="font-size: 12px" class="status" v-else-if="info.status == 2">等待发货</div>
+						<div style="font-size: 12px" class="status" v-else-if="info.status == 3" style="color:#f00">成功发货</div>
+						<div style="font-size: 12px" class="status" v-else>发货失败</div>
+					</div>
+
+					<div class="bd">
+						<div class="add">{{info.address}}</div>
+
+						<div class="maxWeight">预估重量：<span>{{info.currentWeight}}kg</span></div>
+
+						<div class="my-progressbar">
+							<span :style="{ width: info.width + '%' }"></span>
+						</div>		
+
+						<div class="user" style="border:0">		
+							<p>
+								<span class="mui-pull-left" v-if="info.goodstype == 1">普通货</span>
+								<span class="mui-pull-left" v-else>敏感货</span>
+								<span class="mui-pull-right">团长：{{info.contact}}</span>
+							</p>
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="arrow"><img src="../static/image/arrow.png" alt=""></div>
+	</div>
+	<div id="mapContainer"></div>	
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
+<script src="../static/js/config.js"></script>
+<script>
+var map; 
+var markers = [];
+vm = new Vue({
+	el : "#vm",
+	data : {
+		first:1,
+		num:0,
+		info:[],
+		lists : [],
+		page : 1,
+		next : 0
+	},
+	methods: {
+		setMapCenter : function(lat,lng,index){
+			that = this;
+			point = {lat:parseFloat(lat), lng:parseFloat(lng)}
+			this.clearOverlays();
+			map.setCenter(point, 17);
+		    var marker = new google.maps.Marker({position: point, map: map});
+		    markers.push(marker);		
+		    that.info = that.lists[index-0];  
+		    $("#mapInfo").show();  
+		},
+		clearOverlays:function(){
+			if (markers) { 
+		    	for (i in markers) { 
+		        	markers[i].setMap(null); 
+		    	} 
+		    }
+		},
+		loadmore:function(){
+			that = this;
+			that.page++;   
+			that.goPage(that.page); // 执行增加页面数据操作
+		},
+		goPage (page) {
+    		var that = this;
+    		mui.showLoading('数据加载中');
+    		request.page = that.page;
+    		$.post(
+				config.pinyouList,
+				request,
+			   	function(res){
+		        	mui.hideLoading();
+					if(res.code=='0'){
+						data = res.body.articles;
+						$.each(data,function(){
+							width = this.currentWeight/this.maxWeight*100;
+							if(width>100){width=100}
+							this.width = width;
+						})
+						that.lists = that.lists.concat(data);	
+						that.num = data.length;							
+						that.next = res.body.next;
+						if (that.first==1){
+							that.info = data[0];
+							that.first = 0;										
+						};
+					}else{
+						mui.toast(res.desc);
+					}
+		    	},
+		    	"json"
+		    );
+    	}
+	},
+	created : function(){
+		var that = this;
+		that.goPage(that.page);
+	},
+	updated : function(){		
+		var that = this;
+		map = new google.maps.Map(document.getElementById('mapContainer'), {
+			disableDefaultUI: true,
+			center: {lat:-34.8911, lng:138.6463},
+			zoom: 17
+		});
+		
+		point = {lat:parseFloat(that.info.lat), lng:parseFloat(that.info.lng)}
+		map.setCenter(point, 17);
+		var marker = new google.maps.Marker({position: point, map: map});
+		markers.push(marker);
+
+		$("#mapInfo").show();		
+		google.maps.event.addListener(map, "drag", function(){
+			$("#mapInfo").hide();
+		});  
+	}
+});
+
+Vue.filter('juli', function (v) {
+    if (v<1000){
+		return v+'m';
+	}else{
+		return Math.round(v/1000).toFixed(1) + "km";
+	}
+})
+
+$(function(){
+	$("#btn").click(function(){
+		var o = $(this).find(".ico");
+		if (o.hasClass("down")){
+			o.removeClass("down");
+		}else{
+			o.addClass("down");
+		}
+		$("#infoBox").slideToggle()
+	})
+})
+</script>
+</body>
+</html>

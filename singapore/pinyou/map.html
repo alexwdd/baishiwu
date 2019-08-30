@@ -47,45 +47,7 @@ html,body{width: 100%; height: 100%}
 	</div>
 	
 	<div id="mapContainer"></div>	
-
-	<div class="mapInfo" id="mapInfo">
-		<div class="info">
-			<div class="pinyou">
-				<a :href="'app://pinyoudetail?articleid='+info.articleid">
-					<div class="hd">
-						<div class="code">{{info.articleid}}号团						
-						<span v-if="info.goodstype == 1" class="green">普通货</span>
-						<span style="color:#f00" v-else>敏感货</span>		
-						</div>			
-						<div style="font-size: 12px" class="status" v-if="info.status == 0">等待包裹</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 1">包裹到齐</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 2">等待发货</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 3" style="color:#f00">成功发货</div>
-						<div style="font-size: 12px" class="status" v-else>发货失败</div>
-					</div>
-
-					<div class="bd">
-						<div class="add">{{info.address}}</div>
-
-						<div class="maxWeight">预估重量：<span>{{info.currentWeight}}kg</span></div>
-
-						<div class="my-progressbar">
-							<span :style="{ width: info.width + '%' }"></span>
-						</div>		
-
-						<div class="user" style="border:0">		
-							<p>
-								<span class="mui-pull-left" v-if="info.goodstype == 1">普通货</span>
-								<span class="mui-pull-left" v-else>敏感货</span>
-								<span class="mui-pull-right">团长：{{info.contact}}</span>
-							</p>
-						</div>
-					</div>
-				</a>
-			</div>
-		</div>
-		<div class="arrow"><img src="../static/image/arrow.png" alt=""></div>
-	</div>
+	
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
@@ -110,26 +72,42 @@ vm = new Vue({
 			that.map.setCenter(point);
 			that.map.setZoom(15);
 		    that.info = that.lists[index-0];
-		    let info = that.info;
-		    if (info.thumb_s!=''){
-	    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'"><div class="img"><img src="'+info.thumb_s+'" /></div><div class="intr"><h1>'+info.title+'</h1><p><i class="icon icon-weizhi"></i> '+info.address+'</p><p class="mp">$'+info.price+'<span>'+formatDate(info.updateTime)+'</span></p></div></a></div>';
-	    	}else{
-	    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'">';
-	    		contentString += '<div class="hd">'+info.title+'</div>';
-	    		contentString += '<div class="price">$'+info.price+'</div>';
-	    		contentString += '<div class="tag">';
-	    		if (info.sortName!=''){
-	    			contentString += '<div class="tag1">'+info.sortName+'</div>';
-	    		}
-	    		if (info.work!=''){
-	    			contentString += '<div class="tag2">'+info.work+'</div>';
-	    		}
-	    		if (info.visa!=''){
-	    			contentString += '<div class="tag2">'+info.visa+'</div>';
-	    		}
-	    		contentString += '</div>';
-	    		contentString += '</a></div>';
-	    	} 
+		    let info = that.info;	
+    		contentString = '<div class="mapShowInfo"><div class="pinyou"><a href="app://pinyoudetail?articleid='+info.articleid+'">';
+    		contentString += '<div class="hd">'+info.articleid+'号团	';
+    		if(info.goodstype==1){
+    			contentString += '<span class="green">普通货</span>';
+    		}else{
+    			contentString += '<span style="color:#f00">敏感货</span>';
+    		}
+    		if(info.status==0){
+    			contentString += '<div style="font-size: 12px" class="status">等待包裹</div>';
+    		}else if(info.status==1){
+    			contentString += '<div style="font-size: 12px" class="status">包裹到齐</div>';
+    		}else if(info.status==2){
+    			contentString += '<div style="font-size: 12px" class="status">等待发货</div>';
+    		}else if(info.status==3){
+    			contentString += '<div style="font-size: 12px" class="status" style="color:#f00">成功发货</div>';
+    		}else{
+    			contentString += '<div style="font-size: 12px" class="status">发货失败</div>';
+    		}
+    		contentString += '</div>';
+
+    		contentString += '<div class="bd">';
+    		contentString += '<div class="add">'+info.address+'</div>';
+    		contentString += '<div class="maxWeight">预估重量：<span>'+info.currentWeight+'kg</span></div>';
+    		contentString += '<div class="my-progressbar"><span style="width:'+info.width+'%"></span></div>';
+    		contentString += '<div class="user" style="border:0"><p>';
+    		if(info.goodstype==1){
+    			contentString += '<span class="mui-pull-left">普通货</span>';
+    		}else{
+    			contentString += '<span class="mui-pull-left">敏感货</span>';
+    		}
+    		contentString += '<span class="mui-pull-right">团长：'+info.contact+'</span>';
+    		contentString += '</p></div>';
+    		contentString += '</div>';
+    		
+    		contentString += '</a></div></div>';	 
 
 		    var infowindow = new google.maps.InfoWindow({
 	        	content: contentString
@@ -185,21 +163,41 @@ vm = new Vue({
 		    	that.map.setZoom(15);
 		    	that.map.setCenter(marker.getPosition());
 	
-	    		var contentString = '<div class="mapShowInfo"><a href="'+info.url+'">';
-	    		contentString += '<div class="hd">'+info.title+'</div>';
-	    		contentString += '<div class="price">$'+info.price+'</div>';
-	    		contentString += '<div class="tag">';
-	    		if (info.sortName!=''){
-	    			contentString += '<div class="tag1">'+info.sortName+'</div>';
+	    		contentString = '<div class="mapShowInfo"><div class="pinyou"><a href="app://pinyoudetail?articleid='+info.articleid+'">';
+	    		contentString += '<div class="hd">'+info.articleid+'号团	';
+	    		if(info.goodstype==1){
+	    			contentString += '<span class="green">普通货</span>';
+	    		}else{
+	    			contentString += '<span style="color:#f00">敏感货</span>';
 	    		}
-	    		if (info.work!=''){
-	    			contentString += '<div class="tag2">'+info.work+'</div>';
-	    		}
-	    		if (info.visa!=''){
-	    			contentString += '<div class="tag2">'+info.visa+'</div>';
+	    		if(info.status==0){
+	    			contentString += '<div style="font-size: 12px" class="status">等待包裹</div>';
+	    		}else if(info.status==1){
+	    			contentString += '<div style="font-size: 12px" class="status">包裹到齐</div>';
+	    		}else if(info.status==2){
+	    			contentString += '<div style="font-size: 12px" class="status">等待发货</div>';
+	    		}else if(info.status==3){
+	    			contentString += '<div style="font-size: 12px" class="status" style="color:#f00">成功发货</div>';
+	    		}else{
+	    			contentString += '<div style="font-size: 12px" class="status">发货失败</div>';
 	    		}
 	    		contentString += '</div>';
-	    		contentString += '</a></div>';
+
+	    		contentString += '<div class="bd">';
+	    		contentString += '<div class="add">'+info.address+'</div>';
+	    		contentString += '<div class="maxWeight">预估重量：<span>'+info.currentWeight+'kg</span></div>';
+	    		contentString += '<div class="my-progressbar"><span style="width:'+info.width+'%"></span></div>';
+	    		contentString += '<div class="user" style="border:0"><p>';
+	    		if(info.goodstype==1){
+	    			contentString += '<span class="mui-pull-left">普通货</span>';
+	    		}else{
+	    			contentString += '<span class="mui-pull-left">敏感货</span>';
+	    		}
+	    		contentString += '<span class="mui-pull-right">团长：'+info.contact+'</span>';
+	    		contentString += '</p></div>';
+	    		contentString += '</div>';
+	    		
+	    		contentString += '</a></div></div>';	
 		 
 				var infowindow = new google.maps.InfoWindow({
 		        	content: contentString,

@@ -17,18 +17,16 @@
 <style>
 html,body{width: 100%; height: 100%}
 </style>
-</head>
 <body>
 <div class="showMap" id="vm" v-cloak>
 	<!-- <div class="back mui-icon mui-icon-back"></div> -->
-
 	<div class="infoList">
 		<div class="hd" id="btn">
 			<div class="ico down"></div>
 			<span id="num">{{num}}条信息</span>		
 		</div>
 		<div class="bd" id="infoBox">
-			<li v-for="(vo,index) in lists" @click="setMapCenter(vo.lat,vo.lng,index)">
+			<li v-for="(vo,index) in lists" @click="selectHandler(vo.latitude,vo.longitude,index)">
 				<div class="num">{{index+1}}</div>
 				<div class="info">
 					<h1>{{vo.articleid}}号团
@@ -46,53 +44,14 @@ html,body{width: 100%; height: 100%}
 			<p v-show="next" @click="loadmore" style="text-align:center">加载更多</p>
 		</div>
 	</div>
-
-	<div class="mapInfo" id="mapInfo">
-		<div class="info">
-			<div class="pinyou">
-				<a :href="'app://pinyoudetail?articleid='+info.articleid">
-					<div class="hd">
-						<div class="code">{{info.articleid}}号团						
-						<span v-if="info.goodstype == 1" class="green">普通货</span>
-						<span style="color:#f00" v-else>敏感货</span>		
-						</div>			
-						<div style="font-size: 12px" class="status" v-if="info.status == 0">等待包裹</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 1">包裹到齐</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 2">等待发货</div>
-						<div style="font-size: 12px" class="status" v-else-if="info.status == 3" style="color:#f00">成功发货</div>
-						<div style="font-size: 12px" class="status" v-else>发货失败</div>
-					</div>
-
-					<div class="bd">
-						<div class="add">{{info.address}}</div>
-
-						<div class="maxWeight">预估重量：<span>{{info.currentWeight}}kg</span></div>
-
-						<div class="my-progressbar">
-							<span :style="{ width: info.width + '%' }"></span>
-						</div>		
-
-						<div class="user" style="border:0">		
-							<p>
-								<span class="mui-pull-left" v-if="info.goodstype == 1">普通货</span>
-								<span class="mui-pull-left" v-else>敏感货</span>
-								<span class="mui-pull-right">团长：{{info.contact}}</span>
-							</p>
-						</div>
-					</div>
-				</a>
-			</div>
-		</div>
-		<div class="arrow"><img src="../static/image/arrow.png" alt=""></div>
-	</div>
+	
 	<div id="mapContainer"></div>	
+	
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6569ST34pV9m3ECxVXSakk8tz760nfAk"></script>
 <script src="../static/js/config.js"></script>
 <script>
-var map; 
-var markers = [];
 vm = new Vue({
 	el : "#vm",
 	data : {
@@ -101,18 +60,59 @@ vm = new Vue({
 		info:[],
 		lists : [],
 		page : 1,
-		next : 0
+		next : 0,
+		map:'',
+		markers : []
 	},
 	methods: {
-		setMapCenter : function(lat,lng,index){
+		selectHandler : function(lat,lng,index){			
 			that = this;
 			point = {lat:parseFloat(lat), lng:parseFloat(lng)}
-			this.clearOverlays();
-			map.setCenter(point, 17);
-		    var marker = new google.maps.Marker({position: point, map: map});
-		    markers.push(marker);		
-		    that.info = that.lists[index-0];  
-		    $("#mapInfo").show();  
+			that.map.setCenter(point);
+			that.map.setZoom(15);
+		    that.info = that.lists[index-0];
+		    let info = that.info;	
+    		contentString = '<div class="mapShowInfo"><div class="pinyou"><a href="app://pinyoudetail?articleid='+info.articleid+'">';
+    		contentString += '<div class="hd">'+info.articleid+'号团	';
+    		if(info.goodstype==1){
+    			contentString += '<span class="green">普通货</span>';
+    		}else{
+    			contentString += '<span style="color:#f00">敏感货</span>';
+    		}
+    		if(info.status==0){
+    			contentString += '<div style="font-size: 12px" class="status">等待包裹</div>';
+    		}else if(info.status==1){
+    			contentString += '<div style="font-size: 12px" class="status">包裹到齐</div>';
+    		}else if(info.status==2){
+    			contentString += '<div style="font-size: 12px" class="status">等待发货</div>';
+    		}else if(info.status==3){
+    			contentString += '<div style="font-size: 12px" class="status" style="color:#f00">成功发货</div>';
+    		}else{
+    			contentString += '<div style="font-size: 12px" class="status">发货失败</div>';
+    		}
+    		contentString += '</div>';
+
+    		contentString += '<div class="bd">';
+    		contentString += '<div class="add">'+info.address+'</div>';
+    		contentString += '<div class="maxWeight">预估重量：<span>'+info.currentWeight+'kg</span></div>';
+    		contentString += '<div class="my-progressbar"><span style="width:'+info.width+'%"></span></div>';
+    		contentString += '<div class="user" style="border:0"><p>';
+    		if(info.goodstype==1){
+    			contentString += '<span class="mui-pull-left">普通货</span>';
+    		}else{
+    			contentString += '<span class="mui-pull-left">敏感货</span>';
+    		}
+    		contentString += '<span class="mui-pull-right">团长：'+info.contact+'</span>';
+    		contentString += '</p></div>';
+    		contentString += '</div>';
+    		
+    		contentString += '</a></div></div>';	 
+
+		    var infowindow = new google.maps.InfoWindow({
+	        	content: contentString
+	        });
+
+	        infowindow.open(that.map,that.markers[index-0]);
 		},
 		clearOverlays:function(){
 			if (markers) { 
@@ -155,29 +155,111 @@ vm = new Vue({
 		    	},
 		    	"json"
 		    );
-    	}
+    	},
+    	setMapCenter(marker, info) {
+    		var that = this;
+		    marker.addListener('click', function() {
+		    	that.map.setZoom(15);
+		    	that.map.setCenter(marker.getPosition());
+	
+	    		contentString = '<div class="mapShowInfo"><div class="pinyou"><a href="app://pinyoudetail?articleid='+info.articleid+'">';
+	    		contentString += '<div class="hd">'+info.articleid+'号团	';
+	    		if(info.goodstype==1){
+	    			contentString += '<span class="green">普通货</span>';
+	    		}else{
+	    			contentString += '<span style="color:#f00">敏感货</span>';
+	    		}
+	    		if(info.status==0){
+	    			contentString += '<div style="font-size: 12px" class="status">等待包裹</div>';
+	    		}else if(info.status==1){
+	    			contentString += '<div style="font-size: 12px" class="status">包裹到齐</div>';
+	    		}else if(info.status==2){
+	    			contentString += '<div style="font-size: 12px" class="status">等待发货</div>';
+	    		}else if(info.status==3){
+	    			contentString += '<div style="font-size: 12px" class="status" style="color:#f00">成功发货</div>';
+	    		}else{
+	    			contentString += '<div style="font-size: 12px" class="status">发货失败</div>';
+	    		}
+	    		contentString += '</div>';
+
+	    		contentString += '<div class="bd">';
+	    		contentString += '<div class="add">'+info.address+'</div>';
+	    		contentString += '<div class="maxWeight">预估重量：<span>'+info.currentWeight+'kg</span></div>';
+	    		contentString += '<div class="my-progressbar"><span style="width:'+info.width+'%"></span></div>';
+	    		contentString += '<div class="user" style="border:0"><p>';
+	    		if(info.goodstype==1){
+	    			contentString += '<span class="mui-pull-left">普通货</span>';
+	    		}else{
+	    			contentString += '<span class="mui-pull-left">敏感货</span>';
+	    		}
+	    		contentString += '<span class="mui-pull-right">团长：'+info.contact+'</span>';
+	    		contentString += '</p></div>';
+	    		contentString += '</div>';
+	    		
+	    		contentString += '</a></div></div>';	
+		 
+				var infowindow = new google.maps.InfoWindow({
+		        	content: contentString,
+		        	maxWidth:350
+		        });
+
+		        infowindow.open(that.map, marker);
+		    });
+		}
 	},
 	created : function(){
 		var that = this;
 		that.goPage(that.page);
 	},
-	updated : function(){		
+	updated : function(){
 		var that = this;
+		that.map = new google.maps.Map(document.getElementById('mapContainer'), {
+			disableDefaultUI: true,
+			center: {lat:-34.8911, lng:138.6463},
+			zoom: 11
+		});
+		var image = '/www/static/image/mark.png';
+
+		for (var i = 0; i < that.lists.length; i++) {
+			var marker = new google.maps.Marker({				
+				position: {lat: parseFloat(that.lists[i]['lat']), lng:parseFloat(that.lists[i]['lng'])},map: that.map,icon: image
+			});
+			that.markers.push(marker);
+			that.setMapCenter(marker,that.lists[i]);
+		}
+
+		/*for (var i = 0; i < that.lists.length; i++) {
+			var marker = new google.maps.Marker({				
+				position: {lat: parseFloat(that.lists[i]['latitude']), lng:parseFloat(that.lists[i]['longitude'])},map: map,icon: image
+			});
+			marker.addListener('click', showInfo(that.lists[i]));
+			markers.push(marker);
+        }*/
+		
+		/*var that = this;
 		map = new google.maps.Map(document.getElementById('mapContainer'), {
 			disableDefaultUI: true,
 			center: {lat:-34.8911, lng:138.6463},
 			zoom: 17
 		});
 		
-		point = {lat:parseFloat(that.info.lat), lng:parseFloat(that.info.lng)}
+		point = {lat:parseFloat(that.info.latitude), lng:parseFloat(that.info.longitude)}
 		map.setCenter(point, 17);
-		var marker = new google.maps.Marker({position: point, map: map});
-		markers.push(marker);
+		var image = '/www/static/image/mark.png';
+		var marker = new google.maps.Marker({position: point, map: map , icon:image});
 
-		$("#mapInfo").show();		
-		google.maps.event.addListener(map, "drag", function(){
-			$("#mapInfo").hide();
-		});  
+		var contentString = '<div class="info"><div class="pinyou"><a href="'+that.info.url+'"><div class="hd">'+that.info.title+'</div><div class="bd"><div class="add">'+that.info.address+'</div></div></a></div></div>';
+
+		var infowindow = new google.maps.InfoWindow({
+        	content: contentString
+        });
+
+        infowindow.open(map, marker);
+
+		marker.addListener('click', function() {
+        	infowindow.open(map, marker);
+        });
+		markers.push(marker);*/
 	}
 });
 
@@ -189,6 +271,21 @@ Vue.filter('juli', function (v) {
 	}
 })
 
+function formatDate(value) {
+    date = new Date(parseInt(value) * 1000);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    if (month<10){
+    	month = '0'+month;
+    }
+    day =date.getDate();
+    if (day<10){
+    	day = '0'+day;
+    }
+    return year+'/'+month+'/'+day;
+}
+
+
 $(function(){
 	$("#btn").click(function(){
 		var o = $(this).find(".ico");
@@ -198,7 +295,8 @@ $(function(){
 			o.addClass("down");
 		}
 		$("#infoBox").slideToggle()
-	})
+	});
+	$("#btn").click();
 })
 </script>
 </body>

@@ -17,8 +17,8 @@ class WeixinController extends CommonController {
     public function getModel($type){
         foreach (C('infoArr') as $key => $value) {
             if ($value['py'] == $type) {
-            return $value;
-        }
+                return $value;
+            }
         }
         return false;           
     }
@@ -27,6 +27,13 @@ class WeixinController extends CommonController {
     public function getSortName($cid){
         $map['id'] = $cid;
         return M('Category')->where($map)->getField('name');die;
+    }
+
+    public function wxconfig(){
+        if ($_POST) {
+            if (!checkFormDate()){returnJson('-1','未知错误');}
+            returnJson('0',C("SUCCESS_RETURN"),array('msg'=>C('site.wxapp'))); 
+        }
     }
 
     //获取该城市选择的模块

@@ -868,4 +868,43 @@ class StoreController extends CommonController {
             returnJson('0','success',$brand);
         }
     }
+
+
+    //有问题呀
+    public function categoryGoods(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $path = I('post.path');
+
+            if($path==''){
+                returnJson('-1','参数错误');
+            }
+
+            $map['agentID'] = $this->agent['id'];
+            $map['path'] = $path;
+            $thisCate = M('DgCate')->field('id,name')->where($map)->find();
+            if(!$thisCate){
+                returnJson('-1','分类不存在');
+            }
+
+            $cate = M('DgCate')->field('id,name')->where(array('fid'=>$thisCate['id']))->order('sort asc,id desc')->select();
+            foreach ($cate as $key => $value) {
+                unset($map);
+                $map['cid|cid1'] = $value['id'];
+                $map['show'] = 1;
+                $goods = M("DgGoodsIndex")->where($map)->order('sort asc,id desc')->select();
+                foreach ($goods as $k => $val) {
+                    $goods[$k]['picname'] = getRealUrl($val['picname']);
+                    $goods[$k]['num'] = 0;
+                    $goods[$k]['cartShow'] = true;
+                    $goods[$k]['rmb'] = number_format($this->agent['huilv']*$val['price'],1);
+                    if ($val['tag']>0) {
+                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
+                    }
+                }
+                $cate[$key]['goods'] = $goods;
+            }
+            returnJson(0,'success',['data'=>$cate]);
+        }
+    }
 }

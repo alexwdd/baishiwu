@@ -64,7 +64,11 @@ class WeixinController extends CommonController {
 
             unset($map);
             $map['cityID'] = $cityID;   
-            $map['fid'] = 0;        
+            $map['fid'] = 0;
+            if($cityID==9){
+                $map['cid'] = array('not in',[1,4,94,152]);
+                $map['type'] = array('not eq','article');
+            }
             $list = M('CityCate')->field('cid,name,icon')->where($map)->order('sort asc')->select();
             foreach ($list as $key => $value) {
                 unset($r);
@@ -118,7 +122,7 @@ class WeixinController extends CommonController {
                 $list[$key]['icon'] = getRealUrl($value['icon']);
             }
 
-            unset($map);
+            /*unset($map);
             $map['cityID'] = $cityID;
             $map['show'] = 1;
             $agent = M('Agent')->field('id,logo,name')->where($map)->order('sort asc,id desc')->select();
@@ -130,7 +134,7 @@ class WeixinController extends CommonController {
                     'url'  =>'http://' . $_SERVER['HTTP_HOST'] .'/store/?agentid='.$value['id']
                 ];
                 array_push($list, $temp);
-            }
+            }*/
             returnJson('0',C("SUCCESS_RETURN"),array('ads'=>$ads,'cate'=>$list));       
         }       
     }

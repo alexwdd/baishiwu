@@ -36,6 +36,13 @@ class WeixinController extends CommonController {
         }
     }
 
+    public function appShow(){
+        if ($_POST) {
+            if (!checkFormDate()){returnJson('-1','未知错误');}
+            returnJson('0',C("SUCCESS_RETURN"),array('show'=>0)); 
+        }
+    }
+
     //获取该城市选择的模块
     public function getmain(){
         if ($_POST) {

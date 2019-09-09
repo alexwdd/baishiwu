@@ -40,7 +40,7 @@ class StoreController extends CommonController {
             $map['fid'] = 0;
             $map['comm'] = 1;
             $map['agentID'] = $this->agent['id'];
-            $indexCate = M("DgCate")->field('id,path,name')->where($map)->select();
+            $indexCate = M("DgCate")->field('id,path,name')->where($map)->order('sort asc,id asc')->select();
             foreach ($indexCate as $key => $value) {
                 unset($map);
                 $map['comm'] = 1;
@@ -69,6 +69,7 @@ class StoreController extends CommonController {
         $list = M('AgentAd')->cache(true)->where($map)->select();
         foreach ($list as $key => $value) {
             $list[$key]['image'] = getRealUrl($value['image']);
+            $list[$key]['url'] = htmlspecialchars_decode($value['url']);
         }
         return $list;
     }
@@ -146,7 +147,7 @@ class StoreController extends CommonController {
 
             unset($map);
             $map['fid'] = $thisCate['id'];
-            $cate = M("DgCate")->where($map)->select();
+            $cate = M("DgCate")->where($map)->order('sort asc,id asc')->select();
 
             if (!$cate) {
                 $cate = [$thisCate];
@@ -191,7 +192,7 @@ class StoreController extends CommonController {
             $cate = M("DgCate")->where($map)->find();
             unset($map);
             $map['fid'] = $cate['id'];
-            $child = M("DgCate")->where($map)->select();
+            $child = M("DgCate")->where($map)->order('sort asc,id asc')->select();
             foreach ($child as $key => $value) {
                 $child[$key]['index'] = $key+1;
             }

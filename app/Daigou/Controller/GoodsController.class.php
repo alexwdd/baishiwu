@@ -304,6 +304,7 @@ class GoodsController extends CommonController {
                     $data['inprice'] = trim($sheet->getCellByColumnAndRow(19, $i)->getValue());
                     $data['say'] = trim($sheet->getCellByColumnAndRow(20, $i)->getValue());
                     $data['wuliu'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
+                    $data['sort'] = trim($sheet->getCellByColumnAndRow(22, $i)->getValue());
                     $obj->where(array('id'=>$goodsID))->save($data);
 
                     unset($map);
@@ -413,7 +414,8 @@ class GoodsController extends CommonController {
             ->setCellValue('S1', '关键词')
             ->setCellValue('T1', '进货价')
             ->setCellValue('U1', '特色描述')
-            ->setCellValue('V1', '快递');
+            ->setCellValue('V1', '快递')
+            ->setCellValue('W1', '排序');
         foreach($list as $k => $v){
             $num=$k+2;
             $objPHPExcel->setActiveSheetIndex(0)
@@ -438,7 +440,8 @@ class GoodsController extends CommonController {
                 ->setCellValue('S'.$num, $v['keyword'])
                 ->setCellValue('T'.$num, $v['inprice'])
                 ->setCellValue('U'.$num, $v['say'])
-                ->setCellValue('V'.$num, $v['wuliu']);
+                ->setCellValue('V'.$num, $v['wuliu'])
+                ->setCellValue('W'.$num, $v['sort']);
         }
 
         $objPHPExcel->getActiveSheet()->setTitle('商品');
@@ -450,5 +453,116 @@ class GoodsController extends CommonController {
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output'); 
     }  
+
+
+    public function import1(){
+        if (IS_POST) {
+            set_time_limit(0);
+            ini_set("memory_limit", "512M"); 
+            
+            $file = I('post.excel');
+            import("Common.ORG.PHPExcel");
+            $objReader = \PHPExcel_IOFactory::createReader ( 'Excel5' );
+            $objReader->setReadDataOnly(true);
+            $objPHPExcel = $objReader->load('.'.$file);
+            $sheet = $objPHPExcel->getSheet(0); // 读取第一個工作表
+            $highestRow = $sheet->getHighestRow(); // 取得总行数
+            $highestColumm = $sheet->getHighestColumn(); // 取得总列数
+
+            //$highestColumm= PHPExcel_Cell::columnIndexFromString($highestColumm); //字母列转换为数字列 如:AA变为27
+            $obj = M('DgGoodsIndex');
+            $total = 0;
+            $error = '';
+            for ( $i = 2; $i <= $highestRow; $i++) {
+                $goodsID = trim($sheet->getCellByColumnAndRow(0, $i)->getValue());
+    
+                if ($goodsID>0) {
+                    unset($data);               
+                    $data['name'] = trim($sheet->getCellByColumnAndRow(1, $i)->getValue());
+                    $data['short'] = trim($sheet->getCellByColumnAndRow(2, $i)->getValue());
+                    //$data['en'] = trim($sheet->getCellByColumnAndRow(3, $i)->getValue());
+                    if ($cid>0 && $cid!='') {
+                        $path = M('DgCate')->where(array('id'=>$cid))->getField("path");
+                        if ($path) {
+                            $data['cid'] = $cid;
+                            $data['path'] = $path;
+                        }else{
+                            $data['cid'] = 0;
+                            $data['path'] = '';
+                        }                    
+                    }else{
+                        $data['cid'] = 0;
+                        $data['path'] = '';
+                    }
+                    
+                    if ($cid1>0 && $cid1!='') {
+                        $path1 = M('DgCate')->where(array('id'=>$cid1))->getField("path");
+                        if ($path1) {
+                            $data['cid1'] = $cid1;
+                            $data['path1'] = $path1;
+                        }else{
+                            $data['cid1'] = 0;
+                            $data['path1'] = '';
+                        }                    
+                    }else{
+                        $data['cid1'] = 0;
+                        $data['path1'] = '';
+                    }
+                    $data['price'] = trim($sheet->getCellByColumnAndRow(6, $i)->getValue());
+                    $data['number'] = trim($sheet->getCellByColumnAndRow(7, $i)->getValue());
+                    $data['wuliu'] = trim($sheet->getCellByColumnAndRow(8, $i)->getValue());
+
+                    $obj->where(array('id'=>$goodsID))->save($data);
+                    $total++;
+                }
+            }
+            
+            $msg = '共'.($highestRow-1).'条数据，成功导入'.$total.'条，错误信息'.$error;
+            $this->success($msg);
+        }else{
+            $this->display();
+        }
+    } 
+
+    public function export1(){
+        import("Common.ORG.PHPExcel");
+
+        $map['base']=0;
+        $map['agentID'] = $this->user['id'];
+        $list = M('DgGoodsIndex')->where($map)->order('id desc')->select();
+        $objPHPExcel = new \PHPExcel();    
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', '编号')
+            ->setCellValue('B1', '名称')
+            ->setCellValue('C1', '短名称')
+            ->setCellValue('D1', '英文')
+            ->setCellValue('E1', '分类1(数字)')
+            ->setCellValue('F1', '分类2(数字)')
+            ->setCellValue('G1', '价格')
+            ->setCellValue('H1', '单品数量')   
+            ->setCellValue('I1', '快递');
+        foreach($list as $k => $v){
+            $num=$k+2;
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A'.$num, $v['id'])                
+                ->setCellValue('B'.$num, $v['name'])                
+                ->setCellValue('C'.$num, $v['short'])
+                ->setCellValue('D'.$num, $v['en'])                 
+                ->setCellValue('E'.$num, $v['cid'])
+                ->setCellValue('F'.$num, $v['cid1'])
+                ->setCellValue('G'.$num, $v['price'])
+                ->setCellValue('H'.$num, $v['number'])
+                ->setCellValue('I'.$num, $v['wuliu']);
+        }
+
+        $objPHPExcel->getActiveSheet()->setTitle('套餐');
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="套餐.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output'); 
+    }
 }
 ?>

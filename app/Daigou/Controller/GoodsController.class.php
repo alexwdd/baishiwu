@@ -481,6 +481,8 @@ class GoodsController extends CommonController {
                     $data['name'] = trim($sheet->getCellByColumnAndRow(1, $i)->getValue());
                     $data['short'] = trim($sheet->getCellByColumnAndRow(2, $i)->getValue());
                     //$data['en'] = trim($sheet->getCellByColumnAndRow(3, $i)->getValue());
+                    $cid = trim($sheet->getCellByColumnAndRow(4, $i)->getValue());
+                    $cid1 = trim($sheet->getCellByColumnAndRow(5, $i)->getValue());
                     if ($cid>0 && $cid!='') {
                         $path = M('DgCate')->where(array('id'=>$cid))->getField("path");
                         if ($path) {

@@ -53,9 +53,14 @@ class StoreController extends CommonController {
                     $goods[$k]['num'] = 0;
                     $goods[$k]['cartShow'] = true;
                     $goods[$k]['rmb'] = number_format($this->agent['huilv']*$val['price'],1);
-                    if ($val['tag']>0) {
-                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
-                    }
+                    if($val['empty']==1){
+                        $goods[$k]['tag'] = 999;
+                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/empty.png';
+                    }else{
+                        if ($val['tag']>0) {
+                            $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';
+                        }
+                    }                    
                 }
                 $indexCate[$key]['goods'] = $goods;
             }
@@ -119,8 +124,14 @@ class StoreController extends CommonController {
                 $list[$k]['num'] = 0;
                 $list[$k]['cartShow'] = true;
                 $list[$k]['rmb'] = number_format($this->agent['huilv']*$value['price'],1);
-                if ($value['tag']>0) {
-                    $list[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$value['tag'].'.png';   
+                
+                if($value['empty']==1){
+                    $list[$k]['tag'] = 999;
+                    $list[$k]['tagImg'] = C('site.domain').'/static/tag/empty.png';
+                }else{
+                    if ($value['tag']>0) {
+                        $list[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$value['tag'].'.png';
+                    }
                 }
             }
             returnJson(0,'success',['next'=>$next,'data'=>$list]);
@@ -157,7 +168,7 @@ class StoreController extends CommonController {
                 unset($map);
                 $map['show'] = 1;
                 $map['agentID'] = $this->agent['id'];
-                $map['cid'] = $value['id'];
+                $map['cid|cid1'] = $value['id'];
                 $goods = M('DgGoodsIndex')->where($map)->limit($firstRow.','.$pagesize)->order('sort asc,id desc')->select();
 
                 foreach ($goods as $k => $val) {
@@ -165,8 +176,14 @@ class StoreController extends CommonController {
                     $goods[$k]['num'] = 0;
                     $goods[$k]['cartShow'] = true;
                     $goods[$k]['rmb'] = number_format($this->agent['huilv']*$val['price'],1);
-                    if ($val['tag']>0) {
-                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';   
+
+                    if($val['empty']==1){
+                        $goods[$k]['tag'] = 999;
+                        $goods[$k]['tagImg'] = C('site.domain').'/static/tag/empty.png';
+                    }else{
+                        if ($val['tag']>0) {
+                            $goods[$k]['tagImg'] = C('site.domain').'/static/tag/tag'.$val['tag'].'.png';
+                        }
                     }
                 }
 

@@ -305,6 +305,7 @@ class GoodsController extends CommonController {
                     $data['say'] = trim($sheet->getCellByColumnAndRow(20, $i)->getValue());
                     $data['wuliu'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
                     $data['sort'] = trim($sheet->getCellByColumnAndRow(22, $i)->getValue());
+                    $data['agsID'] = trim($sheet->getCellByColumnAndRow(23, $i)->getValue());
                     $obj->where(array('id'=>$goodsID))->save($data);
 
                     unset($map);
@@ -365,6 +366,7 @@ class GoodsController extends CommonController {
                     $data['inprice'] = trim($sheet->getCellByColumnAndRow(19, $i)->getValue());
                     $data['say'] = trim($sheet->getCellByColumnAndRow(20, $i)->getValue());
                     $data['wuliu'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
+                    $data['agsID'] = trim($sheet->getCellByColumnAndRow(23, $i)->getValue());
                     $data['sort'] = 50;
                     $data['updateTime'] = time();
                     $data['createTime'] = time();
@@ -415,7 +417,8 @@ class GoodsController extends CommonController {
             ->setCellValue('T1', '进货价')
             ->setCellValue('U1', '特色描述')
             ->setCellValue('V1', '快递')
-            ->setCellValue('W1', '排序');
+            ->setCellValue('W1', '排序')
+            ->setCellValue('X1', 'agsID');
         foreach($list as $k => $v){
             $num=$k+2;
             $objPHPExcel->setActiveSheetIndex(0)
@@ -441,7 +444,8 @@ class GoodsController extends CommonController {
                 ->setCellValue('T'.$num, $v['inprice'])
                 ->setCellValue('U'.$num, $v['say'])
                 ->setCellValue('V'.$num, $v['wuliu'])
-                ->setCellValue('W'.$num, $v['sort']);
+                ->setCellValue('W'.$num, $v['sort'])
+                ->setCellValue('X'.$num, $v['agsID']);
         }
 
         $objPHPExcel->getActiveSheet()->setTitle('商品');

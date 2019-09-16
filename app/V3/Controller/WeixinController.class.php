@@ -56,6 +56,7 @@ class WeixinController extends CommonController {
             if ($adID!='' && is_numeric($adID)) {
                 $map['cid']=$adID;
             }
+            $map['id'] = array('neq',38);
             $ads = M('Ad')->field('name as title,articleid,type,createTime as time,image,url')->where($map)->order('sort asc , id desc')->select();
             foreach ($ads as $key => $value) {
                 $ads[$key]['time'] = date("Y-m-d",$value['time']);
@@ -66,7 +67,7 @@ class WeixinController extends CommonController {
             $map['cityID'] = $cityID;   
             $map['fid'] = 0;
             if($cityID==9){
-                $map['cid'] = array('not in',[1,4,94,152]);
+                $map['cid'] = array('not in',[1,4,7,94,152]);
                 $map['type'] = array('not eq','article');
             }
             $list = M('CityCate')->field('cid,name,icon')->where($map)->order('sort asc')->select();

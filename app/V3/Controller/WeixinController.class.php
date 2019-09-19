@@ -67,7 +67,7 @@ class WeixinController extends CommonController {
             $map['cityID'] = $cityID;   
             $map['fid'] = 0;
             if($cityID==9){
-                $map['cid'] = array('not in',[1,4,7,94,152]);
+                $map['cid'] = array('not in',[1,4,7,94,142,152]);
                 $map['type'] = array('not eq','article');
             }
             $list = M('CityCate')->field('cid,name,icon')->where($map)->order('sort asc')->select();
@@ -281,7 +281,8 @@ class WeixinController extends CommonController {
                 }
                 if (count($q)>0) {
                     array_push($quick,$q);
-                }            
+                }
+                $quick = [];
                 returnJson('0',C('SUCCESS_RETURN'),['data'=>$list,'ad1'=>$ad1,'ad2'=>$ad2,'quick'=>$quick,'about'=>$about]);
             }
         }
@@ -608,7 +609,9 @@ class WeixinController extends CommonController {
 
                 //设施
                 $sheshi = M("OptionItem")->where(array('cate'=>7))->field("id as itemid,name,value")->select();
-        
+                
+                $quick = [];
+                $quick = [];
                 return returnJson('0',C('SUCCESS_RETURN'),['data'=>$list,'ad1'=>$ad1,'ad2'=>$ad2,'quick'=>$quick,'about'=>$about,'sheshi'=>$sheshi]);
             }else{
                 returnJson('-1','不存在的信息');
@@ -650,6 +653,7 @@ class WeixinController extends CommonController {
                     $list[$key]['user'] = M('Member')->where(array('id'=>$value['userid']))->field('nickname,headimg')->find();
                 }                
             }
+            $list = [];
             returnJson(0,'success',$list);
         }
     }

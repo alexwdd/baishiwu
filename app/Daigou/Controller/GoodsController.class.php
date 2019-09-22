@@ -517,6 +517,7 @@ class GoodsController extends CommonController {
                     $data['price'] = trim($sheet->getCellByColumnAndRow(6, $i)->getValue());
                     $data['number'] = trim($sheet->getCellByColumnAndRow(7, $i)->getValue());
                     $data['wuliu'] = trim($sheet->getCellByColumnAndRow(8, $i)->getValue());
+                    $data['agsID'] = trim($sheet->getCellByColumnAndRow(9, $i)->getValue());
 
                     $obj->where(array('id'=>$goodsID))->save($data);
                     $total++;
@@ -546,7 +547,8 @@ class GoodsController extends CommonController {
             ->setCellValue('F1', '分类2(数字)')
             ->setCellValue('G1', '价格')
             ->setCellValue('H1', '单品数量')   
-            ->setCellValue('I1', '快递');
+            ->setCellValue('I1', '快递')
+            ->setCellValue('J1', 'agsID');
         foreach($list as $k => $v){
             $num=$k+2;
             $objPHPExcel->setActiveSheetIndex(0)
@@ -558,7 +560,8 @@ class GoodsController extends CommonController {
                 ->setCellValue('F'.$num, $v['cid1'])
                 ->setCellValue('G'.$num, $v['price'])
                 ->setCellValue('H'.$num, $v['number'])
-                ->setCellValue('I'.$num, $v['wuliu']);
+                ->setCellValue('I'.$num, $v['wuliu'])
+                ->setCellValue('J'.$num, $v['agsID']);
         }
 
         $objPHPExcel->getActiveSheet()->setTitle('套餐');

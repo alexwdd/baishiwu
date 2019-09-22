@@ -59,6 +59,7 @@ class ChatController extends CommonController {
             $firstRow = $pagesize*($page-1); 
 
             $obj = M('Chat');
+            $map['status'] = 1;
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
             if ($page < $totalPage) {
@@ -176,6 +177,7 @@ class ChatController extends CommonController {
             $firstRow = $pagesize*($page-1); 
 
             $obj = M('Chat');
+            $map['status'] = 1;
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
             if ($page < $totalPage) {
@@ -454,6 +456,7 @@ class ChatController extends CommonController {
             $firstRow = $pagesize*($page-1); 
 
             $obj = M('Chat');
+            $map['status'] = 1;
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
             if ($page < $totalPage) {

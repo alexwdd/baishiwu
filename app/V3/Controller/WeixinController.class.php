@@ -479,7 +479,7 @@ class WeixinController extends CommonController {
             $page = I('post.page/d',1); 
             $pagesize =10;
             $firstRow = $pagesize*($page-1); 
-
+            $map['status'] = 1;
             $count = $obj->where($map)->count();
             $totalPage = ceil($count/$pagesize);
             if ($page < $totalPage) {
@@ -545,6 +545,7 @@ class WeixinController extends CommonController {
                 unset($map);
                 $map['id'] = array('neq',$articleid);
                 $map['cityID'] = $cityID;
+                $map['status'] = 1;
                 $about = M($arr['db'])->where($map)->limit(6)->order('articleid desc')->select();
                 foreach ($about as $key => $value) {
                     $about[$key] = $this->setTagPrice($value,$type);

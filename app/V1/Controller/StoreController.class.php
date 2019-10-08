@@ -64,7 +64,7 @@ class StoreController extends CommonController {
                 }
                 $indexCate[$key]['goods'] = $goods;
             }
-            returnJson(0,'success',['banner'=>$banner,'ad'=>$ad,'quick'=>$quick,'hotkey'=>$hotkey,'notice'=>$this->agent['notice'],'goods'=>$indexCate]);      
+            returnJson(0,'success',['banner'=>$banner,'ad'=>$ad,'quick'=>$quick,'shopName'=>$this->agent['name'],'hotkey'=>$hotkey,'notice'=>$this->agent['notice'],'goods'=>$indexCate]);      
         } 
     }
 

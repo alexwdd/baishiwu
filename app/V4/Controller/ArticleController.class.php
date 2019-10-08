@@ -61,7 +61,8 @@ class ArticleController extends CommonController {
                     'type'=>'mall',
                     'name'=>$value['name'],
                     'image'=>'http://' . $_SERVER['HTTP_HOST'] . $value['logo'],
-                    'url'  =>'http://' . $_SERVER['HTTP_HOST'] .'/store/?agentid='.$value['id']
+                    //'url'  =>'http://' . $_SERVER['HTTP_HOST'] .'/store/?agentid='.$value['id']
+                    'url'  =>'http://wx.worldmedia.top/adelaide/store?agentid='.$value['id']
                 ];
                 array_push($list, $temp);
             }

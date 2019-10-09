@@ -489,6 +489,7 @@ class StoreController extends CommonController {
             $kid = I("post.kid");
             $data = $this->getYunfeiJson($this->user,$kid);
             returnJson(0,'success',['data'=>$data]);
+            
         }
     }
 

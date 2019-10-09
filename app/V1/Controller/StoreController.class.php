@@ -306,7 +306,7 @@ class StoreController extends CommonController {
                 $list[$key]['money'] = number_format($money,2);
             }       
 
-            $heji = $this->getCartNumber($this->user);
+            $heji = $this->getCartNumber($this->user);            
             $wuliu = M("Wuliu")->where(array('agentID'=>0))->select();
             returnJson(0,'success',['goods'=>$list,'wuliu'=>$wuliu,'heji'=>$heji]);
         }
@@ -333,11 +333,12 @@ class StoreController extends CommonController {
             $goodsMoney = $goods['price'] * $value['number'];
             $serverMoney = $serverMoney * $value['goodsNumber'] * $goods['number'];
             $total += $goodsMoney + $serverMoney;
+            $rmb = round($total * $this->agent['huilv'],1);
             $server += $serverMoney;
             $weight += $value['goodsNumber'] * $goods['weight'];       
             $number = count($list);
         }
-        return array('number'=>$number,'total'=>$total,'serverMoney'=>$server,'weight'=>number_format($weight,2)); 
+        return array('number'=>$number,'total'=>$total,'rmb'=>$rmb,'serverMoney'=>$server,'weight'=>number_format($weight,2)); 
     }
 
     //添加到购物车
@@ -362,7 +363,7 @@ class StoreController extends CommonController {
                 returnJson('-1','参数错误');
             }
 
-            $goods = M("DgGoodsIndex")->where('id',$specid)->find();
+            $goods = M("DgGoodsIndex")->where(array('id'=>$specid))->find();
             if (!$goods) {
                 returnJson('-1','商品不存在');
             }
@@ -492,7 +493,7 @@ class StoreController extends CommonController {
     }
 
     public function getYunfeiJson($user,$kid,$province=null){
-        $kuaidi = M('Wuliu')->where('id',$kid)->find();
+        $kuaidi = M('Wuliu')->where(array('id'=>$kid))->find();
         if (!$kuaidi) {
             returnJson('-1','快递公司不存在');
         }
@@ -643,7 +644,7 @@ class StoreController extends CommonController {
                     break;
                 }
             }        
-            returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'flag'=>$flag]);
+            returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'rmb'=>round($total*$this->agent['huilv'],1),'flag'=>$flag]);
         }
     }
 

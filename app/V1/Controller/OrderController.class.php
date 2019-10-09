@@ -147,6 +147,11 @@ class OrderController extends CommonController {
                         }
                         $baoguo[$k]['image'] = $temp;
                     }
+                    if(in_array($val['type'],[12,13,14])){
+                        $baoguo[$k]['url'] = config('site.url'.$f['type']);
+                    }else{
+                        $baoguo[$k]['url'] = '';
+                    }
                 }
                 $person[$key]['baoguo'] = $baoguo;
             }
@@ -190,6 +195,37 @@ class OrderController extends CommonController {
             }else{
                 returnJson('-1','操作失败');
             }
+        }
+    }
+
+    public function progress(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+
+            $No = I('post.No');
+            if ($No=='') {
+                returnJson('-1','缺少运单号');
+            }
+            $token = $this->getAueToken();
+            if ($token=='') {
+                returnJson('-1','系统错误，稍后重试');
+            }
+            $list = M("DgOrderBaoguo")->where(['kdNo'=>$No])->find();
+            if (!$list) {
+                returnJson('-1','包裹不存在');
+            }
+            
+            $url = 'http://aueapi.auexpress.com/api/ShipmentOrderTrack/Cache?OrderId='.$No;
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$token));
+            $result = curl_exec($ch);
+            $result = json_decode($result,true);
+            if ($result['Code']!=0) {
+                returnJson('-1','没有查询到相关资源');
+            }
+            returnJson(0,'success',['data'=>$result]);
         }
     }
 }

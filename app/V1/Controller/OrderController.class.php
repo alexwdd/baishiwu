@@ -154,6 +154,8 @@ class OrderController extends CommonController {
                     }
                 }
                 $person[$key]['baoguo'] = $baoguo;
+                $person[$key]['front'] = getRealUrl($value['front']);
+                $person[$key]['back'] = getRealUrl($value['back']);
             }
 
             $goods = M("DgOrderDetail")->field('itemID,price,server,trueNumber,extends,sum(number) as num')->where(array('orderID'=>$list['id']))->group('itemID')->select();    
@@ -226,6 +228,75 @@ class OrderController extends CommonController {
                 returnJson('-1','没有查询到相关资源');
             }
             returnJson(0,'success',['data'=>$result]);
+        }
+    }
+
+    public function updatePersonCard(){
+        if(IS_POST){
+            //if(!checkFormDate()){returnJson(0,'ERROR');}
+
+            $id = I('post.id');
+            $front = I('post.front');
+            $back = I('post.back');
+            if ($id=='') {
+                returnJson('-1','参数错误');
+            }
+            if ($front=='' && $back=='') {
+                returnJson('-1','请选择身份证照片');
+            }
+
+            $map['id'] = $id;
+            $map['memberID'] = $this->user['id'];
+            $list = M("DgOrderPerson")->where($map)->find();
+            if(!$list){
+                returnJson('-1','订单不存在');
+            }
+
+            if($front!='' && strstr($front, 'base64')){
+                $result = $this->base64_upload($front);
+                if ($result) {
+                    $frontUrl = $result['url'];
+                }else{
+                    $frontUrl = '';
+                }
+            }else{
+                $frontUrl = $front;
+            }
+            
+            if($back!='' && strstr($back, 'base64')){
+                $result = $this->base64_upload($back);
+                if ($result) {
+                    $backUrl = $result['url'];
+                }else{
+                    $backUrl = '';
+                }
+            }else{
+                $backUrl = $back;
+            }
+            
+            if($frontUrl != ''){
+                $data['front'] = $frontUrl;
+            }
+
+            if($backUrl != ''){
+                $data['back'] = $backUrl;
+            }
+
+            unset($map);
+            $map['addressID'] = $list['addressID'];
+            //$map['status'] = array('lt',3);
+            $res = M("DgOrderPerson")->where($map)->save($data);
+
+            if($res){ 
+                //更新收件人信息
+                M('Address')->where(['id'=>$list['addressID']])->save($data);
+
+                $frontUrl = getRealUrl($frontUrl);
+                $backUrl = getRealUrl($backUrl);
+                returnJson(0,'success',['front'=>$frontUrl,'back'=>$backUrl]);
+            }else{
+                returnJson('-1','照片保存失败');
+            }
         }
     }
 }

@@ -110,6 +110,32 @@ class OrderController extends CommonController {
         }
     }
 
+    //支付时读取订单信息
+    public function orderInfo(){
+        if (IS_POST) {
+            if($this->user['id']==0){
+                returnJson('999','请先登录');
+            }
+
+            $order_no = I('post.order_no');
+            $map['order_no'] = $order_no;
+            $map['memberID'] = $this->user['id'];
+            $list = M('DgOrder')->where($map)->find();
+            if ($list){
+                if ($list['payStatus']>0) {
+                    returnJson('-1','该订单已支付完成，不要重复支付');
+                }
+                $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
+                $shouxufei = C('site.shouxufei');
+                $huilv = M('Agent')->where(['id'=>$list['agentID']])->getField('huilv'); 
+                returnJson(0,'success',['data'=>$list,'huilv'=>$huilv,'shouxufei'=>$shouxufei]);
+                return view();
+            }else{  
+                returnJson('-1','没有该订单');
+            }
+        }
+    }
+
     //订单详情
     public function detail(){
         if (IS_POST) {

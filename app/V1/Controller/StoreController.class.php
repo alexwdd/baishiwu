@@ -21,7 +21,7 @@ class StoreController extends CommonController {
         if ($agentID=='' || !is_numeric($agentID)) {die;}
         $map['id'] = $agentID;
         //$map['show'] = 1;
-        $agent = M('Agent')->where($map)->find();        
+        $agent = M('Agent')->where($map)->find();
         if (!$agent) {die;}
         $this->agent = $agent;
     }
@@ -488,7 +488,11 @@ class StoreController extends CommonController {
         if (IS_POST) {
             $kid = I("post.kid");
             $data = $this->getYunfeiJson($this->user,$kid);
-            returnJson(0,'success',['data'=>$data]);            
+
+            $heji = $this->getCartNumber($this->user);
+            $heji['total'] = $heji['total'] + $data['totalPrice'];         
+            $heji['rmb'] = round($heji['total']*$this->agent['huilv'],1);         
+            returnJson(0,'success',['data'=>$data,'heji'=>$heji]);            
         }
     }
 
@@ -546,6 +550,7 @@ class StoreController extends CommonController {
                 unset($list[$key]);
             }
         } 
+
         if ($list) {
             import("Common.ORG.Zhongyou");
             $cart = new \cart\Zhongyou($list,$kuaidi,$province,$user);
@@ -559,6 +564,7 @@ class StoreController extends CommonController {
         $totalPrice = 0;
         $totalExtend = 0;
         $totalInprice = 0;
+
         foreach ($baoguoArr as $key => $value) {
             $server = [];
             foreach ($value['goods'] as $k => $val) {
@@ -583,7 +589,7 @@ class StoreController extends CommonController {
             'totalExtend'=>fix_number_precision($totalExtend,2),
             'totalInprice'=>fix_number_precision($totalInprice,2),
             'baoguo'=>$baoguoArr
-        ];     
+        ];
         return $data;
     }
 
@@ -826,30 +832,6 @@ class StoreController extends CommonController {
         $map['memberID'] = $this->user['id'];
         M("DgCart")->where($map)->delete();
         returnJson(0,'success',$order_no);           
-    }
-
-    public function orderInfo(){
-        if (IS_POST) {
-            if($this->user['id']==0){
-                returnJson('999','请先登录');
-            }
-            $order_no = I('post.order_no');
-            $map['order_no'] = $order_no;
-            $map['memberID'] = $this->user['id'];
-            $list = M('DgOrder')->where($map)->find();
-            if ($list){
-                if ($list['payStatus']>0) {
-                    returnJson('-1','该订单已支付完成，不要重复支付');
-                }
-                $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
-                $shouxufei = C('site.shouxufei');
-                $huilv = $this->agent['huilv'];
-                returnJson(0,'success',['data'=>$list,'huilv'=>$huilv,'shouxufei'=>$shouxufei]);
-                return view();
-            }else{  
-                returnJson('-1','没有该订单');
-            }
-        }
     }
 
     public function getOrderNo(){

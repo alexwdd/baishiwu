@@ -1,0 +1,60 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">
+			<select name="cityID" default="<{$list.cityID}>" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-inline">
+            <select name="type" lay-verify="required" default="<{$list.type}>">
+                <option value="">请选择</option>
+                <option value="1">安卓</option>
+                <option value="2">IOS</option>
+            </select>
+        </div>
+    </div>
+
+
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">版本号</label>
+	    <div class="layui-input-inline">
+	    	<input type="text" name="version" value="<{$list.version}>" lay-verType="tips" lay-verify="required" placeholder="请输入版本号" autocomplete="off" class="layui-input"/>
+	    </div>
+    </div>
+    
+    <div class="layui-form-item">
+	    <label class="layui-form-label">url地址</label>
+	    <div class="layui-input-block">
+	    	<input type="text" name="url" value="<{$list.url}>" lay-verType="tips" lay-verify="required" placeholder="请输入升级地址" autocomplete="off" class="layui-input"/>
+	    </div>
+	</div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">强制更新</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="status" value="1" title="是" <php>if($list['status']=='1')echo 'checked';</php>>
+            <input type="radio" name="status" value="0" title="否" <php>if($list['status']=='0')echo 'checked';</php>>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+	    <label class="layui-form-label">版本说明</label>
+	    <div class="layui-input-block">
+	    	<textarea name="desc" class="layui-textarea"><{$list.desc}></textarea>
+	    </div>
+	</div>	
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Version/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+	<input type="hidden" name="id" value="{$list.id}" />
+</form>

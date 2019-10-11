@@ -9,42 +9,41 @@ class DaigouController extends BaseController
     }
 
     public function submit(){
-    	if (IS_POST) {
-			if (!checkFormDate()){returnJson('-1','未知错误');}
-			$order_no = I('post.order_no');		
-			$payType = I('post.payType');	
+        if (IS_POST) {
+            if (!checkFormDate()){returnJson('-1','未知错误');}
+            $order_no = I('post.order_no');     
+            $payType = I('post.payType');   
 
-			if(!in_array($payType,[1,2])){
-				returnJson('-1','支付方式错误');
-			}	
+            if(!in_array($payType,[1,2])){
+                returnJson('-1','支付方式错误');
+            }   
 
-			$map['order_no'] = $order_no;
-			$map['payStatus'] = 0;
-			$list = M('DgOrder')->where($map)->find();
-			if (!$list) {
-				returnJson('-1','订单不存在');
-			}
+            $map['order_no'] = $order_no;
+            $map['payStatus'] = 0;
+            $list = M('DgOrder')->where($map)->find();
+            if (!$list) {
+                returnJson('-1','订单不存在');
+            }
 
-	        $agent = M("Agent")->where("id=".$list['agentID'])->find();
+            $agent = M("Agent")->where("id=".$list['agentID'])->find();
 
             $shouxufei = C('site.shouxufei');
             $huilv = $agent['huilv'];
             $data['shouxufei'] = $shouxufei/100;
             $data['rmb'] = ($list['total'] + $shouxufei*$list['total'])*$huilv;
-            $list = M('DgOrder')->where($map)->save($data);
-            $list['rmb'] = number_format($data['rmb'],1);
-
-    		if ($payType==2) {
-    			$result = $this->wxPub($list,$agent['cityID']);
-    		}else{
+            M('DgOrder')->where($map)->save($data);
+            $list['rmb'] = number_format($data['rmb'],1);           
+            if ($payType==2) {
+                $result = $this->wxPub($list,$agent['cityID']);
+            }else{
                 $result = $this->aliPub($list,$agent['cityID']);
             }    
-    		returnJson(0,'success',$result);	    	
-    	}
+            returnJson(0,'success',$result);            
+        }
     }
 
     //支付宝下单
-    public function aliPub($order,$cityID){ 
+    public function aliPub($order,$cityID){
         switch ($cityID) {
             case '9':
                 $config = C("AOZHOU_PAY");
@@ -79,14 +78,14 @@ class DaigouController extends BaseController
         $content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型)
         //$content['total_amount'] = 0.01;//订单总金额(必须定义成浮点型)
         $content['product_code'] = 'QUICK_MSECURITY_PAY';//
-
+        
         $bizcontent = json_encode($content);
         $request->setNotifyUrl(C('site.domain').'/store/daigou/alinotify/');
         $request->setBizContent($bizcontent);
         //这里和普通的接口调用不同，使用的是sdkExecute
         $response = $aop->sdkExecute($request);
         //htmlspecialchars是为了输出到页面时防止被浏览器将关键参数html转义，实际打印到日志以及http传输不会有这个问题
-        $str = $response;//就是orderString 可以直接给客户端请求，无需再做处理。
+        $str = $response;//就是orderString 可以直接给客户端请求，无需再做处理。         
         return array('url'=>$str,'order_no'=>$order['order_no']);  
     }
 
@@ -103,7 +102,7 @@ class DaigouController extends BaseController
                 return '当前城市未开通在线支付';
                 break;
         }
-    	
+        
         import('Common.ORG.Weixinpay.WxPayPubHelper');
         //=========步骤2：使用统一支付接口，获取prepay_id============
         //使用统一支付接口
@@ -129,18 +128,18 @@ class DaigouController extends BaseController
     }
 
     //商城微信异步通知
-    public function wxnotify(){    	
-    	$postStr = isset($GLOBALS["HTTP_RAW_POST_DATA"]) ?  $GLOBALS["HTTP_RAW_POST_DATA"]  : "" ;
-		if (!empty($postStr)){	
-			$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-			if ($postObj->result_code == 'SUCCESS') {
-				$data['order_no'] = $postObj->out_trade_no;
-				$data['payType'] = 2;
-    			$url = C('site.domain').'/store/daigou/changeOrderStatus/';
-    			$res = $this->https_post($url,$data);			    
-		        echo '<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>';
-			}
-		}
+    public function wxnotify(){     
+        $postStr = isset($GLOBALS["HTTP_RAW_POST_DATA"]) ?  $GLOBALS["HTTP_RAW_POST_DATA"]  : "" ;
+        if (!empty($postStr)){  
+            $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+            if ($postObj->result_code == 'SUCCESS') {
+                $data['order_no'] = $postObj->out_trade_no;
+                $data['payType'] = 2;
+                $url = C('site.domain').'/store/daigou/changeOrderStatus/';
+                $res = $this->https_post($url,$data);               
+                echo '<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>';
+            }
+        }
     }
 
     //支付宝异步通知
@@ -169,7 +168,7 @@ class DaigouController extends BaseController
 
     //修改商城订单状态
     public function changeOrderStatus(){
-    	$map['order_no'] = I('post.order_no');
+        $map['order_no'] = I('post.order_no');
         $list = M('DgOrder')->where($map)->find();
         if ($list) {
             if ($list['payStatus'] > 0) {
@@ -193,7 +192,7 @@ class DaigouController extends BaseController
         $order_no = I('get.order_no');
         if ($order_no=='') {die;}
         $map['order_no'] = $order_no;
-        $list = M('Order')->where($map)->find();
+        $list = M('DgOrder')->where($map)->find();
         if (!$list) {
             $this->error('订单不存在，或已支付');
         }

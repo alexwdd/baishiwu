@@ -1,15 +1,2 @@
-dgOrder 增加手续费字段
-
-接口说明
-store/getMain 首页接口
-
-store/cartNumber 购物车商品个数
-store/cart 购物车
-store/cartAdd 添加到购物车
-store/cartClear 清空购物车
-store/setCartNumber 设置购物车数量
-
-address/lists 地址列表
-address/addressPub 地址发布
-address/addressInfo 地址详细信息
-address/addressDel 	删除地址
+支付成功返回页面
+版本管理

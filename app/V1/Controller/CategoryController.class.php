@@ -72,4 +72,23 @@ class CategoryController extends CommonController {
 		}
 		return returnJson('0',C('SUCCESS_RETURN'),array('subway'=>$list));
     }
+
+    public function version(){ 
+        if (!checkFormDate()){
+			returnJson('-1','未知错误');
+		}
+        $cityID = I('post.cityID');
+        $type = I('post.type');
+        if($type!=''){
+            $map['type'] = $type;
+        }
+        if($cityID!=''){
+            $map['cityID'] = $cityID;
+        }
+        $list = M('Version')->field('version,desc,url,status,createTime')->order('id desc')->where($map)->select();
+        foreach ($list as $key => $value) {
+            $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
+        }
+        returnJson(0,C('SUCCESS_RETURN'),array('data'=>$list));
+    }
 }

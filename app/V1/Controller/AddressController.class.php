@@ -188,4 +188,41 @@ class AddressController extends CommonController {
             }
         }
     }
+
+    public function textToAddress(){
+        if (IS_POST) { 
+            if(!checkFormDate()){returnJson('-1','ERROR');}  
+            $text = I('post.text');
+
+            if($text==""){
+                returnJson('-1',"请输入需要转换的地址信息");
+            }
+
+            $app_id = '104534';
+            $method = 'cloud.address.resolve';
+            $key = 'fe1248c9ba671014c1659607a245407f2d201d1b';
+            $time = time();
+            $sign = md5($app_id.$method.$time.$key);
+
+            $url = "https://kop.kuaidihelp.com/api";
+            $data = [
+                "app_id"=>$app_id,
+                "method"=>$method,
+                "sign"=>$sign,
+                "ts"=>$time,
+                "data"=>'{
+                    "text":"'.$text.'",
+                    "multimode":false
+                }'
+            ];
+
+            $result = $this->https_post($url,$data);
+            $result = json_decode($result,true);
+            if($result['code']==0){
+                returnJson(0,'success',$result['data'][0]);
+            }else{
+                returnJson('-1','转换失败');
+            }            
+        }
+    }
 }

@@ -376,7 +376,7 @@ class StoreController extends CommonController {
             }
 
             if ($goods['empty']==1) {
-                returnJson('-1','该商品已售罄');
+                returnJson('-1','亲，该商品已告罄');
             }
 
             $db = M("DgCart");
@@ -621,9 +621,25 @@ class StoreController extends CommonController {
             }
 
             $map['memberID'] = $this->user['id'];
-            $count = M("DgCart")->where($map)->count();
-            if ($count==0) {
+            $list = M("DgCart")->where($map)->order('typeID asc,number desc')->select();
+            if (!$list) {
                 returnJson('-1','购物车中没有商品');
+            }
+            foreach ($list as $key => $value) {
+                $goods = M('DgGoodsIndex')->where('id='.$value['itemID'])->find(); 
+                $goods['picname'] = getRealUrl($goods['picname']);
+                if ($value['server']!='') {
+                    $serverID = explode(",",$value['server']);
+                    unset($map);
+                    $map['id'] = array('in',$serverID);
+                    $server = M("Server")->field('name,price')->where($map)->select();
+                    $list[$key]['server'] = $server;
+                }else{
+                    $list[$key]['server'] = null;
+                }
+                $list[$key]['goodsNumber'] = $goods['number'];//套餐中包含几个商品
+                $list[$key]['goods'] = $goods;
+                $list[$key]['money'] = number_format($money,2);
             }
 
             //收件信息
@@ -657,7 +673,7 @@ class StoreController extends CommonController {
                     break;
                 }
             }        
-            returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'rmb'=>round($total*$this->agent['huilv'],1),'flag'=>$flag]);
+            returnJson(0,'success',['address'=>$address,'sender'=>$sender,'baoguo'=>$baoguo,'money'=>$money,'total'=>$total,'goods'=>$list,'rmb'=>round($total*$this->agent['huilv'],1),'flag'=>$flag]);
         }
     }
 

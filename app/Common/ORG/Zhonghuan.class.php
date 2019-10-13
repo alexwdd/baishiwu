@@ -1,18 +1,19 @@
 <?php
 namespace pack;
 
-class Zhongyou {
+class Zhonghuan {
 
 	private $cart;				//购物车商品
 	private $baoguoArr = [];
 	private $province;
 	private $extendArea = ['新疆维吾尔自治区','西藏自治区'];
-	private $maxNumber = 15; 	//单个包裹中最多商品个数
-	private $maxWeight = 4.4; 	//单个包裹最大重量(kg)
+	private $maxNumber = 10; 	//单个包裹中最多商品个数
+	private $maxWeight = 3.3; 	//单个包裹最大重量(kg)
 	private $maxPrice = 180; 	//单个包裹最大金额
 
 	/*
 	$cart中的trueNumber是实际单品数量，比如商品A单品数量是3个，如果购物车中有2个，单品数量总数是6，这里的trueNumber不是数据库中单个商品的trueNumber！！！
+	包裹的status属性如果是1就是该包裹不再跟别的包裹2次混编
 	*/
 	public function __construct($cart,$province) {
 		foreach ($cart as $key => $value) {
@@ -21,7 +22,7 @@ class Zhongyou {
 
 		$cart = array_values($cart);//创建索引
 		$this->cart = $cart;
-		$this->province = trim($province);		
+		$this->province = trim($province);
 		header("Content-type: text/html;charset=utf-8");
 	}
 
@@ -66,7 +67,7 @@ class Zhongyou {
 		                $item['trueNumber'] = $oldNumber - $number;
 	           		}
 	            }
-	        }
+            }
 		}
 
 		if($item['trueNumber']>0){
@@ -92,7 +93,7 @@ class Zhongyou {
 	public function getBaoguo(){
 		//处理包邮
 		$baoyou = $this->getBaoyou();
-
+		
 		//处理红酒
 		$hongjiu = $this->singleBaoguo(15);
 		if ($hongjiu) {
@@ -110,7 +111,7 @@ class Zhongyou {
 		if ($shengxian) {
 			array_push($this->baoguoArr,$shengxian);
 		}
-
+		
 		foreach ($this->cart as $key => $value) {
 			if ($value['typeID']==5) {
 				$this->goodsInsertBaoguo($value);
@@ -129,10 +130,9 @@ class Zhongyou {
             }
 		}
 
-
 		foreach ($this->cart as $key => $value) {			
 			$this->goodsInsertBaoguo($value);           
-		}		
+		}
 
 		/*while ($this->cart) {
 			$baoguo = [
@@ -180,17 +180,19 @@ class Zhongyou {
         $length = count($this->baoguoArr);
 
 		$lastBaoguo = end($this->baoguoArr);
-		//最后一个包裹重量小于1公斤，从其他包裹中匀一部分商品，总重够1公斤就可以了	
+		//最后一个包裹重量小于1公斤，从其他包裹中匀一部分商品，总重够1公斤就可以了
+
 		if ($lastBaoguo['totalWeight'] < 1 && $lastBaoguo['baoyou']==0) {
-			for ($i=0; $i < ($length-1); $i++) { 
+			for ($i=0; $i < ($length-1); $i++) {
 				if($this->baoguoArr[$i]['status']==0){
 					$res = $this->moveGoods($this->baoguoArr[$i],$lastBaoguo);
 					$lastBaoguo = $res['to'];
 					$this->baoguoArr[$length-1] = $res['to'];
 					$this->baoguoArr[$i] = $res['from'];
-				}
+				}				
 			}
 		}
+		
  		
  		foreach ($this->baoguoArr as $key => $value) {
 			$wuliuWeight = ceil($this->baoguoArr[$key]['totalWuliuWeight']*10);
@@ -207,8 +209,8 @@ class Zhongyou {
 	        	$config = tpCache('kuaidi');
 	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$config['inprice1'];
 	        }else{
-	        	$danjia = getDanjia(2);
-	        	$this->baoguoArr[$key]['kuaidi'] = '中邮';
+	        	$danjia = getDanjia(3);
+	        	$this->baoguoArr[$key]['kuaidi'] = '中环';
 	        	if($this->baoguoArr[$key]['totalWuliuWeight']<1 && $this->baoguoArr[$key]['baoyou']==0){
 	        		$this->baoguoArr[$key]['yunfei'] = (1-$this->baoguoArr[$key]['totalWuliuWeight'])*$danjia['price'];
 	        	}else{
@@ -220,7 +222,7 @@ class Zhongyou {
 	        if ($this->inExtendArea()) {
 	        	$this->baoguoArr[$key]['extend'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['otherPrice'];
 	        }
-		}	
+		}
 		return $this->baoguoArr;
 	}
 
@@ -288,7 +290,7 @@ class Zhongyou {
                         'yunfei'=>0,
                         'inprice'=>0,
                         'extend'=>0,
-                        'kuaidi'=>'中邮',
+                        'kuaidi'=>'中环',
                         'status'=>1,
                         'baoyou'=>1,
                         'goods'=>array($goods),
@@ -341,7 +343,7 @@ class Zhongyou {
 		$thisMaxNumber = $this->maxNumber;
 		//12是类特殊的包裹，只有同一类商品的话允许超过上限
 		if($this->canOutMaxNumber($baoguo,$item)){
-			$thisMaxNumber = 20;
+			$thisMaxNumber = 15;
 		}
 		
 		//总数不能超过包裹商品数量
@@ -432,7 +434,7 @@ class Zhongyou {
 
 	//获取当前商品包裹类型
 	private function getBaoguoType($item){
-		foreach (C('BAOGUO_ZY') as $key => $value) {
+		foreach (C('BAOGUO_ZH') as $key => $value) {
 			if ($item['typeID'] == $value['id']) {
 				return $value;
 				break;

@@ -81,7 +81,7 @@ class CommonController extends BaseController {
             echo json_encode(array(
                 'status'=>1,
                 'results'=>array(
-                    'data'=>C('baoguoType')
+                    'data'=>C('BAOGUO_ZH')
                     )
             ));
         //}

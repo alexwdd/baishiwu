@@ -55,7 +55,7 @@ if(IS_WIN){
     same 相同商品一个包裹最多几个
     can 能和哪些商品混寄
     */
-    'baoguoType' => array(         
+    /*'baoguoType' => array(         
         array('id'=>1,'name'=>'罐装奶粉','max'=>3,'same'=>99,'can'=>[]),
         array('id'=>2,'name'=>'袋装奶粉','max'=>3,'same'=>99,'can'=>[]),
         array('id'=>3,'name'=>'小罐奶粉','max'=>3,'same'=>99,'can'=>[]),
@@ -76,6 +76,60 @@ if(IS_WIN){
         array('id'=>12,'name'=>'红酒','max'=>999,'same'=>999,'can'=>[]),
         array('id'=>13,'name'=>'手动面单','max'=>999,'same'=>999,'can'=>[]),
         array('id'=>14,'name'=>'生鲜','max'=>999,'same'=>999,'can'=>[])
+    ),*/
+
+    'BAOGUO_ZH' => array(         
+        array('id'=>1, 'name'=>'罐装奶粉','max'=>3,'same'=>99,'can'=>[]),
+        array('id'=>2, 'name'=>'袋装奶粉','max'=>3,'same'=>99,'can'=>[]),
+        array('id'=>3, 'name'=>'小罐奶粉','max'=>3,'same'=>99,'can'=>[]),
+        
+        array('id'=>4, 'name'=>'A类保健品','max'=>10,'same'=>6,'can'=>[5,6,7,8,9,10,11,12,13]),
+        array('id'=>5, 'name'=>'A1(1个可混)','max'=>1,'same'=>1,'can'=>[4,7,8,9,10,11,12,13]),
+        array('id'=>6, 'name'=>'A2(3个可混)','max'=>3,'same'=>3,'can'=>[4,7,8,9,10,11,12,13]),
+        
+        array('id'=>7, 'name'=>'B1(<$10)','max'=>2,'same'=>2,'can'=>[4,5,6,8,9,10,11,12,13]),
+        array('id'=>8, 'name'=>'B2($10-$30)','max'=>1,'same'=>1,'can'=>[4,5,6,7,9,10,11,12,13]),
+
+        array('id'=>9, 'name'=>'C类(FF等)','max'=>1,'same'=>1,'can'=>[4,5,6,7,8,10,11,12,13]), 
+
+        array('id'=>10,'name'=>'D1(日用品)','max'=>4,'same'=>4,'can'=>[4,5,6,7,8,9,11,12,13]),
+        array('id'=>11,'name'=>'D2(日用品)','max'=>2,'same'=>2,'can'=>[4,5,6,7,8,9,10,12,13]),
+
+        array('id'=>12,'name'=>'E(婴儿食品)','max'=>15,'same'=>4,'can'=>[4,5,6,7,8,9,10,11,13]),
+        array('id'=>13,'name'=>'F类(成人食品)','max'=>10,'same'=>4,'can'=>[4,5,6,7,8,9,10,11,12]),
+
+        array('id'=>14,'name'=>'1个不混','max'=>1,'same'=>1,'can'=>[]),
+
+        array('id'=>15,'name'=>'红酒','max'=>999,'same'=>999,'can'=>[]),
+        array('id'=>16,'name'=>'手动面单','max'=>999,'same'=>999,'can'=>[]),
+        array('id'=>17,'name'=>'生鲜','max'=>999,'same'=>999,'can'=>[])
+    ),
+
+    'BAOGUO_ZY' => array(
+        array('id'=>1, 'name'=>'罐装奶粉','max'=>3,'same'=>99,'can'=>[]),
+        array('id'=>2, 'name'=>'袋装奶粉','max'=>3,'same'=>99,'can'=>[]),
+        array('id'=>3, 'name'=>'小罐奶粉','max'=>3,'same'=>99,'can'=>[]),
+        
+        array('id'=>4, 'name'=>'A类保健品','max'=>15,'same'=>6,'can'=>[5,6,7,8,9,10,11,12,13]),
+        array('id'=>5, 'name'=>'A1(1个可混)','max'=>1,'same'=>1,'can'=>[4,7,8,9,10,11,12,13]),
+        array('id'=>6, 'name'=>'A2(3个可混)','max'=>3,'same'=>3,'can'=>[4,7,8,9,10,11,12,13]),
+        
+        array('id'=>7, 'name'=>'B1(<$10)','max'=>4,'same'=>4,'can'=>[4,5,6,8,9,10,11,12,13]),
+        array('id'=>8, 'name'=>'B2($10-$30)','max'=>2,'same'=>2,'can'=>[4,5,6,7,9,10,11,12,13]),
+
+        array('id'=>9, 'name'=>'C类(FF等)','max'=>1,'same'=>1,'can'=>[4,5,6,7,8,10,11,12,13]), 
+
+        array('id'=>10,'name'=>'D1(日用品)','max'=>6,'same'=>6,'can'=>[4,5,6,7,8,9,11,12,13]),
+        array('id'=>11,'name'=>'D2(日用品)','max'=>3,'same'=>3,'can'=>[4,5,6,7,8,9,10,12,13]),
+
+        array('id'=>12,'name'=>'E(婴儿食品)','max'=>20,'same'=>6,'can'=>[4,5,6,7,8,9,10,11,13]),
+        array('id'=>13,'name'=>'F类(成人食品)','max'=>15,'same'=>6,'can'=>[4,5,6,7,8,9,10,11,12]),
+
+        array('id'=>14,'name'=>'1个不混','max'=>1,'same'=>1,'can'=>[]),
+
+        array('id'=>15,'name'=>'红酒','max'=>999,'same'=>999,'can'=>[]),
+        array('id'=>16,'name'=>'手动面单','max'=>999,'same'=>999,'can'=>[]),
+        array('id'=>17,'name'=>'生鲜','max'=>999,'same'=>999,'can'=>[])
     ),
 );
 

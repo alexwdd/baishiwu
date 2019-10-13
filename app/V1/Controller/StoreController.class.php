@@ -557,10 +557,9 @@ class StoreController extends CommonController {
                 unset($list[$key]);
             }
         } 
-
         if ($list) {
             import("Common.ORG.Zhongyou");
-            $cart = new \cart\Zhongyou($list,$kuaidi,$province,$user);
+            $cart = new \pack\Zhongyou($list,$kuaidi,$province,$user);
             $baoguoArr2 = $cart->getBaoguo();
             $baoguoArr = array_merge($baoguoArr1,$baoguoArr2);
         }else{

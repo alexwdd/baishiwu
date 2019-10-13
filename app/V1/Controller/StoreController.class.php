@@ -643,6 +643,7 @@ class StoreController extends CommonController {
             }
 
             //收件信息
+            unset($map);
             $map['memberID'] = $this->user['id'];
             $address = M('Address')->where($map)->order('def desc , id desc')->find();
 
@@ -656,14 +657,14 @@ class StoreController extends CommonController {
            
             $money = $this->getCartNumber($this->user);
 
-            $total = $baoguo['totalPrice']+$baoguo['totalExtend']+$money['total'];
+            $total = $baoguo['totalPrice']+$baoguo['totalExtend']+$money['total']+$money['serverMoney'];
        
             //是否包含签名
             $flag = 0;//货物签名
             foreach ($baoguo['baoguo'] as $key => $value) {
                 foreach ($value['goods'] as $k => $val) {
                     if ($flag==0 && $val['server']!='') {
-                        if (strstr($val['server'], '2')) {
+                        if (strstr($val['server'], '17')) {
                             $flag = 1;
                             break;
                         }
@@ -760,7 +761,7 @@ class StoreController extends CommonController {
         }else{
             $total = $realMoney;
         }
-
+        $total = $total+$serverMoney;
         $order_no = $this->getOrderNo();
         $data['agentID'] = $this->agent['id'];
         $data['sender'] = $sender[0];

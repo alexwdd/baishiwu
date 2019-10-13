@@ -942,4 +942,16 @@ class StoreController extends CommonController {
             returnJson('0','success',$brand);
         }
     }
+
+    public function kefu(){
+        if(IS_POST){
+            if(!checkFormDate()){returnJson('-1','ERROR');}
+            $map['agentID'] = $this->agent['id'];
+            $data = M('AgentKefu')->where($map)->find();
+            if($data){
+                $data['content'] = htmlspecialchars_decode($data['content']);
+            }
+            returnJson('0','success',$data);
+        }
+    }
 }

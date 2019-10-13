@@ -26,9 +26,10 @@ layui.define(['element',"fsConfig","fsCommon"], function(exports){
 				{"menuId":"12","menuName":"订单管理","menuIcon":"fa-rmb","menuHref":"","parentMenuId":"1"},
 
 				{"menuId":"101","menuName":"商城设置","menuIcon":"","menuHref":"/index.php?m=Daigou&c=setting&a=index","parentMenuId":"10"},
-				{"menuId":"102","menuName":"广告管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=ad&a=index","parentMenuId":"10"},
+				{"menuId":"102","menuName":"广告管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=ad&a=index","parentMenuId":"10"},				
 				{"menuId":"103","menuName":"帮助中心","menuIcon":"","menuHref":"/index.php?m=Daigou&c=article&a=index","parentMenuId":"10"},
 				{"menuId":"104","menuName":"商城留言","menuIcon":"","menuHref":"/index.php?m=Daigou&c=feedback&a=index","parentMenuId":"10"},
+				{"menuId":"105","menuName":"在线客服","menuIcon":"","menuHref":"/index.php?m=Daigou&c=kefu&a=index","parentMenuId":"10"},
 
 				{"menuId":"111","menuName":"商品管理","menuIcon":"","menuHref":"/index.php?m=Daigou&c=goods&a=index","parentMenuId":"11"},
 				{"menuId":"112","menuName":"商品分类","menuIcon":"","menuHref":"/index.php?m=Daigou&c=category&a=index","parentMenuId":"11"},

@@ -3,9 +3,9 @@ namespace Adminx\Controller;
 
 class AgentController extends AdminController {
 
-	#列表
-	public function index() {
-		if (IS_POST) {
+    #列表
+    public function index() {
+        if (IS_POST) {
             $disable  = I('disable');
             $authentication  = I('authentication');
             $oauth  = I('oauth');
@@ -58,7 +58,7 @@ class AgentController extends AdminController {
         }else{
             $this->display();
         }
-	}
+    }
 
     #添加
     public function add() {
@@ -78,7 +78,7 @@ class AgentController extends AdminController {
         }
     }
 
-	#编辑
+    #编辑
     public function edit() {
         if($_POST){
             $obj = D('Agent');
@@ -127,9 +127,15 @@ class AgentController extends AdminController {
             $crypt = new \Think\Crypt;
             $cryptStr = $rs['id'].','.get_client_ip();
             $flag = $crypt->encrypt($cryptStr,C('DATA_CRYPT_KEY'),0);
-            session('flag', $flag);
-            session('isadmin', '9999');
-            $this->redirect('Agent/Index/index'); 
+            
+            if($rs['type']==1){
+                session('flag', $flag);
+                $this->redirect('Agent/Index/index');
+            }else{
+                session('dgflag', $flag);
+                $this->redirect('Daigou/Index/index');
+            }
+             
         }else{
             $this->error('您访问的会员不存在！');      
         }

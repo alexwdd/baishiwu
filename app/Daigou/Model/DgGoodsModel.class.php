@@ -69,7 +69,7 @@ class DgGoodsModel extends Model {
         $spec_cid1 = I("post.spec_cid1/a");
         $spec_price = I("post.spec_price/a");
         $spec_number = I("post.spec_number/a");
-        $spec_wuliu = I("post.spec_wuliu/a");
+        $spec_single = I("post.spec_single/a");
         $spec_tag = I("post.spec_tag/a");
         $spec_show = I("post.spec_show/a");
 
@@ -100,7 +100,7 @@ class DgGoodsModel extends Model {
             'wuliuWeight' => $data['wuliuWeight'],
             'server' => $data['server'],
             'tag' => $data['tag'],
-            'wuliu'=>$data['wuliu']
+            'single'=>$data['single']
         );
         array_push($spec_data,$baseData);   
 
@@ -123,7 +123,7 @@ class DgGoodsModel extends Model {
                 $temp['short'] = $spec_short[$i];
                 $temp['price'] = $spec_price[$i];
                 $temp['number'] = $spec_number[$i];
-                $temp['wuliu'] = $spec_wuliu[$i];
+                $temp['single'] = $spec_single[$i];
                 $temp['show'] = $spec_show[$i];
                 $temp['tag'] = $spec_tag[$i];                
                 array_push($spec_data,$temp);
@@ -147,7 +147,7 @@ class DgGoodsModel extends Model {
         $spec_short = I("post.spec_short/a");
         $spec_price = I("post.spec_price/a");
         $spec_number = I("post.spec_number/a");
-        $spec_wuliu = I("post.spec_wuliu/a");
+        $spec_single = I("post.spec_single/a");
         $spec_tag = I("post.spec_tag/a");
         $spec_show = I("post.spec_show/a");
 
@@ -175,7 +175,7 @@ class DgGoodsModel extends Model {
             'wuliuWeight' => $data['wuliuWeight'],
             'server' => $data['server'],
             'tag' => $data['tag'],
-            'wuliu'=>$data['wuliu']
+            'single'=>$data['single']
         ); 
         M("DgGoodsIndex")->where(array('goodsID'=>$data['id'],'base'=>1))->save($baseData);
 
@@ -198,7 +198,7 @@ class DgGoodsModel extends Model {
                 $temp['short'] = $spec_short[$i];
                 $temp['price'] = $spec_price[$i];
                 $temp['number'] = $spec_number[$i];
-                $temp['wuliu'] = $spec_wuliu[$i];
+                $temp['single'] = $spec_single[$i];
                 $temp['show'] = $spec_show[$i];
                 $temp['tag'] = $spec_tag[$i];
                 $temp['goodsID'] = $data['id'];

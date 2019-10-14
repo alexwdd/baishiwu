@@ -10,16 +10,16 @@ class Zhonghuan {
 	private $maxNumber = 10; 	//单个包裹中最多商品个数
 	private $maxWeight = 3.3; 	//单个包裹最大重量(kg)
 	private $maxPrice = 180; 	//单个包裹最大金额
+	private $signID = 2;
 
 	/*
 	$cart中的trueNumber是实际单品数量，比如商品A单品数量是3个，如果购物车中有2个，单品数量总数是6，这里的trueNumber不是数据库中单个商品的trueNumber！！！
 	包裹的status属性如果是1就是该包裹不再跟别的包裹2次混编
 	*/
-	public function __construct($cart,$province) {
+	public function __construct($cart,$province,$user=null) {
 		foreach ($cart as $key => $value) {
 			unset($cart[$key]['memberID']);
 		}
-
 		$cart = array_values($cart);//创建索引
 		$this->cart = $cart;
 		$this->province = trim($province);
@@ -195,10 +195,40 @@ class Zhonghuan {
 		
  		
  		foreach ($this->baoguoArr as $key => $value) {
+ 			if ($this->baoguoArr[$key]['totalWuliuWeight']<1) {
+				$this->baoguoArr[$key]['totalWuliuWeight']=1;
+			}
+
 			$wuliuWeight = ceil($this->baoguoArr[$key]['totalWuliuWeight']*10);
 			$this->baoguoArr[$key]['totalWuliuWeight'] = number_format($wuliuWeight/10,1);
-	
+
 	        if (in_array($value['type'],[1,2,3])){//奶粉类走澳邮
+	        	$danjia = getDanjia(1,$this->user);	
+	        	$this->baoguoArr[$key]['kuaidi'] = '澳邮';
+	        	$this->baoguoArr[$key]['yunfei'] = $this->getNaifen($value['type'],$value['totalNumber']);
+	        	$config = tpCache('kuaidi');
+	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$config['inprice1'];
+	        }else{
+	        	$danjia = getDanjia(3,$this->user);
+	        	$this->baoguoArr[$key]['kuaidi'] = '中环($'.$danjia['price'].'/kg)';
+	        	$this->baoguoArr[$key]['yunfei'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['price'];
+	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['inprice'];
+	        }
+	        
+	        if ($this->inExtendArea()) {
+	        	$this->baoguoArr[$key]['extend'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['otherPrice'];
+	        }
+
+	        $this->baoguoArr[$key]['sign']=0;
+	        foreach ($value['goods'] as $k => $val) {
+	        	$ids = explode(",", $val['server']);
+	            if (in_array(2,$ids)) {
+	                $this->baoguoArr[$key]['sign']=1;
+	                break;
+	            }
+			}
+	
+	        /*if (in_array($value['type'],[1,2,3])){//奶粉类走澳邮
 	        	$danjia = getDanjia(1);
 	        	$this->baoguoArr[$key]['kuaidi'] = '澳邮';
 	        	if($this->baoguoArr[$key]['totalWuliuWeight']<1 && $this->baoguoArr[$key]['baoyou']==0){
@@ -221,7 +251,7 @@ class Zhonghuan {
 	        
 	        if ($this->inExtendArea()) {
 	        	$this->baoguoArr[$key]['extend'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['otherPrice'];
-	        }
+	        }*/
 		}
 		return $this->baoguoArr;
 	}
@@ -360,6 +390,11 @@ class Zhonghuan {
 			}
 		}
 
+		//判断商品签名
+		if (!$this->checkSign($baoguo,$item)) {
+			return false;
+		}
+
 		if(!$this->canHybrid($baoguo,$item)){
 			return false;
 		}
@@ -403,6 +438,30 @@ class Zhonghuan {
 			$number = $number > $priceNumber ? $priceNumber : $number;
 		}
 		return $number;
+	}
+
+	//判断奶粉中是否包含签名，有签名的不能混寄
+	private function checkSign($baoguo,$item){
+		$sign = false;
+		foreach ($baoguo['goods'] as $key => $value) {
+			if (strpos($value['server'],$signID)===0){//包含签名
+				$sign = true;
+				break;
+			}
+		}
+		if ($sign) {
+			if (strpos($item['server'],$signID)===0) {
+				return true;
+			}else{
+				return false;
+			}			
+		}else{
+			if (strpos($item['server'],$signID)!==0) {
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 
 	//处理type这类特殊的商品，只有同一类商品的话允许超过上限

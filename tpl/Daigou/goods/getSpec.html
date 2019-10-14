@@ -28,11 +28,10 @@
     <td><input type="text" name="spec_short[]" lay-verify="required" class="layui-input"></td>
     <td><input type="text" name="spec_price[]" lay-verify="required" class="layui-input" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"></td>
     <td><input type="text" name="spec_number[]" lay-verify="required" class="layui-input" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"></td>
-    <td><select name="spec_wuliu[]">
-        <option value="">无</option>
-        <volist name="wuliu" id="vo">
-        <option value="{$vo.name}">{$vo.name}</option>
-        </volist>
+    <td><select name="spec_single[]">
+        <option value="0">否</option>
+        <option value="1">是</option>
+
     </select></td>
     <td><select name="spec_tag[]">
         <option value="">无</option>

@@ -123,6 +123,12 @@
 						<select name="typeID" default="{$list.typeID}" class="fsSelect fsDict" lay-verify="required" dict="baoguo" addNull="1">
 	      				</select>
 					</div>
+
+					<label class="layui-form-label">单独打包</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="single" value="1" title="是" <php>if($list['single']==1) echo 'checked';</php>/>
+                        <input type="radio" name="single" value="0" title="否" <php>if($list['single']==0) echo 'checked';</php>/>
+                    </div>
 				</div>
 
 				<div class="layui-form-item">
@@ -192,16 +198,6 @@
 						<input type="text" name="number" id="number" value="{$list.number}" class="layui-input">
 					</div>
 
-					<label class="layui-form-label">快递</label>
-					<div class="layui-input-inline">
-						<select name="wuliu" default="{$list.wuliu}">
-							<option value="">无</option>
-					        <volist name="wuliu" id="vo">
-					        <option value="{$vo.name}">{$vo.name}</option>
-					        </volist>
-	      				</select>
-					</div>
-
 					<label class="layui-form-label">水印</label>
 					<div class="layui-input-inline">
 						<select name="tag" id="tag" default="{$list.tag}">
@@ -257,7 +253,7 @@
 				    		<td><b>短名称</b></td>
 				    		<td style="width: 80px"><b>价格</b></td>
 			               	<td style="width: 80px"><b>单品数量</b></td>	
-			               	<td style="width: 120px"><b>快递</b></td>
+			               	<td style="width: 120px"><b>单独打包</b></td>
 			               	<td style="width: 100px"><b>水印</b></td>
 			               	<td style="width: 60px"><a href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-xs" id="addBtn">添加</a></td>
 			            </tr>
@@ -292,11 +288,9 @@
 					    <td><input type="text" name="spec_short[]" value="{$vo.short}" lay-verify="required" class="layui-input"></td>
 					    <td><input type="text" name="spec_price[]" value="{$vo.price}" lay-verify="required" class="layui-input" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"></td>
 					    <td><input type="text" name="spec_number[]" value="{$vo.number}" lay-verify="required" class="layui-input" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')"></td>			
-					    <td><select name="spec_wuliu[]" default="{$vo.wuliu}">
-					        <option value="">无</option>
-					        <volist name="wuliu" id="item">
-					        <option value="{$item.name}">{$item.name}</option>
-					        </volist>
+					    <td><select name="spec_single[]" default="{$vo.single}">
+					        <option value="0">否</option>
+					        <option value="1">是</option>
 					    </select></td>
 					    <td><select name="spec_tag[]" default="{$vo.tag}">
 							<option value="">无</option>

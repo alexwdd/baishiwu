@@ -23,8 +23,7 @@ class DaigouController extends BaseController
             $list = M('DgOrder')->where($map)->find();
             if (!$list) {
                 returnJson('-1','订单不存在');
-            }
-
+            }           
             $agent = M("Agent")->where("id=".$list['agentID'])->find();
 
             $shouxufei = C('site.shouxufei');
@@ -32,7 +31,7 @@ class DaigouController extends BaseController
             $data['shouxufei'] = $shouxufei/100;
             $data['rmb'] = ($list['total'] + $data['shouxufei']*$list['total'])*$huilv;          
             M('DgOrder')->where($map)->save($data);
-            $list['rmb'] = number_format($data['rmb'],1);           
+            //$list['rmb'] = number_format($data['rmb'],1);           
             if ($payType==2) {
                 $result = $this->wxPub($list,$agent['cityID']);
             }else{
@@ -75,7 +74,7 @@ class DaigouController extends BaseController
         $content['out_trade_no'] = $order['order_no'];//商户网站唯一订单号
         $content['timeout_express'] = '1d';//该笔订单允许的最晚付款时间
 
-        $content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型)
+        $content['total_amount'] = floatval($order['rmb']);//订单总金额(必须定义成浮点型) 
         //$content['total_amount'] = 0.01;//订单总金额(必须定义成浮点型)
         $content['product_code'] = 'QUICK_MSECURITY_PAY';//
         

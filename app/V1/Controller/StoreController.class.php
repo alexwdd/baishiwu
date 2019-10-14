@@ -390,7 +390,7 @@ class StoreController extends CommonController {
                     }
                     $number = $list['number']+$number;
                     $data['number'] = $number;
-                    $data['goodsNumber'] = $number*$goods['number'];
+                    $data['trueNumber'] = $number*$goods['number'];
                     $db->where($map)->save($data);
                 }else{
                     $data = [
@@ -398,7 +398,7 @@ class StoreController extends CommonController {
                         'goodsID'=>$goods['goodsID'],
                         'itemID'=>$specid,
                         'number'=>$number,
-                        'goodsNumber'=>$number*$goods['number'],
+                        'trueNumber'=>$number*$goods['number'],
                         'typeID'=>$goods['typeID'],
                         'server'=>$server,
                         'extends'=>$exts
@@ -437,7 +437,7 @@ class StoreController extends CommonController {
             $obj = M('DgCart');
             $list = $obj->where($map)->find();
             
-            $data['goodsNumber'] = ($list['goodsNumber']/$list['number'])*$number;
+            $data['trueNumber'] = ($list['trueNumber']/$list['number'])*$number;
             $data['number'] = $number;
             $obj->where($map)->save($data); 
             $heji = fix_number_precision($this->getCartNumber($this->user),2); 
@@ -520,8 +520,12 @@ class StoreController extends CommonController {
             $list[$key]['wuliuWeight'] = $goods['wuliuWeight'];            
             $list[$key]['weight'] = $goods['weight'];            
             $list[$key]['price'] = $goods['price'];            
-            $list[$key]['singleNumber'] = $goods['number'];             
-            if ($goods['wuliu']!='') { //套餐类的先处理掉
+            $list[$key]['singleNumber'] = $goods['number'];       
+
+            //$list[$key]['baoyou'] = $goods['single'];
+            
+
+            /*if ($goods['wuliu']!='') { //套餐类的先处理掉
                 for ($i=0; $i < $value['number']; $i++) { 
                     $brandName = getBrandName($goods['typeID']);
                     $list[$key]['goodsNumber'] = $goods['number'];
@@ -555,16 +559,19 @@ class StoreController extends CommonController {
                     array_push($baoguoArr1,$baoguo);
                 }
                 unset($list[$key]);
-            }
+            }*/
         } 
-        if ($list) {
-            import("Common.ORG.Zhongyou");
-            $cart = new \pack\Zhongyou($list,$kuaidi,$province,$user);
-            $baoguoArr2 = $cart->getBaoguo();
-            $baoguoArr = array_merge($baoguoArr1,$baoguoArr2);
+
+        if($kid==9){
+            import("Common.ORG.Zhonghuan");
+            $cart = new \pack\Zhonghuan($list,$province,$user);
         }else{
-            $baoguoArr =$baoguoArr1;
-        }        
+            import("Common.ORG.Zhongyou");
+            $cart = new \pack\Zhongyou($list,$province,$user);
+        }
+        
+        $baoguoArr = $cart->getBaoguo();
+        
         $totalWeight = 0;
         $totalWuliuWeight = 0;
         $totalPrice = 0;

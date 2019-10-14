@@ -83,8 +83,8 @@ class GoodsController extends CommonController {
             }
             $this->assign('attr', $attr);
 
-            $wuliu = M("Wuliu")->where(array('agentID'=>0))->order("sort asc")->select();
-            $this->assign('wuliu', $wuliu);
+            /*$wuliu = M("Wuliu")->where(array('agentID'=>0))->order("sort asc")->select();
+            $this->assign('wuliu', $wuliu);*/
 
             $this->assign('tag',C('GOODS_TAG'));
             $this->display();
@@ -142,8 +142,8 @@ class GoodsController extends CommonController {
                 }
                 $this->assign('attr', $attr);
 
-                $wuliu = M("Wuliu")->where(array('agentID'=>0))->order("sort asc")->select();
-                $this->assign('wuliu', $wuliu);
+                /*$wuliu = M("Wuliu")->where(array('agentID'=>0))->order("sort asc")->select();
+                $this->assign('wuliu', $wuliu);*/
 
                 $this->assign('tag',C('GOODS_TAG'));
                 $this->display();

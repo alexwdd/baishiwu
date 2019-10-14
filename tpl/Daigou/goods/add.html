@@ -122,6 +122,12 @@
 						<select name="typeID" class="fsSelect fsDict" lay-verify="required" dict="baoguo" addNull="1">
 	      				</select>
 					</div>
+
+					<label class="layui-form-label">单独打包</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="single" value="1" title="是" />
+                        <input type="radio" name="single" value="0" title="否" checked/>
+                    </div>
 				</div>
 
 				<div class="layui-form-item">
@@ -191,16 +197,6 @@
 						<input type="text" name="number" id="number" value="1" class="layui-input">
 					</div>
 
-					<label class="layui-form-label">快递</label>
-					<div class="layui-input-inline">
-						<select name="wuliu">
-							<option value="">无</option>
-					        <volist name="wuliu" id="vo">
-					        <option value="{$vo.name}">{$vo.name}</option>
-					        </volist>
-	      				</select>
-					</div>
-
 					<label class="layui-form-label">水印</label>
 					<div class="layui-input-inline">
 						<select name="tag" id="tag">
@@ -253,7 +249,7 @@
 				    		<td><b>短名称</b></td>
 				    		<td style="width: 80px"><b>价格</b></td>
 			               	<td style="width: 80px"><b>单品数量</b></td>			               	
-			               	<td style="width: 120px"><b>快递</b></td>
+			               	<td style="width: 120px"><b>单独打包</b></td>
 			               	<td style="width: 100px"><b>水印</b></td>
 			               	<td style="width: 60px"><a href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-xs" id="addBtn">添加</a></td>
 			            </tr>

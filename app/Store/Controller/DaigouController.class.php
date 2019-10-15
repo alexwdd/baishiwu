@@ -29,9 +29,9 @@ class DaigouController extends BaseController
             $shouxufei = C('site.shouxufei');
             $huilv = $agent['huilv'];
             $data['shouxufei'] = $shouxufei/100;
-            $data['rmb'] = ($list['total'] + $data['shouxufei']*$list['total'])*$huilv;          
+            $data['rmb'] = ($list['total'] + $data['shouxufei']*$list['total'])*$huilv;
             M('DgOrder')->where($map)->save($data);
-            //$list['rmb'] = number_format($data['rmb'],1);           
+            $list['rmb'] = $data['rmb'];           
             if ($payType==2) {
                 $result = $this->wxPub($list,$agent['cityID']);
             }else{

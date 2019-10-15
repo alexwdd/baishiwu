@@ -303,7 +303,7 @@ class GoodsController extends CommonController {
                     $data['keyword'] = trim($sheet->getCellByColumnAndRow(18, $i)->getValue());
                     $data['inprice'] = trim($sheet->getCellByColumnAndRow(19, $i)->getValue());
                     $data['say'] = trim($sheet->getCellByColumnAndRow(20, $i)->getValue());
-                    $data['wuliu'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
+                    $data['single'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
                     $data['sort'] = trim($sheet->getCellByColumnAndRow(22, $i)->getValue());
                     $data['agsID'] = trim($sheet->getCellByColumnAndRow(23, $i)->getValue());
                     $obj->where(array('id'=>$goodsID))->save($data);
@@ -365,7 +365,7 @@ class GoodsController extends CommonController {
                     $data['keyword'] = trim($sheet->getCellByColumnAndRow(18, $i)->getValue());
                     $data['inprice'] = trim($sheet->getCellByColumnAndRow(19, $i)->getValue());
                     $data['say'] = trim($sheet->getCellByColumnAndRow(20, $i)->getValue());
-                    $data['wuliu'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
+                    $data['single'] = trim($sheet->getCellByColumnAndRow(21, $i)->getValue());
                     $data['agsID'] = trim($sheet->getCellByColumnAndRow(23, $i)->getValue());
                     $data['sort'] = 50;
                     $data['updateTime'] = time();
@@ -416,7 +416,7 @@ class GoodsController extends CommonController {
             ->setCellValue('S1', '关键词')
             ->setCellValue('T1', '进货价')
             ->setCellValue('U1', '特色描述')
-            ->setCellValue('V1', '快递')
+            ->setCellValue('V1', '单独打包')
             ->setCellValue('W1', '排序')
             ->setCellValue('X1', 'agsID');
         foreach($list as $k => $v){
@@ -443,7 +443,7 @@ class GoodsController extends CommonController {
                 ->setCellValue('S'.$num, $v['keyword'])
                 ->setCellValue('T'.$num, $v['inprice'])
                 ->setCellValue('U'.$num, $v['say'])
-                ->setCellValue('V'.$num, $v['wuliu'])
+                ->setCellValue('V'.$num, $v['single'])
                 ->setCellValue('W'.$num, $v['sort'])
                 ->setCellValue('X'.$num, $v['agsID']);
         }
@@ -516,7 +516,7 @@ class GoodsController extends CommonController {
                     }
                     $data['price'] = trim($sheet->getCellByColumnAndRow(6, $i)->getValue());
                     $data['number'] = trim($sheet->getCellByColumnAndRow(7, $i)->getValue());
-                    $data['wuliu'] = trim($sheet->getCellByColumnAndRow(8, $i)->getValue());
+                    $data['single'] = trim($sheet->getCellByColumnAndRow(8, $i)->getValue());
                     $data['agsID'] = trim($sheet->getCellByColumnAndRow(9, $i)->getValue());
 
                     $obj->where(array('id'=>$goodsID))->save($data);
@@ -547,7 +547,7 @@ class GoodsController extends CommonController {
             ->setCellValue('F1', '分类2(数字)')
             ->setCellValue('G1', '价格')
             ->setCellValue('H1', '单品数量')   
-            ->setCellValue('I1', '快递')
+            ->setCellValue('I1', '单独打包')
             ->setCellValue('J1', 'agsID');
         foreach($list as $k => $v){
             $num=$k+2;
@@ -560,7 +560,7 @@ class GoodsController extends CommonController {
                 ->setCellValue('F'.$num, $v['cid1'])
                 ->setCellValue('G'.$num, $v['price'])
                 ->setCellValue('H'.$num, $v['number'])
-                ->setCellValue('I'.$num, $v['wuliu'])
+                ->setCellValue('I'.$num, $v['single'])
                 ->setCellValue('J'.$num, $v['agsID']);
         }
 

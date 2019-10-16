@@ -39,11 +39,11 @@ function fix_number_precision($data, $precision = 2)
 }
 
 //获取中邮快递ID
-function getBrandID($type){
-    if ($type==1 || $type==2 || $type==3) {
+function getBrandID($order){
+    if(strstr($order['kuaidi'], '澳邮')){
         return 1;
     }
-    if ($type==5) {
+    if(strstr($order['kuaidi'], '中邮')){
         return 2;
     }
     return 3;

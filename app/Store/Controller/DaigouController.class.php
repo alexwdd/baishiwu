@@ -180,6 +180,12 @@ class DaigouController extends BaseController
                 M('DgOrder')->where($map)->save($data);
                 M('DgOrderBaoguo')->where(array('orderID'=>$list['id']))->setField('status',1);
                 M('DgOrderPerson')->where(array('orderID'=>$list['id']))->setField('status',1);
+
+                //发送短信
+                /*$notifyMobile = M("Agent")->where(array('id'=>$list['agentID']))->getField('notifyMobile');
+                if($notifyMobile!=''){
+                    
+                }*/
             }
         }else{
             exit('订单不存在');  

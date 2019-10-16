@@ -155,7 +155,7 @@ class BaseController extends Controller{
             }
         }
 
-        $brandID = getBrandID($order['type']);
+        $brandID = getBrandID($order);
         $config = C("aue");
         $data = [
             'MemberId'=>$config['MemberId'],

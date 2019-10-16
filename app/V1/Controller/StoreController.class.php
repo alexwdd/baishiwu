@@ -306,7 +306,7 @@ class StoreController extends CommonController {
                 }else{
                     $list[$key]['server'] = null;
                 }
-                $list[$key]['goodsNumber'] = $goods['number'];//套餐中包含几个商品
+                $list[$key]['trueNumber'] = $goods['number'];//套餐中包含几个商品
                 //小计金额
                 $money = $value['number'] * $goods['price'];
                 $list[$key]['goods'] = $goods;
@@ -325,27 +325,30 @@ class StoreController extends CommonController {
         $total = 0;
         $server = 0;
         $weight = 0;
+        $goodsMoney = 0;
         foreach ($list as $key => $value) {
             $goods = M('DgGoodsIndex')->where('id='.$value['itemID'])->find(); 
             if ($value['server']!='') {
-                $serverID = explode(",",$value['server']);
+                $serverID = explode(",",$value['server']);        
                 unset($map);
                 $map['id'] = array('in',$serverID);
-                $serverMoney = M("server")->where($map)->sum('price');                
+                $serverMoney = M("server")->where($map)->sum('price');                             
             }else{
                 $serverMoney = 0;
             }
 
             //贴心服务需要计算商品个数，所以要乘套餐里边商品的数量
-            $goodsMoney = $goods['price'] * $value['number'];
-            $serverMoney = $serverMoney * $value['goodsNumber'] * $goods['number'];
-            $total += $goodsMoney + $serverMoney;
+            $tempMoney = $goods['price'] * $value['number'];
+            $serverMoney = $serverMoney * $value['trueNumber'];
+            $goodsMoney += $tempMoney;
+            $total += $tempMoney + $serverMoney;
             $rmb = round($total * $this->agent['huilv'],1);
-            $server += $serverMoney;
-            $weight += $value['goodsNumber'] * $goods['weight'];       
+            $server += $serverMoney;            
+            $weight += $value['trueNumber'] * $goods['weight'];       
             $number = count($list);
         }
-        return array('number'=>$number,'total'=>$total,'rmb'=>$rmb,'serverMoney'=>$server,'weight'=>number_format($weight,2)); 
+
+        return array('number'=>$number,'goodsMoney'=>$goodsMoney,'total'=>$total,'rmb'=>$rmb,'serverMoney'=>$server,'weight'=>number_format($weight,2)); 
     }
 
     //添加到购物车
@@ -412,7 +415,7 @@ class StoreController extends CommonController {
                     }else{
                         $number = $list['number']-$number;
                         $data['number'] = $number;
-                        $data['goodsNumber'] = $number*$goods['number'];
+                        $data['trueNumber'] = $number*$goods['number'];
                         $db->where($map)->save($data);
                     }                
                 }
@@ -641,7 +644,7 @@ class StoreController extends CommonController {
                 }else{
                     $list[$key]['server'] = null;
                 }
-                $list[$key]['goodsNumber'] = $goods['number'];//套餐中包含几个商品
+                $list[$key]['trueNumber'] = $goods['number'];//套餐中包含几个商品
                 $list[$key]['goods'] = $goods;
                 $list[$key]['money'] = number_format($money,2);
             }
@@ -661,20 +664,13 @@ class StoreController extends CommonController {
            
             $money = $this->getCartNumber($this->user);
 
-            $total = $baoguo['totalPrice']+$baoguo['totalExtend']+$money['total']+$money['serverMoney'];
+            $total = $baoguo['totalPrice']+$baoguo['totalExtend']+$money['total'];
        
             //是否包含签名
             $flag = 0;//货物签名
-            foreach ($baoguo['baoguo'] as $key => $value) {
-                foreach ($value['goods'] as $k => $val) {
-                    if ($flag==0 && $val['server']!='') {
-                        if (strstr($val['server'], '17')) {
-                            $flag = 1;
-                            break;
-                        }
-                    }
-                }
-                if ($flag==1) {
+            foreach ($baoguo['baoguo'] as $key => $value) {                
+                if ($value['sign']==1) {
+                    $flag = 1;
                     break;
                 }
             }        
@@ -765,7 +761,6 @@ class StoreController extends CommonController {
         }else{
             $total = $realMoney;
         }
-        $total = $total+$serverMoney;
         $order_no = $this->getOrderNo();
         $data['agentID'] = $this->agent['id'];
         $data['sender'] = $sender[0];

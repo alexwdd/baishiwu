@@ -28,10 +28,11 @@ class DaigouController extends BaseController
 
             $shouxufei = C('site.shouxufei');
             $huilv = $agent['huilv'];
-            $data['shouxufei'] = $shouxufei/100;
-            $data['rmb'] = ($list['total'] + $data['shouxufei']*$list['total'])*$huilv;
+            $sxf = ($list['total']*$shouxufei)/100;
+            $data['shouxufei'] = $sxf;
+            $data['rmb'] = ($list['total'] + $sxf)*$huilv;
             M('DgOrder')->where($map)->save($data);
-            $list['rmb'] = $data['rmb'];           
+            $list['rmb'] = round($data['rmb'],2);           
             if ($payType==2) {
                 $result = $this->wxPub($list,$agent['cityID']);
             }else{
@@ -101,7 +102,6 @@ class DaigouController extends BaseController
                 return '当前城市未开通在线支付';
                 break;
         }
-        
         import('Common.ORG.Weixinpay.WxPayPubHelper');
         //=========步骤2：使用统一支付接口，获取prepay_id============
         //使用统一支付接口
@@ -110,7 +110,7 @@ class DaigouController extends BaseController
         $unifiedOrder->setParameter("body",'购买商品');//商品描述
         //自定义订单号，此处仅作举例
         $unifiedOrder->setParameter("out_trade_no",$order['order_no']);//商户订单号 
-        $unifiedOrder->setParameter("total_fee",$order['rmb']*100);//总金额
+        $unifiedOrder->setParameter("total_fee",(int)($order['rmb']*100));//总金额
         //$unifiedOrder->setParameter("total_fee",1);//总金额
 
         //通知地址 

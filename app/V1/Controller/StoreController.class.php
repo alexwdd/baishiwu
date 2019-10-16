@@ -513,16 +513,14 @@ class StoreController extends CommonController {
         $list = M("DgCart")->where($map)->order('typeID asc,number desc')->select();
         foreach ($list as $key => $value) {
             $goods = M('DgGoodsIndex')->where('id='.$value['itemID'])->find(); 
-
             $list[$key]['goodsID'] = $goods['goodsID'];
             $list[$key]['name'] = $goods['name'];
             $list[$key]['short'] = $goods['short'];
             $list[$key]['wuliuWeight'] = $goods['wuliuWeight'];            
             $list[$key]['weight'] = $goods['weight'];            
             $list[$key]['price'] = $goods['price'];            
-            $list[$key]['singleNumber'] = $goods['number'];       
-
-            //$list[$key]['baoyou'] = $goods['single'];
+            $list[$key]['singleNumber'] = $goods['number'];
+            $list[$key]['baoyou'] = $goods['single'];
             
 
             /*if ($goods['wuliu']!='') { //套餐类的先处理掉
@@ -711,7 +709,7 @@ class StoreController extends CommonController {
         foreach ($list as $key => $value) {
             $goods = M('DgGoodsIndex')->where(array('id'=>$value['itemID']))->find();
             $goodsInprice = M("DgGoods")->where(array('id'=>$value['goodsID']))->getField("inprice");
-            $chengben += $goodsInprice * $value['goodsNumber'];
+            $chengben += $goodsInprice * $value['trueNumber'];
             if ($goods) {
                 if ($goods['empty']==1) {
                     returnJson('-1','商品【'.$goods['name'].'】库存不足');
@@ -719,8 +717,8 @@ class StoreController extends CommonController {
             }else{
                 returnJson('-1','商品【'.$goods['name'].'】已经下架');
             }
-            if ($value['typeID']==12) {
-                $hongjiu += $value['goodsNumber'];
+            if ($value['typeID']==15) {
+                $hongjiu += $value['trueNumber'];
             }
         }
 
@@ -845,8 +843,8 @@ class StoreController extends CommonController {
                         'itemID'=>$val['itemID'],
                         'name'=>$val['name'],
                         'short'=>$val['short'],
-                        'number'=>$val['goodsNumber'],    
-                        'trueNumber'=>$val['goodsNumber'],    
+                        'number'=>$val['trueNumber'],    
+                        'trueNumber'=>$val['trueNumber'],    
                         'price'=>$val['price'],
                         'server'=>$val['server'],
                         'extends'=>$val['extends'],

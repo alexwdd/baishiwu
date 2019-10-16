@@ -203,14 +203,21 @@ class Zhongyou {
 			
 			if (in_array($value['type'],[1,2,3])){//奶粉类走澳邮
 	        	$danjia = getDanjia(1,$this->user);	
-	        	$this->baoguoArr[$key]['kuaidi'] = '澳邮';
-	        	$this->baoguoArr[$key]['yunfei'] = $this->getNaifen($value['type'],$value['totalNumber']);
-	        	$config = tpCache('kuaidi');
-	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$config['inprice1'];
+	        	$this->baoguoArr[$key]['kuaidi'] = '澳邮($'.$danjia['price'].'/kg)';
+	        	if($value['baoyou']==1){
+	        		$this->baoguoArr[$key]['yunfei'] = 0;
+	        	}else{
+	        		$this->baoguoArr[$key]['yunfei'] = $this->getNaifen($value['type'],$value['totalNumber']);
+	        	}	        		    
+	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['inprice'];
 	        }else{
 	        	$danjia = getDanjia(2,$this->user);
 	        	$this->baoguoArr[$key]['kuaidi'] = '中邮($'.$danjia['price'].'/kg)';
-	        	$this->baoguoArr[$key]['yunfei'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['price'];
+	        	if($value['baoyou']==1){
+	        		$this->baoguoArr[$key]['yunfei'] = 0;
+	        	}else{
+	        		$this->baoguoArr[$key]['yunfei'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['price'];
+	        	}	        	
 	        	$this->baoguoArr[$key]['inprice'] = $this->baoguoArr[$key]['totalWuliuWeight']*$danjia['inprice'];
 	        }
 	        

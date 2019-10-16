@@ -151,6 +151,7 @@ class OrderController extends CommonController {
             if (!$list) {
                 returnJson('-1','不存在的订单');
             }
+            $list['trueMoney'] = $list['total']+$list['shouxufei'];
             $list['createTime'] = date("Y-m-d H:i:s",$list['createTime']);
             $list['payType'] = getPayType($list['payType']);
 

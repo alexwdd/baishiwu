@@ -502,6 +502,15 @@ function send_sms($mobile,$content){
     return $result;
 }
 
+function send_cn_sms($mobile,$content){
+    $smsapi = "http://api.smsbao.com/";
+    $user = "shanguang02"; //短信平台帐号
+    $pass = md5("q62466173"); //短信平台密码 
+    $sendurl = $smsapi."sms?u=".$user."&p=".$pass."&m=".urlencode($mobile)."&c=".urlencode($content);
+    $result =file_get_contents($sendurl);
+    return $result;
+}
+
 //阿里发短信验证码
 function send_sms_code($mobile, $code) {
     import("Common.ORG.alisms.aliyun-php-sdk-core.Config");

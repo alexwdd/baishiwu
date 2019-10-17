@@ -182,10 +182,11 @@ class DaigouController extends BaseController
                 M('DgOrderPerson')->where(array('orderID'=>$list['id']))->setField('status',1);
 
                 //发送短信
-                /*$notifyMobile = M("Agent")->where(array('id'=>$list['agentID']))->getField('notifyMobile');
+                $notifyMobile = M("Agent")->where(array('id'=>$list['agentID']))->getField('notifyMobile');
                 if($notifyMobile!=''){
-                    
-                }*/
+                    $msg = '【澳洲生活圈】您有新的订单，订单号'.$list['order_no'].'，请及时处理。';
+                    send_cn_sms($notifyMobile,$msg);
+                }
             }
         }else{
             exit('订单不存在');  

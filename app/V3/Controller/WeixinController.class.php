@@ -56,7 +56,7 @@ class WeixinController extends CommonController {
             if ($adID!='' && is_numeric($adID)) {
                 $map['cid']=$adID;
             }
-            $map['id'] = array('neq',38);
+            //$map['id'] = array('neq',38);
             $ads = M('Ad')->field('name as title,articleid,type,createTime as time,image,url')->where($map)->order('sort asc , id desc')->select();
             foreach ($ads as $key => $value) {
                 $ads[$key]['time'] = date("Y-m-d",$value['time']);
@@ -67,7 +67,7 @@ class WeixinController extends CommonController {
             $map['cityID'] = $cityID;   
             $map['fid'] = 0;
             if($cityID==9){
-                $map['cid'] = array('not in',[1,4,7,94,142,152]);
+                //$map['cid'] = array('not in',[1,4,7,94,142,152]);
                 $map['type'] = array('not eq','article');
             }
             $list = M('CityCate')->field('cid,name,icon')->where($map)->order('sort asc')->select();
@@ -123,7 +123,7 @@ class WeixinController extends CommonController {
                 $list[$key]['icon'] = getRealUrl($value['icon']);
             }
 
-            /*unset($map);
+            unset($map);
             $map['cityID'] = $cityID;
             $map['show'] = 1;
             $agent = M('Agent')->field('id,logo,name')->where($map)->order('sort asc,id desc')->select();
@@ -132,10 +132,10 @@ class WeixinController extends CommonController {
                     'type'=>'mall',
                     'name'=>$value['name'],
                     'icon'=>'http://' . $_SERVER['HTTP_HOST'] . $value['logo'],
-                    'url'  =>'http://' . $_SERVER['HTTP_HOST'] .'/store/?agentid='.$value['id']
+                    'url'  =>'http://wx.worldmedia.top/adelaide/store?agentid='.$value['id']
                 ];
                 array_push($list, $temp);
-            }*/
+            }
             returnJson('0',C("SUCCESS_RETURN"),array('ads'=>$ads,'cate'=>$list));       
         }       
     }
@@ -282,7 +282,6 @@ class WeixinController extends CommonController {
                 if (count($q)>0) {
                     array_push($quick,$q);
                 }
-                $quick = [];
                 returnJson('0',C('SUCCESS_RETURN'),['data'=>$list,'ad1'=>$ad1,'ad2'=>$ad2,'quick'=>$quick,'about'=>$about]);
             }
         }
@@ -496,7 +495,6 @@ class WeixinController extends CommonController {
                 $list[$key]['thumb_b'] = getRealUrl($value['thumb_b']);
                 $list[$key]['thumb_s'] = getRealUrl($value['thumb_s']);
                 $list[$key]['createTime'] = date("Y/m/d",$value['createTime']);
-
                 $list[$key] = $this->setTagPrice($list[$key],$type);
             }
             
@@ -610,9 +608,6 @@ class WeixinController extends CommonController {
 
                 //设施
                 $sheshi = M("OptionItem")->where(array('cate'=>7))->field("id as itemid,name,value")->select();
-                
-                $quick = [];
-                $quick = [];
                 return returnJson('0',C('SUCCESS_RETURN'),['data'=>$list,'ad1'=>$ad1,'ad2'=>$ad2,'quick'=>$quick,'about'=>$about,'sheshi'=>$sheshi]);
             }else{
                 returnJson('-1','不存在的信息');

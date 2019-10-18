@@ -174,7 +174,7 @@ class OrderController extends CommonController {
                         }
                         $baoguo[$k]['image'] = $temp;
                     }
-                    if(in_array($val['type'],[12,13,14])){
+                    if(in_array($val['type'],[15,16,17])){
                         $baoguo[$k]['url'] = config('site.url'.$f['type']);
                     }else{
                         $baoguo[$k]['url'] = '';

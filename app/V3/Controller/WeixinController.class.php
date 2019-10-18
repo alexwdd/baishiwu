@@ -649,7 +649,6 @@ class WeixinController extends CommonController {
                     $list[$key]['user'] = M('Member')->where(array('id'=>$value['userid']))->field('nickname,headimg')->find();
                 }                
             }
-            $list = [];
             returnJson(0,'success',$list);
         }
     }

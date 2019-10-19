@@ -9,7 +9,7 @@
 			<div class="layui-inline">
 				<label class="layui-form-mid">日期</label>
 				<div class="layui-input-inline">
-					<input type="text" name="createDate" autocomplete="off" class="layui-input fsDate" dateRange="1" placeholder=" - "/>
+					<input type="text" name="createDate" id="createDate" autocomplete="off" class="layui-input fsDate" dateRange="1" placeholder=" - "/>
 				</div>
 			</div>
 			<div class="layui-input-inline">
@@ -28,10 +28,30 @@
 			  <i class="layui-icon">&#xe669;</i>刷新
 			</button>
 
+			<button type="button" class="layui-btn" function="toExp">导出
+			</button>
+
 			<button class="layui-btn layui-btn-danger" function="submit" method="post" url="{:U("Order3/del")}" isMutiDml="1" isConfirm="1" confirmMsg="是否确定删除选中的数据？" inputs="id:">
 			  <i class="layui-icon">&#xe640;</i>删除
 			</button>
 		</div>
+		<script>
+		layui.fsButton.toExp = function(elem,data,datagrid){
+			var postData='';
+			$.each(data,function(x,y){
+				if (x==0){
+					postData+=y.id;
+				}else{
+					postData+=','+y.id;
+				}				
+			})
+	    	if(postData==''){
+	    		alert("请选择要导出的订单");
+	    		return false;
+	    	}
+			window.location.href = '{:U('order3/export')}?ids='+postData;
+		}
+	    </script>
 
 		<div class="tj">总金额:<span id="total">0</span></div>
 

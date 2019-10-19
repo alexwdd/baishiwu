@@ -171,8 +171,8 @@ class BagController extends CommonController {
                 ->setCellValue('G'.$num, $v['kuaidi'])
                 ->setCellValue('H'.$num, $v['goods'])
                 ->setCellValue('I'.$num, $v['sender'].'/'.$v['senderMobile'])
-                ->setCellValue('J'.$num, $v['inprice']*$v['number']);
-                ->setCellValue('K'.$num, $v['payment']);
+                ->setCellValue('J'.$num, $v['inprice']*$v['number'])
+                ->setCellValue('K'.$num, $v['payment'])
                 ->setCellValue('L'.$num, $v['inprice']*$v['number']+$v['payment']);
         }
 

@@ -50,7 +50,7 @@ class Order4Controller extends CommonController {
             $list = $obj->where($map)->order($field.' '.$order)->limit($firstRow.','.$pageSize)->select();
             foreach ($list as $key => $value) {
                 $list[$key]['pay'] = getPayType($value['payType']);
-                $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where('orderID',$value['id'])->count();
+                $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where('orderID='.$value['id'])->count();
                 $list[$key]['lirun'] = $value['total']-$value['inprice']-$value['wuliuInprice'];
                 $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
             }

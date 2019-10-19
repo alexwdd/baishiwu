@@ -155,7 +155,10 @@ class BagController extends CommonController {
             ->setCellValue('F1', '地址')
             ->setCellValue('G1', '快递')
             ->setCellValue('H1', '商品')
-            ->setCellValue('I1', '发件人');
+            ->setCellValue('I1', '发件人')
+            ->setCellValue('J1', '商品金额')
+            ->setCellValue('K1', '运费')
+            ->setCellValue('L1', '应支付');
         foreach($list as $k => $v){
             $num=$k+2;
             $objPHPExcel->setActiveSheetIndex(0)
@@ -167,7 +170,10 @@ class BagController extends CommonController {
                 ->setCellValue('F'.$num, $v['province'].'/'.$v['city'].'/'.$v['area'].'/'.$v['address'])
                 ->setCellValue('G'.$num, $v['kuaidi'])
                 ->setCellValue('H'.$num, $v['goods'])
-                ->setCellValue('I'.$num, $v['sender'].'/'.$v['senderMobile']);
+                ->setCellValue('I'.$num, $v['sender'].'/'.$v['senderMobile'])
+                ->setCellValue('J'.$num, $v['inprice']*$v['number']);
+                ->setCellValue('K'.$num, $v['payment']);
+                ->setCellValue('L'.$num, $v['inprice']*$v['number']+$v['payment']);
         }
 
         $objPHPExcel->getActiveSheet()->setTitle('包裹');

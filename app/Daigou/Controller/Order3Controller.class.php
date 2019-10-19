@@ -46,6 +46,7 @@ class Order3Controller extends CommonController {
                 $list[$key]['pay'] = getPayType($value['payType']);
                 $list[$key]['baoguoNumber'] = M('DgOrderBaoguo')->where('orderID',$value['id'])->count();
                 $list[$key]['lirun'] = $value['total']-$value['inprice']-$value['wuliuInprice'];
+                $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
             }
             $result = array(
                 'data'=>array(

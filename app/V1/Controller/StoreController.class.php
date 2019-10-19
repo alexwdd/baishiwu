@@ -516,12 +516,14 @@ class StoreController extends CommonController {
         $list = M("DgCart")->where($map)->order('typeID asc,number desc')->select();
         foreach ($list as $key => $value) {
             $goods = M('DgGoodsIndex')->where('id='.$value['itemID'])->find(); 
+            $inprice = M('DgGoods')->where('id='.$goods['goodsID'])->getField("inprice");
             $list[$key]['goodsID'] = $goods['goodsID'];
             $list[$key]['name'] = $goods['name'];
             $list[$key]['short'] = $goods['short'];
             $list[$key]['wuliuWeight'] = $goods['wuliuWeight'];            
             $list[$key]['weight'] = $goods['weight'];            
             $list[$key]['price'] = $goods['price'];            
+            $list[$key]['inprice'] = $inprice;            
             $list[$key]['singleNumber'] = $goods['number'];
             $list[$key]['baoyou'] = $goods['single'];
             
@@ -841,6 +843,7 @@ class StoreController extends CommonController {
                         'number'=>$val['trueNumber'],    
                         'trueNumber'=>$val['trueNumber'],    
                         'price'=>$val['price'],
+                        'inprice'=>$val['inprice'],
                         'server'=>$val['server'],
                         'extends'=>$val['extends'],
                         'del'=>0,

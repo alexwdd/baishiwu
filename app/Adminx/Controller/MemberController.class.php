@@ -161,14 +161,10 @@ class MemberController extends AdminController {
 
 	#删除
 	public function del() {
-		//$this->error('经销商不允许删除，您可以选择封号');
-		$id=I('post.selectedids');
+		$id=I('post.id');        
         if($id==''){
             $this->error('您没有选择任何信息！');
         }else{
-        	if (!$_SESSION['administrator']) {
-				$map['teamID'] = $this->admin['teamID'];
-			}
             $map['id'] = array('in',$id);
             $obj = M('Member');
             $list = $obj->where($map)->delete();

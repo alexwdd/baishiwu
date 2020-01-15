@@ -66,20 +66,24 @@ class Order2Controller extends CommonController {
 
 	#删除
 	public function del() {
-		$id=I('post.id');
+        $id=I('post.id');
         if($id==''){
             $this->error('您没有选择任何信息！');
         }else{
             $map['id'] = array('in',$id);
             $map['agentID'] = $this->user['id'];
             $obj = M('DgOrder');
-            $list = $obj->where($map)->setField('del',1);
-            if ($list) {
-                $this->success('操作成功');
-            }else{
-                $this->error('操作失败');
+            $res = $obj->where($map)->delete();
+            if($res){
+                unset($map);
+                $map['orderID'] = array('in',$id);
+                $map['agentID'] = $this->user['id'];
+                M('DgOrderBaoguo')->where($map)->delete();
+                M('DgOrderDetail')->where($map)->delete();
+                M('DgOrderPerson')->where($map)->delete();
             }
+            $this->success('操作成功');         
         }
-	}
+    }
 }
 ?>

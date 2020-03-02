@@ -1,0 +1,62 @@
+<layout name='layout' />
+
+<form class="layui-form">	
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-block">
+			<input type="text" id="name" name="name" class="layui-input" lay-verType="tips" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">缩略图</label>
+		<div class="layui-inline">
+			<img class="thumb" id="picname_src" src="<{:STATICS}>/image/image.jpg" />
+			<input type="hidden" name="picname" id="picname" />	
+		</div>
+		<div class="layui-inline">
+		<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="picname"
+			 >上传图片</button>
+			<input type="button" value="删除" class="layui-btn layui-btn-small" onclick="delImage('picname')"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea name="intr" class="layui-textarea"></textarea>
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="show" value="1" title="开启" checked="checked">
+			<input type="radio" name="show" value="0" title="关闭">
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">初始票数</label>
+		<div class="layui-input-inline">
+			<input type="text" name="poll" value="0" lay-verify="required" class="layui-input">
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+	    <button class="layui-btn" lay-submit="" lay-filter="save" url="<{:U('Vote/addItem')}>">新增</button>
+	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+	</div>
+	<input type="hidden" name="voteId" value="<{$voteId}>" />
+</form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>

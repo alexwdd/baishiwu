@@ -1,0 +1,48 @@
+<layout name='layout' />
+
+<form class="layui-form" isLoad="1">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-block">
+			<input type="text" id="name" name="name" value="<{$list.name}>" class="layui-input" lay-verType="tips" lay-verify="required">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-inline">
+			<input type="radio" name="show" value="1" title="开启" <php>if($list['show']==='1')echo checked;</php>>
+			<input type="radio" name="show" value="0" title="关闭" <php>if($list['show']==='0')echo checked;</php>>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">截止日期</label>
+		<div class="layui-input-inline">
+			<input type="text" name="endTime" value="<{$list.endTime}>" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">每日投票</label>
+		<div class="layui-input-inline">
+			<input type="number" name="dayNumber" value="<{$list.dayNumber}>" autocomplete="off" class="layui-input" lay-verify="required"/>
+		</div>
+		<div class="layui-form-mid layui-word-aux">次</div>    
+
+		<label class="layui-form-label">每人限投</label>
+		<div class="layui-input-inline">
+			<input type="number" name="personNumber" value="<{$list.personNumber}>" autocomplete="off" class="layui-input" lay-verify="required"/>
+		</div>
+		<div class="layui-form-mid layui-word-aux">次</div> 
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Vote/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+	<input type="hidden" name="id" />
+</form>

@@ -12,6 +12,7 @@ class VoteSubjectModel extends Model {
     );	
 
     protected $_auto = array (
+    	array('startTime','strtotime',Model::MODEL_BOTH,'function'),
     	array('endTime','strtotime',Model::MODEL_BOTH,'function'),
 		array('createTime','time',Model::MODEL_INSERT,'function'),		
 		array('updateTime','time',Model::MODEL_BOTH,'function'),

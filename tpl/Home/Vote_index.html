@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title><{$list.name}></title>
+<link rel="stylesheet" type="text/css" href="<{:RES}>/mui/css/mui.min.css" />
+<link rel="stylesheet" type="text/css" href="<{:RES}>/mui/css/loading.min.css" />
+<link rel="stylesheet" type="text/css" href="<{:RES}>/css/vote.css?v=1.12" />
+
+<script src="<{:RES}>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<{:RES}>/mui/js/mui.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="<{:RES}>/mui/plugin/loading.js"></script>
+<script type="text/javascript" src="<{:RES}>/mui/plugin/form.js"></script>
+<script src="<{:RES}>/js/common.js?v=1.03" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="mui-content">
+	<div class="banner"><img src="<{$list.picname}>" /></div>
+	<div class="intr"><{$list.intr}></div>
+	<div class="date">投票已开始，截止时间<{$list.endTime|date="Y-m-d",###}></div>
+	<div class="tab">
+		<li style="border-right: 1px #fff solid">
+			<p><i class="mui-icon mui-icon-contact"></i> 候选项</p>
+			<span>100</span>
+		</li>
+		<li>
+			<p><i class="mui-icon mui-icon-compose"></i> 投票人次</p>
+			<span>100</span>
+		</li>
+	</div>
+
+	<div class="list">
+		<volist name="item" id="vo">
+		<li>
+			<div class="item">
+				<img src="<{$vo.picname}>">
+				<p><{$vo.name}></p>
+			</div>
+		</li>
+		</volist>
+	</div>
+</div>
+
+</body>
+</html>

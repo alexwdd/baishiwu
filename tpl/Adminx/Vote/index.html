@@ -22,15 +22,34 @@
 
 	        <div class="fsDatagridCols">
 				<p checkbox="true"/>	
-				<p field="value" title="状态" width="60" templet="#showTpl"/>			
+				<p field="value" title="状态" width="60" templet="#showTpl"/>
+				<p title="类型" width="60" templet="#selectTpl"/>
+				<p title="展示形式" width="100" templet="#typeTpl"/>
 				<p field="name" title="名称" width="40%"/>
 				<p field="dayNumber" title="每日投票" width="100"/>
 				<p field="personNumber" title="每人限投票" width="100"/>
+				<p field="startTime" title="开始日期" width="180"/>
 				<p field="endTime" title="截止日期" width="180"/>
 				<p field="createTime" title="添加日期" width="180"/>
 				<p field="updateTime" title="更新日期" width="180"/>
 				<p fixed="right" align="center" toolbar="#barDemo" title="操作" width="150"/>
 			</div>
+
+			<script type="text/html" id="selectTpl">
+				{{# if(d.selectType == 1){ }}
+				单选
+				{{# }else{ }}
+				多选
+				{{# } }}				
+			</script>
+
+			<script type="text/html" id="typeTpl">
+				{{# if(d.type == 1){ }}
+				双排
+				{{# }else if(d.type == 2){ }}
+				单排
+				{{# } }}				
+			</script>
 
 			<script type="text/html" id="showTpl">
 				{{# if(d.show == 1){ }}

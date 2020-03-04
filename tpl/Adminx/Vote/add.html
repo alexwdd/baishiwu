@@ -18,11 +18,55 @@
 	</div>
 
 	<div class="layui-form-item">
+		<label class="layui-form-label">封面</label>
+		<div class="layui-inline">
+			<img class="thumb" id="picname_src" src="<{:STATICS}>/image/image.jpg" />
+			<input type="hidden" name="picname" id="picname" />	
+		</div>
+		<div class="layui-inline">
+		<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="picname"
+			 >上传图片</button>
+			<input type="button" value="删除" class="layui-btn layui-btn-small" onclick="delImage('picname')"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">类型</label>
+		<div class="layui-input-inline">
+			<select name="selectType" lay-verify="required">
+				<option value="">请选择</option>
+				<option value="1">单选</option>
+				<option value="2">多选</option>
+			</select>
+		</div>
+
+		<label class="layui-form-label">展示形式</label>
+		<div class="layui-input-inline" lay-verify="required">
+			<select name="type">
+				<option value="">请选择</option>
+				<option value="1">双排</option>
+				<option value="2">单排</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">开始日期</label>
+		<div class="layui-input-inline">
+			<input type="text" name="startTime" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
+		</div>
+
 		<label class="layui-form-label">截止日期</label>
 		<div class="layui-input-inline">
 			<input type="text" name="endTime" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
 		</div>
-	</div>
+	</div>	
 	
 	<div class="layui-form-item">
 		<label class="layui-form-label">每日投票</label>
@@ -38,6 +82,13 @@
 		<div class="layui-form-mid layui-word-aux">次</div> 
 	</div>
 
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea name="intr" class="layui-textarea"></textarea>
+		</div>
+	</div>
+
 	<hr/>
 
 	<div class="layui-form-item">
@@ -46,3 +97,4 @@
 	    <button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
 	</div>
 </form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>

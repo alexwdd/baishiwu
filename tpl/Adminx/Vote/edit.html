@@ -17,6 +17,49 @@
 	</div>
 
 	<div class="layui-form-item">
+		<label class="layui-form-label">封面</label>
+		<div class="layui-inline">
+			<img class="thumb" id="picname_src" src="<empty name="list.picname"><{:STATICS}>/image/image.jpg<else/><{$list.picname}></empty>" />
+			<input type="hidden" name="picname" id="picname" value="<{$list.picname}>" />
+		</div>
+		<div class="layui-inline">
+			<button type="button" class="layui-btn"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="picname"
+			 >上传图片</button>
+			<input type="button" value="删除" class="layui-btn layui-btn-small" onclick="delImage('picname')"/>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">类型</label>
+		<div class="layui-input-inline">
+			<select name="selectType" default="<{$list.selectType}>" lay-verify="required">
+				<option value="">请选择</option>
+				<option value="1">单选</option>
+				<option value="2">多选</option>
+			</select>
+		</div>
+
+		<label class="layui-form-label">展示形式</label>
+		<div class="layui-input-inline">
+			<select name="type" default="<{$list.type}>" lay-verify="required">
+				<option value="">请选择</option>
+				<option value="1">双排</option>
+				<option value="2">单排</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">开始日期</label>
+		<div class="layui-input-inline">
+			<input type="text" name="startTime" value="<{$list.startTime}>" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
+		</div>
 		<label class="layui-form-label">截止日期</label>
 		<div class="layui-input-inline">
 			<input type="text" name="endTime" value="<{$list.endTime}>" autocomplete="off" class="layui-input fsDate" dateType="date" readonly="readonly" lay-verify="required"/>
@@ -37,6 +80,14 @@
 		<div class="layui-form-mid layui-word-aux">次</div> 
 	</div>
 
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">描述</label>
+		<div class="layui-input-block">
+			<textarea name="intr" class="layui-textarea"><{$list.intr}></textarea>
+		</div>
+	</div>
+
+
 	<hr/>
 
 	<div class="layui-form-item">
@@ -46,3 +97,4 @@
     </div>
 	<input type="hidden" name="id" />
 </form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>

@@ -15,6 +15,7 @@ class VoteController extends AdminController{
 
             $list = $obj->where($map)->order('id desc')->limit($firstRow.','.$pageSize)->select();
             foreach ($list as $key => $value) {
+                $list[$key]['startTime'] = date("Y-m-d",$value['startTime']);
                 $list[$key]['endTime'] = date("Y-m-d",$value['endTime']);
                 $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
                 $list[$key]['updateTime'] = date("Y-m-d H:i:s",$value['updateTime']);
@@ -59,6 +60,7 @@ class VoteController extends AdminController{
             if (!$list) {
                 $this->error('信息不存在');
             } else {
+                $list['startTime'] = date("Y-m-d",$list['startTime']);
                 $list['endTime'] = date("Y-m-d",$list['endTime']);
                 $this->assign('list', $list);
                 $this->display();

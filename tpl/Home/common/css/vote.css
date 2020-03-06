@@ -10,6 +10,7 @@ input, select, textarea {font-size: 14px;}
 
 .intr{background: #fff; border-radius: 5px; margin: 5px; padding: 5px;}
 .date{padding:0 5px; font-size: 14px; text-align: center;}
+.red{color: #f00}
 .tab{clear: both; margin: 5px; overflow: hidden; border-radius: 5px;}
 .tab li{float: left; width: 50%; box-sizing: border-box; padding: 5px 0; text-align: center; color: #fff; background:#05c1af}
 .tab li p{color: #fff; margin: 0}
@@ -17,6 +18,7 @@ input, select, textarea {font-size: 14px;}
 
 .list{clear: both; overflow: hidden;}
 .list li{float: left; width: 50%; overflow: hidden;}
+.one li{width: 100%}
 .list li .item{ margin: 5px; clear: both; overflow: hidden; background: #fff; padding: 5px; box-shadow: 0 0 3px #999; border-radius: 3px; position: relative;}
 .list li .item img{display: block;}
 .list li .item p{margin: 0; color: #000; font-size: 14px; padding-top: 5px;}

@@ -19,8 +19,9 @@ class VoteController extends AdminController{
                 $list[$key]['endTime'] = date("Y-m-d",$value['endTime']);
                 $list[$key]['createTime'] = date("Y-m-d H:i:s",$value['createTime']);
                 $list[$key]['updateTime'] = date("Y-m-d H:i:s",$value['updateTime']);
+                $list[$key]['url'] = 'http://'.$_SERVER['HTTP_HOST'].'/home/vote/index/voteID/'.$value['id'].'.html';
             }
-
+            
             $result = array(
                 'data'=>array(
                     'list'=>$list,

@@ -17,13 +17,45 @@
 <body>
 
 <div class="mui-content">
+	<nav class="mui-bar mui-bar-tab">
+		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="finance" class="mui-tab-item">
+			<span class="mui-icon mui-icon-home"></span>
+			<span class="mui-tab-label">首页</span>
+		</a>
+
+		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="tixian" class="mui-tab-item">
+			<span class="mui-icon mui-icon-star"></span>
+			<span class="mui-tab-label">排行</span>
+		</a>
+
+		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="member" class="mui-tab-item">
+			<span class="mui-icon mui-icon-search"></span>
+			<span class="mui-tab-label">搜索</span>
+		</a>
+	</nav>
+
+	<script>
+	mui.ready(function(){
+		mui('.mui-bar-tab').on('tap','a',function(){
+			document.location.href=this.href;}
+		);
+
+		var val = $("#activeIndex").val();
+		$(".mui-tab-item").each(function(){
+			if ($(this).attr("data")==val){
+				$(this).addClass("mui-active");
+			};
+		});
+	})
+	</script>
+
 	<div class="banner"><img src="<{$list.picname}>" /></div>
 	<div class="intr"><{$list.intr}></div>
-	<div class="date">投票已开始，截止时间<{$list.endTime|date="Y-m-d",###}></div>
+	<div class="date <eq name="list.flag" value="1">red</eq>"><{$list['msg']}></div>
 	<div class="tab">
 		<li style="border-right: 1px #fff solid">
 			<p><i class="mui-icon mui-icon-contact"></i> 候选项</p>
-			<span>100</span>
+			<span><?php echo count($item); ?></span>
 		</li>
 		<li>
 			<p><i class="mui-icon mui-icon-compose"></i> 投票人次</p>
@@ -31,7 +63,7 @@
 		</li>
 	</div>
 
-	<div class="list">
+	<div class="list <eq name="list.type" value="2">one</eq>">
 		<volist name="item" id="vo">
 		<li>
 			<div class="item">

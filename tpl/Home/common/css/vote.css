@@ -20,5 +20,14 @@ input, select, textarea {font-size: 14px;}
 .list li{float: left; width: 50%; overflow: hidden;}
 .one li{width: 100%}
 .list li .item{ margin: 5px; clear: both; overflow: hidden; background: #fff; padding: 5px; box-shadow: 0 0 3px #999; border-radius: 3px; position: relative;}
+.list li .item i{position: absolute; right: 10px; top: 10px; background:#05c1af; color: #fff; border-radius: 50%; display: none;}
 .list li .item img{display: block;}
 .list li .item p{margin: 0; color: #000; font-size: 14px; padding-top: 5px;}
+
+.empty{text-align: center; color: #999; clear: both; overflow: }
+.loadData{text-align: center; display: none;}
+
+.voteBox{position: fixed; width: 100%; bottom: 50px; left: 0;}
+.my-btn{background-color: #05c1af;border: 1px solid #05c1af; color: #fff; margin-bottom: 0}
+.my-btn:active{background-color: #05c1af;border: 1px solid #05c1af;}
+.my-btn:enabled:active{border: 1px solid #0aa596;background-color: #0aa596;}

@@ -23,7 +23,7 @@
 			<span class="mui-tab-label">首页</span>
 		</a>
 
-		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="tixian" class="mui-tab-item">
+		<a href="<{:U('vote/phb',array('voteID'=>$list['id']))}>" data="tixian" class="mui-tab-item">
 			<span class="mui-icon mui-icon-star"></span>
 			<span class="mui-tab-label">排行</span>
 		</a>
@@ -34,46 +34,167 @@
 		</a>
 	</nav>
 
-	<script>
-	mui.ready(function(){
-		mui('.mui-bar-tab').on('tap','a',function(){
-			document.location.href=this.href;}
-		);
-
-		var val = $("#activeIndex").val();
-		$(".mui-tab-item").each(function(){
-			if ($(this).attr("data")==val){
-				$(this).addClass("mui-active");
-			};
-		});
-	})
-	</script>
-
 	<div class="banner"><img src="<{$list.picname}>" /></div>
 	<div class="intr"><{$list.intr}></div>
 	<div class="date <eq name="list.flag" value="1">red</eq>"><{$list['msg']}></div>
 	<div class="tab">
 		<li style="border-right: 1px #fff solid">
 			<p><i class="mui-icon mui-icon-contact"></i> 候选项</p>
-			<span><?php echo count($item); ?></span>
+			<span><{$total.number}></span>
 		</li>
 		<li>
 			<p><i class="mui-icon mui-icon-compose"></i> 投票人次</p>
-			<span>100</span>
+			<span><{$total.person}></span>
 		</li>
 	</div>
-
-	<div class="list <eq name="list.type" value="2">one</eq>">
+	
+	<div id="result" class="list <eq name="list.type" value="2">one</eq>">
 		<volist name="item" id="vo">
 		<li>
 			<div class="item">
+				<i class="mui-icon mui-icon-checkmarkempty" data-id="<{$vo.id}>"></i>
 				<img src="<{$vo.picname}>">
 				<p><{$vo.name}></p>
 			</div>
 		</li>
 		</volist>
 	</div>
-</div>
 
+	<div class="loadData"><span class="mui-spinner"></span></div>
+
+	<div class="voteBox">
+        <button type="button" id="voteBtn" class="mui-btn mui-btn-block my-btn">投票</button>
+    </div>
+	
+</div>
+<div style="height:100px;"></div>
+<script type="text/javascript">
+function GetRequest() {   
+   var url = location.search; //获取url中"?"符后的字串   
+   var theRequest = new Object();   
+   if (url.indexOf("?") != -1) {   
+      var str = url.substr(1);   
+      strs = str.split("&");   
+      for(var i = 0; i < strs.length; i ++) {
+         if (strs[i]!='remark=%E4%B8%8D%E9%99%90' && strs[i]!='singleType=%E4%B8%8D%E9%99%90'){
+            //theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+            theRequest[strs[i].split("=")[0]]=strs[i].split("=")[1];
+         }            
+      }   
+   }   
+   return theRequest;   
+}
+
+var token = GetRequest().token;
+if(token==undefined){
+	token = '';
+}
+
+mui.ready(function(){
+	mui('.mui-bar-tab').on('tap','a',function(){
+		document.location.href=this.href+"?token="+token;}
+	);
+
+	var val = $("#activeIndex").val();
+	$(".mui-tab-item").each(function(){
+		if ($(this).attr("data")==val){
+			$(this).addClass("mui-active");
+		};
+	});
+})
+
+var status = 0;
+var index = 2;
+$(window).scroll(function(){
+    var scrollHeight = $(document).height(); //文档高度
+    var scrollTop = $(this).scrollTop(); //滚动条卷去高度
+    var windowHeight = $(this).height(); // 窗口高度
+    if(scrollHeight - scrollTop - windowHeight < 100 ){
+        if (status == 0) {//尚有待展示的分页数据
+            LoadData(index);//加载相应页码的数据
+            index++;//页码自增
+        }
+    }
+
+    function LoadData(page){
+    	status = 1;
+    	let url = "<{:U('vote/ajax')}>";
+    	let data = {
+    		page : page,
+    		voteId : <{$list.id}>
+    	};
+    	$(".loadData").show();
+    	$.post(url,data,function(res){
+    		$(".loadData").hide();
+    		if(res.code==1){
+    			result = res.body;    			
+    			var _html = "";
+	    		for (var i = 0; i < result.data.length; i++) {
+	    			_html += '<li><div class="item"><i class="mui-icon mui-icon-checkmarkempty"  data-id="'+result.data[i]['id']+'"></i><img src="'+result.data[i]['picname']+'"><p>'+result.data[i]['name']+'</p></div></li>';
+	    		}
+	    		$("#result").append(_html);
+
+	    		if(result.next == 1){
+    				status = 0;
+    			}else{
+    				$("#result").append('<p class="empty">已经到底了</p>');
+    			}
+    		}    		
+    	},'json');
+    }
+});
+
+$(function(){
+	var type = <{$list.selectType}>;
+	$(".list").on("click",".item",function(){
+		if(type==1){
+			$(".item i").hide();
+			$(this).find("i").show();
+		}else{
+			if($(this).find("i").is(":visible")){
+				$(this).find("i").hide();
+			}else{
+				$(this).find("i").show();
+			}
+		}		
+	});
+
+	$("#voteBtn").click(function(){
+		var ids = [];
+		$(".item i").each(function(){
+			if($(this).is(":visible")){
+				ids.push($(this).attr("data-id"));
+			}
+		});
+
+		if(ids.length==0){
+			mui.alert("请选择你要投票的对象");
+			return false;
+		}
+
+		if(token=="" || token==undefined){
+			mui.alert("请先下载APP进行投票");
+			return false;
+		}
+
+		let data = {
+			token : token,
+			voteId : <{$list.id}>,
+			ids : ids.join("-"),
+		};
+		mui.showLoading();
+		$.post("<{:U('vote/submit')}>",data,function(res){    		
+    		mui.hideLoading();
+    		if(res.code==1){
+    			mui.alert(res.desc, '投票成功', function(){
+                    window.location.reload(); 
+                })
+    		}else{
+    			mui.alert(res.desc);
+    		}
+    	},'json');
+	})
+})
+</script>
 </body>
 </html>

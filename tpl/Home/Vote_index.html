@@ -16,19 +16,33 @@
 </head>
 <body>
 
+<neq name="is_weixin" value="1">
+<header class="mui-bar mui-bar-nav">
+    <a href="app://goback"><i class="mui-icon mui-icon-left-nav"></i></a>
+    <h1 class="mui-title"><{$list.name}></h1>
+</header>
+</neq>
+
 <div class="mui-content">
 	<nav class="mui-bar mui-bar-tab">
-		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="finance" class="mui-tab-item">
+		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" class="mui-tab-item link">
 			<span class="mui-icon mui-icon-home"></span>
 			<span class="mui-tab-label">首页</span>
 		</a>
-
-		<a href="<{:U('vote/phb',array('voteID'=>$list['id']))}>" data="tixian" class="mui-tab-item">
+		
+		<?php if(($list['endTime']+86399) < time()){ ?>
+		<a href="<{:U('vote/phb',array('voteID'=>$list['id']))}>" class="mui-tab-item link">
 			<span class="mui-icon mui-icon-star"></span>
 			<span class="mui-tab-label">排行</span>
 		</a>
+		<?php }else{ ?>
+		<a href="javascript:void(0);" id="alertBtn" class="mui-tab-item">
+			<span class="mui-icon mui-icon-star"></span>
+			<span class="mui-tab-label">排行</span>
+		</a>
+		<?php } ?>
 
-		<a href="<{:U('vote/index',array('voteID'=>$list['id']))}>" data="member" class="mui-tab-item">
+		<a href="javascript:void(0)" id="searchBtn" class="mui-tab-item">
 			<span class="mui-icon mui-icon-search"></span>
 			<span class="mui-tab-label">搜索</span>
 		</a>
@@ -46,8 +60,8 @@
 			<p><i class="mui-icon mui-icon-compose"></i> 投票人次</p>
 			<span><{$total.person}></span>
 		</li>
-	</div>
-	
+	</div>	
+
 	<div id="result" class="list <eq name="list.type" value="2">one</eq>">
 		<volist name="item" id="vo">
 		<li>
@@ -61,11 +75,12 @@
 	</div>
 
 	<div class="loadData"><span class="mui-spinner"></span></div>
-
+	
+	<eq name="list.flag" value="0">
 	<div class="voteBox">
         <button type="button" id="voteBtn" class="mui-btn mui-btn-block my-btn">投票</button>
     </div>
-	
+	</eq>
 </div>
 <div style="height:100px;"></div>
 <script type="text/javascript">
@@ -91,20 +106,15 @@ if(token==undefined){
 }
 
 mui.ready(function(){
-	mui('.mui-bar-tab').on('tap','a',function(){
+	mui('.mui-bar-tab').on('tap','.link',function(){
 		document.location.href=this.href+"?token="+token;}
 	);
-
-	var val = $("#activeIndex").val();
-	$(".mui-tab-item").each(function(){
-		if ($(this).attr("data")==val){
-			$(this).addClass("mui-active");
-		};
-	});
 })
 
 var status = 0;
 var index = 2;
+var keyword = "<{$keyword}>";
+var flag = <{$list.flag}>;
 $(window).scroll(function(){
     var scrollHeight = $(document).height(); //文档高度
     var scrollTop = $(this).scrollTop(); //滚动条卷去高度
@@ -121,6 +131,7 @@ $(window).scroll(function(){
     	let url = "<{:U('vote/ajax')}>";
     	let data = {
     		page : page,
+    		keyword : keyword,
     		voteId : <{$list.id}>
     	};
     	$(".loadData").show();
@@ -146,20 +157,48 @@ $(window).scroll(function(){
 
 $(function(){
 	var type = <{$list.selectType}>;
-	$(".list").on("click",".item",function(){
-		if(type==1){
-			$(".item i").hide();
-			$(this).find("i").show();
-		}else{
-			if($(this).find("i").is(":visible")){
-				$(this).find("i").hide();
-			}else{
+	if(flag==0){
+		$(".list").on("click",".item",function(){
+			if(type==1){
+				$(".item i").hide();
 				$(this).find("i").show();
+			}else{
+				if($(this).find("i").is(":visible")){
+					$(this).find("i").hide();
+				}else{
+					$(this).find("i").show();
+				}
+			}		
+		})
+	};
+
+	$("#alertBtn").click(function(){
+		mui.alert('活动尚未结束');
+	})
+	
+	document.getElementById("searchBtn").addEventListener('tap', function(e) {
+		e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+		var btnArray = ['确定', '取消'];
+		mui.prompt('请输入关键词', '', '搜索', btnArray, function(e) {
+			if (e.index == 0) {
+				//if(e.value!=''){
+					let url = "<{:U('vote/index',array('voteID'=>$list['id']))}>?token="+token+"&keyword="+e.value;
+					window.location.href = url;
+				/*}else{
+					return false;
+				}*/
 			}
-		}		
+		})
 	});
+	
 
 	$("#voteBtn").click(function(){
+		var is_weixin = <{$is_weixin}>;
+		if (is_weixin==1){
+            mui.alert('<div class="appText">请下载<{$appName}>APP参与投票，更多精彩活动等着你来！</div><div class="appList"><li><a href="<{$iUrl}>"><img src="<{:RES}>/image/appstore.png" /></a></li><li><a href="<{$aUrl}>"><img src="<{:RES}>/image/googleplay.png" /></a></li></div>');
+            return false;
+        }
+
 		var ids = [];
 		$(".item i").each(function(){
 			if($(this).is(":visible")){

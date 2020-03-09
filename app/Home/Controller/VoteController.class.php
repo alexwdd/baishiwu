@@ -5,11 +5,25 @@ use Common\Controller\BaseController;
 class VoteController extends BaseController {
 
 	public function _initialize() {
+        $httpAgent = $_SERVER['HTTP_USER_AGENT']; 
+        if(strpos(strtolower($httpAgent),"micromessenger")) {
+            $is_weixin = 1;
+        }else{
+            $is_weixin = 0;
+        }
+
+        $app['appName'] = '阿德莱德眼';
+        $app['aUrl'] = 'https://play.google.com/store/apps/details?id=com.ldw.life';
+        $app['iUrl'] = 'https://itunes.apple.com/cn/app/id1386824572?l=zh&ls=1&mt=8';
+
+        $this->assign('app',$app);
+        $this->assign('is_weixin',$is_weixin);
 		parent::_initialize();
 	}    
 
     public function index() {
-    	$voteID = I('get.voteID',0);
+        $voteID = I('get.voteID',0);
+    	$keyword = I('get.keyword','');
     	$map['id'] = $voteID;
     	$map['show'] = 1;
     	$list = M('VoteSubject')->where($map)->find();
@@ -17,14 +31,21 @@ class VoteController extends BaseController {
 
         if($list['startTime']>time()){            
             $list['msg'] = '活动尚未开始，开始时间'.date("Y-m-d",$list['startTime']); 
+            $list['flag'] = 1;
         }elseif(($list['endTime']+86399)<time()){
             $list['flag'] = 1;
             $list['msg'] = '活动已结束，结束时间'.date("Y-m-d",$list['endTime']); 
         }else{
+            $list['flag'] = 0;
             $list['msg'] = '活动已开始，结束时间'.date("Y-m-d",$list['endTime']); 
         }
 
-        $item = M("VoteItem")->where(['voteId'=>$list['id']])->limit(10)->order('id asc')->select();
+        if($keyword!=''){
+            $where['name'] = ['like','%'.$keyword.'%'];
+        }
+        $where['voteId'] = $list['id'];
+
+        $item = M("VoteItem")->where($where)->limit(10)->order('id asc')->select();
         $this->assign('item',$item);
     	$this->assign('list',$list);
 
@@ -41,11 +62,15 @@ class VoteController extends BaseController {
 
             $voteId = I('post.voteId');
             $page = I('post.page');
+            $keyword = I('post.keyword','');
 
             $pagesize =10;
             $firstRow = $pagesize*($page-1); 
 
             $map['voteId'] = $voteId;
+            if($keyword!=''){
+                $where['name'] = ['like','%'.$keyword.'%'];
+            }
             $obj = M('VoteItem');
 
             $count = $obj->where($map)->count();
@@ -158,5 +183,24 @@ class VoteController extends BaseController {
         $map['memberID'] = $user['id'];
         $totalNumber = M('VoteLog')->where($map)->count();  
         return $totalNumber;      
+    }
+
+    public function phb(){
+        $voteID = I('get.voteID',0);
+        $map['id'] = $voteID;
+        $map['show'] = 1;
+        $list = M('VoteSubject')->where($map)->find();
+        if(!$list){
+            $this->error("活动主题不存在");
+        }
+
+        if(($list['endTime']+86399) > time()){
+            $this->error("活动尚未结束，不能查看"); 
+        }
+
+        $item = M("VoteItem")->where(['voteId'=>$list['id']])->order('poll desc')->select();
+        $this->assign('item',$item);
+        $this->assign('list',$list);
+        $this->display();
     }
 }

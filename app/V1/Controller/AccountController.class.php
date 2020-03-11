@@ -906,6 +906,7 @@ class AccountController extends CommonController {
                 returnJson('-1','未知错误');
             }
             $isThumb = I('get.isThumb');
+            $cityID = I('get.cityID');
             $path = '.'.C('UPLOAD_PATH');
 
             if(!is_dir($path)){

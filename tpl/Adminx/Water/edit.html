@@ -1,0 +1,47 @@
+<layout name='layout' />
+
+<form class="layui-form">
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">城市</label>
+		<div class="layui-input-inline">			
+			<select name="cityID" lay-verify="required" default="<{$list.cityID}>" lay-verType="tips" class="fsSelect fsDict" dict="city" addNull="1">
+	      	</select>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">水印</label>
+		<div class="layui-inline">
+			<img class="thumb" id="water_image_src" src="<empty name="list.water_image"><{:STATICS}>/image/image.jpg<else/><{$list.water_image}></empty>" />
+			<input type="hidden" name="water_image" id="water_image" value="<{$list.water_image}>" />
+		</div>
+		<div class="layui-inline">
+			<button type="button" class="layui-btn layui-btn-primary"
+			 id="uploud"
+			 url="<{:U('Upload/image')}>"
+			 size="5120"
+			 exts="jpg|png|gif|jpeg"
+			 accept="images"
+			 tag="water_image"
+			 >上传</button>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">状态</label>
+		<div class="layui-input-block">				
+			<input type="radio" name="status" value="1" title="开启" <php>if($list['status']==='1')echo checked;</php>>	
+			<input type="radio" name="status" value="0" title="关闭" <php>if($list['status']==='0')echo checked;</php>>			
+		</div>
+	</div>
+
+	<hr/>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+     	<button class="layui-btn" lay-submit="" lay-filter="edit" url="<{:U('Water/edit')}>"><i class="layui-icon">&#xe642;</i>编辑</button>
+     	<button type="button" class="layui-btn layui-btn-primary" function="close">关闭</button>
+    </div>
+	<input type="hidden" name="id" />
+</form>
+<script type="text/javascript" src="<{:RES}>/js/upload.js"></script>

@@ -906,9 +906,8 @@ class AccountController extends CommonController {
                 returnJson('-1','未知错误');
             }
             $isThumb = I('get.isThumb');
-            $cityID = I('get.cityID');
+            $cityID = I('cityID');
             $path = '.'.C('UPLOAD_PATH');
-
             if(!is_dir($path)){
                 mkdir($path);
             }
@@ -932,6 +931,15 @@ class AccountController extends CommonController {
                     $thumb_s = $url;
                     $thumb_b = $url;
                 }
+
+                if($cityID!="" && is_numeric($cityID)){
+                    $water = M('Water')->where(['cityID'=>$cityID])->find();
+                    if($water['water_image']!='' && $water['status']==1){
+                        $image = new \Think\Image(); 
+                        $image->open('.'.$url)->water('.'.$water['water_image'],9)->save('.'.$url);
+                    }
+                }
+
                 $array = array(
                     /*'thumb_s'=>'http://'.$_SERVER['HTTP_HOST'].$thumb_s,
                     'thumb_b'=>'http://'.$_SERVER['HTTP_HOST'].$thumb_b,

@@ -906,12 +906,12 @@ class AccountController extends CommonController {
                 returnJson('-1','未知错误');
             }
             $isThumb = I('get.isThumb');
-            $cityID = I('cityID');
+            $cityID = I('post.cityID') ? I('post.cityID') : I('get.cityID');
             $path = '.'.C('UPLOAD_PATH');
             if(!is_dir($path)){
                 mkdir($path);
             }
-            
+
             $upload = new \Think\Upload();// 实例化上传类
             $upload->maxSize = C('image_size')*1024*1024;  //是指上传文件的大小，默认为-1,不限制上传文件大小bytes
             $upload->rootPath = $path;

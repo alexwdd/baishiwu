@@ -12,7 +12,7 @@ var config = {
    checkIsMy : api+'/Account/checkMyArticle',
    
 	//上传图片
-	upload : api+'/account/image_upload?isThumb=YES',
+	upload : api+'/account/image_upload?isThumb=YES&cityID=9',
    //上传图片
    publish : api+'/article/publish',
    //获取帖子列表

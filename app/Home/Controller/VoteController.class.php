@@ -15,6 +15,7 @@ class VoteController extends BaseController {
         $app['appName'] = '阿德莱德眼';
         $app['aUrl'] = 'https://play.google.com/store/apps/details?id=com.ldw.life';
         $app['iUrl'] = 'https://itunes.apple.com/cn/app/id1386824572?l=zh&ls=1&mt=8';
+        $app['download'] = 'http://www.worldmedia.top/download/adelaide.apk';
 
         $this->assign('app',$app);
         $this->assign('is_weixin',$is_weixin);

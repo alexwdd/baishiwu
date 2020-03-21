@@ -936,7 +936,7 @@ class AccountController extends CommonController {
                     $water = M('Water')->where(['cityID'=>$cityID])->find();
                     if($water['water_image']!='' && $water['status']==1){
                         $image = new \Think\Image(); 
-                        $image->open('.'.$url)->water('.'.$water['water_image'],9)->save('.'.$url);
+                        $image->open('.'.$url)->water('.'.$water['water_image'],9,50)->save('.'.$url);
                     }
                 }
 

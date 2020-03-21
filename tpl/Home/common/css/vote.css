@@ -43,3 +43,11 @@ input, select, textarea {font-size: 14px;}
 .searchBox{background: #fff; clear: both; display: flex; padding: 5px;}
 .searchBox input{flex: 1}
 .searchBox span{display: block; width: 40px; cursor: pointer;}
+
+.masker{width: 100%; height: 100vh; position: fixed; top: 0; left: 0; background: rgba(0,0,0,0.5); z-index: 99; display: none; cursor: pointer;}
+.down{clear: both; overflow: hidden; position: fixed; top: 20%; width: 80%; margin-left: 10%; z-index: 999; display: none;}
+.down img{display: block}
+.down .hd{clear: both;}
+.down .bd{background: #fff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; padding: 20px; overflow: hidden; padding-right: 0}
+.down .bd li{float: left; width: 50%; padding-right: 20px; box-sizing: border-box}
+.down .bd li.long{clear: both; width: 100%; margin-top: 10px;}

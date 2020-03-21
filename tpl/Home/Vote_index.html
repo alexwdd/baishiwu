@@ -6,7 +6,7 @@
 <title><{$list.name}></title>
 <link rel="stylesheet" type="text/css" href="<{:RES}>/mui/css/mui.min.css" />
 <link rel="stylesheet" type="text/css" href="<{:RES}>/mui/css/loading.min.css" />
-<link rel="stylesheet" type="text/css" href="<{:RES}>/css/vote.css?v=1.12" />
+<link rel="stylesheet" type="text/css" href="<{:RES}>/css/vote.css?v=1.13" />
 
 <script src="<{:RES}>/js/jquery.min.js"></script>
 <script type="text/javascript" src="<{:RES}>/mui/js/mui.min.js" charset="utf-8"></script>
@@ -75,6 +75,10 @@
     </div>
 	</eq>
 </div>
+
+<div class="down"><div class="hd"><img src="<{:RES}>/image/down.png"></div><div class="bd"><li><a href="<{$app.aUrl}>"><img src="<{:RES}>/image/googleplay.png"></a></li><li><a href="<{$app.iUrl}>"><img src="<{:RES}>/image/appstore.png"></a></li><li class="long" onclick="downApk()"><img src="<{:RES}>/image/button.png"></li></div></div>
+<div class="masker"></div>
+
 <div style="height:100px;"></div>
 <script type="text/javascript">
 function GetRequest() {   
@@ -184,11 +188,17 @@ $(function(){
 		})
 	});
 	
+	$(".masker").click(function(){
+		$(".down").hide();
+        $(".masker").hide();
+	});
 
 	$("#voteBtn").click(function(){
 		var is_weixin = <{$is_weixin}>;
 		if (is_weixin==1){
-            mui.alert('<div class="appText">请下载<{$appName}>APP参与投票，更多精彩活动等着你来！</div><div class="appList"><li><a href="<{$iUrl}>"><img src="<{:RES}>/image/appstore.png" /></a></li><li><a href="<{$aUrl}>"><img src="<{:RES}>/image/googleplay.png" /></a></li></div>');
+            //mui.alert('<div class="appText">请下载<{$appName}>APP参与投票，更多精彩活动等着你来！</div><div class="appList"><li><a href="<{$iUrl}>"><img src="<{:RES}>/image/appstore.png" /></a></li><li><a href="<{$aUrl}>"><img src="<{:RES}>/image/googleplay.png" /></a></li></div>');
+            $(".down").show();
+            $(".masker").show();
             return false;
         }
 
@@ -205,7 +215,8 @@ $(function(){
 		}
 
 		if(token=="" || token==undefined){
-			mui.alert("请先下载APP进行投票");
+			$(".down").show();
+            $(".masker").show();
 			return false;
 		}
 
@@ -227,6 +238,10 @@ $(function(){
     	},'json');
 	})
 })
+
+function downApk(){
+	window.location.href = '<{$app.aUrl}>';
+}
 </script>
 </body>
 </html>

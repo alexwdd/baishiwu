@@ -69,7 +69,7 @@ mui.ready(function(){
                 data.detail = data.detail+"\n联系时请说明是在堪城圈看到的";
             }
             if (data.cityID==9){
-                data.detail = data.detail+"\n记得关注微信公众号阿德莱德眼, 微信分享信息请加adleye3";
+                data.detail = data.detail+"\n更多阿德莱德社区信息，请关注微信公众号阿德莱德眼，微信分享信息请加adleye3";
             }            
             $('#submitBtn').attr("disabled","disabled");
             mui.post(config.publish,data,function(r){

@@ -536,7 +536,7 @@ class ChatController extends CommonController {
             $thumb = I('post.thumb');
             $imageStr = I('post.imageStr');
             if (!$user = $this->checkToken($token)) {
-                returnJson('999'); 
+                returnJson('999','登录超时'); 
             }
             if ($cityID==0) {
                 returnJson('-1','缺少cityID');

@@ -27,7 +27,7 @@ class CommonController extends BaseController {
     public function checkToken($token){
         $map['token'] = $token;
         $map['disable'] = 0;
-        $map['outTime'] = array('gt',time());
+        //$map['outTime'] = array('gt',time());
         $user = M('Member')->where($map)->find();    
         if (!$user) {
             return false;

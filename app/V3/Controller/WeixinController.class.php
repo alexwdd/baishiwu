@@ -57,7 +57,7 @@ class WeixinController extends CommonController {
                 $map['cid']=$adID;
             }
             //$map['id'] = array('neq',38);
-            $ads = M('Ad')->field('name as title,articleid,type,createTime as time,image,url')->where($map)->order('sort asc , id desc')->select();
+            $ads = M('Ad')->field('name as title,articleid,type,createTime as time,image,url,wxurl')->where($map)->order('sort asc , id desc')->select();
             foreach ($ads as $key => $value) {
                 $ads[$key]['time'] = date("Y-m-d",$value['time']);
                 $ads[$key]['image'] = C('site.domain').$value['image'];
@@ -248,7 +248,7 @@ class WeixinController extends CommonController {
                 unset($map);
                 $map['cityID'] = $cityID;
                 $map['cid'] = 127;
-                $ad1 = M('Ad')->field('name,image,type,articleid,url')->where($map)->order('sort asc,id desc')->select();
+                $ad1 = M('Ad')->field('name,image,type,articleid,url,wxurl')->where($map)->order('sort asc,id desc')->select();
                 if ($ad1) {
                     foreach ($ad1 as $key => $value) {
                          $ad1[$key]['image'] = getRealUrl($value['image']);
@@ -257,7 +257,7 @@ class WeixinController extends CommonController {
                     $ad1 = [];
                 }
                 $map['cid'] = 128;
-                $ad2 = M('Ad')->field('name,image,type,articleid,url')->where($map)->order('sort asc,id desc')->select();
+                $ad2 = M('Ad')->field('name,image,type,articleid,url,wxurl')->where($map)->order('sort asc,id desc')->select();
                 if ($ad2) {
                     foreach ($ad2 as $key => $value) {
                          $ad2[$key]['image'] = getRealUrl($value['image']);
@@ -266,7 +266,7 @@ class WeixinController extends CommonController {
                     $ad2 = [];
                 } 
                 $map['cid'] = 129;
-                $ad3 = M('Ad')->field('name,image,url')->where($map)->order('sort asc,id desc')->select();
+                $ad3 = M('Ad')->field('name,image,url,wxurl')->where($map)->order('sort asc,id desc')->select();
                 $quick = [];
                 $q = [];
                 $i = 1;

@@ -4,6 +4,7 @@ namespace V3\Controller;
 class WeixinController extends CommonController {
 
     public $weixin = ['appID'=>'wxd4334941c3c1c498','appsecret'=>'cbbec6f8b6900e35c595064e1b5f5362'];
+    public $wxapp = ['appID'=>'wxe4d659c83d5ec533','appsecret'=>'3aa678d6e1b3e0bb5dc0b19d9dfb524d'];
 
     public function getPy($cid){
         foreach (C('infoArr') as $key => $value) {
@@ -39,7 +40,7 @@ class WeixinController extends CommonController {
     public function appShow(){
         if ($_POST) {
             if (!checkFormDate()){returnJson('-1','未知错误');}
-            returnJson('0',C("SUCCESS_RETURN"),array('show'=>0)); 
+            returnJson('0',C("SUCCESS_RETURN"),array('show'=>1)); 
         }
     }
 
@@ -56,7 +57,7 @@ class WeixinController extends CommonController {
             if ($adID!='' && is_numeric($adID)) {
                 $map['cid']=$adID;
             }
-            //$map['id'] = array('neq',38);
+            $map['id'] = array('neq',38);
             $ads = M('Ad')->field('name as title,articleid,type,createTime as time,image,url,wxurl')->where($map)->order('sort asc , id desc')->select();
             foreach ($ads as $key => $value) {
                 $ads[$key]['time'] = date("Y-m-d",$value['time']);
@@ -732,6 +733,99 @@ class WeixinController extends CommonController {
             $jsapi_ticket = $con->ticket;
             S('JsTicket',$jsapi_ticket,1200);
             return S('JsTicket');
+        }
+    }
+  
+    public function kefu(){
+        /*$echoStr = $_GET["echostr"];
+        if($this->checkSignature()){
+            echo $echoStr;
+            exit;
+        }*/
+        $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+        $postObj = json_decode($postStr,true);
+           
+        $keyword = trim($postObj['Content']);
+        $msgType = $postObj['MsgType'];
+        $toUserName = $postObj['FromUserName'];
+        $fromUserName = $postObj['ToUserName'];
+
+        /*$str = '关注事件'.$postObj.'--'.$keyword;
+        $handle = fopen ("1.txt","w");
+        if(!fwrite ($handle,$str)){
+            die ("生成文件失败！");
+        }*/
+        
+        if($msgType=='text' && $keyword=='2'){
+            $content = '<a href="http://www.baidu.com">点击下载「阿德莱德眼」APP，查看更多同城资讯～</a>';
+            $textTpl = [
+                'touser'=>$toUserName,
+                'msgtype'=>'text',
+                'text'=>['content'=>$content]
+            ];
+            $accessToken = $this->get_app_accessToken();
+            $json = json_encode($textTpl, JSON_UNESCAPED_UNICODE);
+            $url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" . $accessToken;
+            
+            //以'json'格式发送post的https请求
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+            if (!empty($json)){
+                curl_setopt($curl, CURLOPT_POSTFIELDS,$json);
+            }
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            //curl_setopt($curl, CURLOPT_HTTPHEADER, $headers );
+            $output = curl_exec($curl);
+            if (curl_errno($curl)) {
+                echo 'Errno'.curl_error($curl);//捕抓异常
+            }
+            curl_close($curl);
+            if($output == 0){
+                echo 'success';exit;
+            }
+        }
+    }
+  
+    public function get_app_accessToken(){
+        /* 在有效期，直接返回access_token */
+        if(S('wxapp_access_token')){
+            return S('wxapp_access_token');
+        }
+        /* 不在有效期，重新发送请求，获取access_token */
+        else{
+            $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$this->wxapp['appID'].'&secret='.$this->wxapp['appsecret'];
+            $result = $this->https_post($url);
+            $res = json_decode($result,true);   //json字符串转数组    
+            if($res){
+                S('wxapp_access_token',$res['access_token'],3600);
+                return S('wxapp_access_token');
+            }else{
+                return 'api return error';
+            }
+        }
+    }
+
+    //检测签名是否正确返回bool值
+    private function checkSignature(){
+       
+        $signature = $_GET["signature"];
+        $timestamp = $_GET["timestamp"];
+        $nonce = $_GET["nonce"];
+                
+        $token = '4d659c83d5ec5331';
+        $tmpArr = array($token, $timestamp, $nonce);
+        // use SORT_STRING rule
+        sort($tmpArr, SORT_STRING);
+        $tmpStr = implode( $tmpArr );
+        $tmpStr = sha1( $tmpStr );
+        
+        if( $tmpStr == $signature ){
+            return true;
+        }else{
+            return false;
         }
     }
 }

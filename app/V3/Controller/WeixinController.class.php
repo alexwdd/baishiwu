@@ -757,7 +757,7 @@ class WeixinController extends CommonController {
         }*/
         
         if($msgType=='text' && $keyword=='2'){
-            $content = '<a href="http://www.baidu.com">点击下载「阿德莱德眼」APP，查看更多同城资讯～</a>';
+            $content = '<a href="http://www.worldmedia.top/V1/index/download.html">点击下载「阿德莱德眼」APP，查看更多同城资讯～</a>';
             $textTpl = [
                 'touser'=>$toUserName,
                 'msgtype'=>'text',
